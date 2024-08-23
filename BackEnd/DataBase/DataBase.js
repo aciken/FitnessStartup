@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/Deeper')
+mongoose.connect('mongodb://localhost:27017/Fitness')
     .then(() => console.log("Connected to MongoDB"))
     .catch(err => console.log(err));
 
 const UserSchema = new mongoose.Schema({
-  name: {
+  username: {
       type: String,
       required: true,
   },

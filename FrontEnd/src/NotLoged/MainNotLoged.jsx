@@ -9,6 +9,8 @@ export function MainNotLoged() {
         setSelected(selection);
     }
 
+    
+
 
     return (
         <div className="flex flex-row min-h-[100vh]">
