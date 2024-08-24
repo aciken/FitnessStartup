@@ -1,14 +1,44 @@
 import React from 'react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 
 import GoogleLogo from '../../../Assets/Images/GoogleLogo.png'
 import { SigninPop } from '../SigninPop'
 
+import axios from 'axios'
+
 
 export function SigninRoute(){
 
 
+    const navigate = useNavigate()
+
+    const [email, setEmail] = useState('')
+
+    const changeEmail = (e) => {
+        setEmail(e.target.value)
+    }
+
+    const signinNext = async() => {
+        if(email != ''){
+
+        
+        await axios.post('http://localhost:3000/signinEmail', {
+            email: email
+    })
+    .then((res) => {
+        console.log(res)
+        if(res.data != 'User not found'){
+            navigate('/confirm-signin', {state: {email: email}})
+        }
+    }).catch((err) => {
+        console.log(err)
+    })
+} else {
+    console.log('Email is empty')
+}
+}
 
 
 
@@ -33,7 +63,7 @@ export function SigninRoute(){
             </div>
 
 
-             <SigninPop />
+             <SigninPop changeEmail={changeEmail} signinNext={signinNext} />
 
             
            

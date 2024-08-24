@@ -6,6 +6,8 @@ const cors = require('cors');
 app.use(cors());
 
 const createAccount = require('./Auth/createAccount');
+const signinEmail = require('./Auth/signinEmail');
+const signinConfirm = require('./Auth/signinConfirm');
 
 
 app.get('/', (req, res) => {
@@ -13,6 +15,8 @@ app.get('/', (req, res) => {
   });
 
 app.put('/createAccount', createAccount);
+app.post('/signinEmail', signinEmail);
+app.post('/signinConfirm', signinConfirm);
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

@@ -1,9 +1,15 @@
 import GoogleLogo from '../../Assets/Images/GoogleLogo.png'
 import { useNavigate } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
-export function SigninPop(){
+
+export function SigninPop({signinNext, changeEmail}) {
 
     const navigate = useNavigate()
+
+
+
+
 
     return(
 
@@ -16,10 +22,10 @@ export function SigninPop(){
                             <h1 className='font-poppins font-medium text-base text-gray-600'>Sign in with Google</h1>
                         </button>
                         <h1 className='font-poppins font-semibold text-lg text-gray-800'>or</h1>
-                <input type="text" placeholder="Email" className="border border-gray-300 rounded-lg p-2 w-80" />
+                <input onChange={(e) => changeEmail(e)} type="text" placeholder="Email" className="border border-gray-300 rounded-lg p-2 w-80" />
             </div>
             <div className='flex-col justify-end text-end space-y-2'>
-                <button className='bg-blue-500 w-80 h-10 rounded-full text-white font-poppins font-medium text-lg hover:bg-blue-600'>Next</button>
+                <button onClick={() => signinNext()} className='bg-blue-500 w-80 h-10 rounded-full text-white font-poppins font-medium text-lg hover:bg-blue-600'>Next</button>
                 <h1 className='font-poppins font-normal '>Forgot password? <a href="#" className=' font-poppins font-medium text-blue-600 underline hover:text-blue-900'>restart</a></h1>
             </div>
 
@@ -31,3 +37,8 @@ export function SigninPop(){
     )
 
 }
+
+SigninPop.propTypes = {
+    changeEmail: PropTypes.func.isRequired,
+    signinNext: PropTypes.func.isRequired
+};

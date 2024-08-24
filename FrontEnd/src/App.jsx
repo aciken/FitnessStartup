@@ -5,6 +5,7 @@ import { MainNotLoged } from "./NotLoged/MainNotLoged";
 import { Signup } from "./Auth/Routes/Signup";
 import {SigninRoute} from './Auth/Routes/SigninRoute';
 import { CreateAccRoute } from "./Auth/Routes/CreateAccRoute";
+import { ConfirmSignin } from "./Auth/Routes/ConfirmSignin";
 
 
 
@@ -24,6 +25,8 @@ export function App() {
    <Route exact path="/signup" element={<Signup/>} />
     <Route exact path="/signin" element={<SigninRoute/>} />
     <Route exact path="/create-account" element={<CreateAccRoute/>} />
+    <Route exact path="/confirm-signin" element={<ConfirmSignin/>} />
+
 </Routes>
 </Router>
 
