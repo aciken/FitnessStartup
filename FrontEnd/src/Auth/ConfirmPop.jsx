@@ -1,13 +1,58 @@
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import axios from 'axios'
 
 
 
-export function ConfirmPop({email, changePassword, signin}) {
+
+export function ConfirmPop() {
 
     const navigate = useNavigate()
 
+    const location = useLocation()
 
+    const [error, setError] = useState('')
+
+    const [email, setEmail] = useState(location.state.email)
+
+    const [password , setPassword] = useState('')
+
+    const changePassword = (e) => {
+        setPassword(e.target.value)
+    }
+
+    const signin = async () => {
+        await axios.post('http://localhost:3000/signinConfirm', {
+            email: email,
+            password: password
+        })
+        .then((res) => {
+            console.log(res.data)
+            if(res.data == 'Verify'){
+                navigate('/verification', {state: {email: email}})
+
+            } else{
+                console.log(res.data)
+            if(res.data != 'Incorrect Password'){
+
+                console.log('red')
+                localStorage.setItem('user', JSON.stringify(res.data))
+                navigate('/feed/home')
+                }
+             else {
+                setError('Incorrect Password')
+                setTimeout(() => {
+                    setError('')
+                }, 2000)
+            }
+        }
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+    }
 
 
     return(
@@ -22,6 +67,7 @@ export function ConfirmPop({email, changePassword, signin}) {
                     <button onClick={() => signin()}  className="bg-blue-500 w-80 h-10 rounded-full text-white font-poppins font-medium">Submit</button>
                     <h1 onClick={() => navigate('/create-account')} className="font-poppins font-normal ">Don't have account? <a href="#" className="text-blue-600 underline hover:text-blue-800">sign up</a></h1>
                 </div>
+                <h1 className='text-base font-poppins font-semibold text-blue-400'>{error}</h1>
             </div>
 
             <button onClick={() => navigate('/signup')} className="absolute top-0 right-2 mt-0 font-poppins font-medium text-lg rounded-full">x</button>
@@ -32,8 +78,3 @@ export function ConfirmPop({email, changePassword, signin}) {
 
 }
 
-ConfirmPop.propTypes = {
-    email: PropTypes.string.isRequired,
-    changePassword: PropTypes.func.isRequired,
-    signin: PropTypes.func.isRequired
-};

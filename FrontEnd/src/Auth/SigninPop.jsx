@@ -1,13 +1,46 @@
 import GoogleLogo from '../../Assets/Images/GoogleLogo.png'
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { useState } from 'react'
+import axios from 'axios'
 
 
-export function SigninPop({signinNext, changeEmail}) {
+export function SigninPop() {
 
     const navigate = useNavigate()
 
+    const [error, setError] = useState('')
 
+    const [email, setEmail] = useState('')
+
+    const changeEmail = (e) => {
+        setEmail(e.target.value)
+    }
+
+    const signinNext = async() => {
+        if(email != ''){
+
+        
+        await axios.post('http://localhost:3000/signinEmail', {
+            email: email
+    })
+    .then((res) => {
+        console.log(res)
+        if(res.data != 'User not found'){
+            navigate('/confirm-signin', {state: {email: email}})
+        } else {
+            setError('User not found')
+            setTimeout(() => {
+                setError('')
+            }, 2000)
+        }
+    }).catch((err) => {
+        console.log(err)
+    })
+} else {
+    console.log('Email is empty')
+}
+}
 
 
 
@@ -28,6 +61,7 @@ export function SigninPop({signinNext, changeEmail}) {
                 <button onClick={() => signinNext()} className='bg-blue-500 w-80 h-10 rounded-full text-white font-poppins font-medium text-lg hover:bg-blue-600'>Next</button>
                 <h1 className='font-poppins font-normal '>Forgot password? <a href="#" className=' font-poppins font-medium text-blue-600 underline hover:text-blue-900'>restart</a></h1>
             </div>
+            <h1 className='text-base font-poppins font-semibold text-blue-400'>{error}</h1>
 
             <button onClick={() => navigate('/signup')} className='absolute top-0 right-2 mt-0 font-poppins font-medium text-lg'>x</button>
 
@@ -38,7 +72,3 @@ export function SigninPop({signinNext, changeEmail}) {
 
 }
 
-SigninPop.propTypes = {
-    changeEmail: PropTypes.func.isRequired,
-    signinNext: PropTypes.func.isRequired
-};

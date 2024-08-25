@@ -24,7 +24,7 @@ export function LeftTabNotLoged({selected, addSelection}){
             </div>
 
             <div className="flex flex-row absolute w-full bottom-2 px-4 justify-center items-center">
-            <button onClick={() => navigate('/signup')} className="bg-blue-500 w-48 h-10 text-white rounded-full font-poppins font-semibold">Sign up</button>
+            <button onClick={() => navigate('/signup')} className="bg-blue-500 w-48 h-10 text-white rounded-full font-poppins font-semibold hover:bg-blue-600">Sign up</button>
             </div>
         </div>
     )

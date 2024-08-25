@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LeftTabNotLoged } from './LeftTabNotLoged';
+import { useNavigate } from 'react-router-dom';
 
 export function MainNotLoged() {
+
+    const navigate = useNavigate();
 
     const [selected, setSelected] = useState('Home');
 
@@ -9,6 +12,14 @@ export function MainNotLoged() {
         setSelected(selection);
     }
 
+
+
+
+    useEffect(() => {
+        if(JSON.parse(localStorage.getItem('user')) != null) {
+            navigate('/feed/home')
+        }
+    }, [])
     
 
 

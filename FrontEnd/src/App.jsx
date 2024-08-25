@@ -1,11 +1,18 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './index.css'
-import {MainPage} from "./MainPage/MainPage";
+import {HomePage} from "./MainPage/HomePage";
 import { MainNotLoged } from "./NotLoged/MainNotLoged";
 import { Signup } from "./Auth/Routes/Signup";
 import {SigninRoute} from './Auth/Routes/SigninRoute';
 import { CreateAccRoute } from "./Auth/Routes/CreateAccRoute";
 import { ConfirmSignin } from "./Auth/Routes/ConfirmSignin";
+import { DietPage } from "./MainPage/DietPage";
+import { LikesPage } from "./MainPage/LikesPage";
+import { SleepPage } from "./MainPage/SleepPage";
+import { ExercisePage } from "./MainPage/ExercisePage";
+import { ChangesPage } from "./MainPage/ChangesPage";
+import { ProfilePage } from "./Profile/ProfilePage";
+import { Verification } from "./Auth/Routes/Verification";
 
 
 
@@ -21,11 +28,21 @@ export function App() {
 <Router>
 <Routes>
    <Route exact path="/" element={<MainNotLoged/>} /> 
-    <Route exact path="/home" element={<MainPage/>} />
+    <Route exact path="/feed/home" element={<HomePage/>} />
+    <Route exact path="/feed/diet" element={<DietPage/>} />
+    <Route exact path="/feed/likes" element={<LikesPage/>} />
+    <Route exact path="/feed/sleep" element={<SleepPage/>} />
+    <Route exact path="/feed/exercise" element={<ExercisePage/>} />
+    <Route exact path="/feed/changes" element={<ChangesPage/>} />
    <Route exact path="/signup" element={<Signup/>} />
     <Route exact path="/signin" element={<SigninRoute/>} />
     <Route exact path="/create-account" element={<CreateAccRoute/>} />
     <Route exact path="/confirm-signin" element={<ConfirmSignin/>} />
+    <Route exact path="/profile" element={<ProfilePage/>} />
+    <Route exact path="/verification" element={<Verification/>} />
+
+
+
 
 </Routes>
 </Router>
