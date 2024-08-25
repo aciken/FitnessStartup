@@ -60,7 +60,7 @@ export function LeftTab({current}) {
                 </div>
             </div>
 
-            <button onClick={() => navigate('/profile')} className={`w-[95%] h-12 flex flex-row justify-center items-center rounded-full m-1 mt-4  border-2 border-blue-500 hover:drop-shadow-lg ${selected == 'Profile' ? 'bg-blue-500 hover:bg-blue-600' :  'bg-white  hover:bg-gray-200'}`}>
+            <button onClick={() => {if(user.user.step == 0){navigate('/setup/food')}else{navigate('/profile')}}} className={`w-[95%] h-12 flex flex-row justify-center items-center rounded-full m-1 mt-4  border-2 border-blue-500 hover:drop-shadow-lg ${selected == 'Profile' ? 'bg-blue-500 hover:bg-blue-600' :  'bg-white  hover:bg-gray-200'}`}>
                 <svg className={`w-8 h-8 p-1 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24 ${selected == 'Profile' ? 'fill-white' : 'fill-blue-500'}`}><title>account</title><path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" /></svg>
                 <h1 className={`font-poppins  text-base font-semibold ${selected == 'Profile' ? 'text-white' : 'text-blue-500'}`}>Profile</h1>
             </button>

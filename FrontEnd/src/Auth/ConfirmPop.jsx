@@ -39,8 +39,13 @@ export function ConfirmPop() {
 
                 console.log('red')
                 localStorage.setItem('user', JSON.stringify(res.data))
-                navigate('/feed/home')
+                console.log(res.data.user.step)
+                if(res.data.user.step == 0){
+                    navigate('/feed/home')
+                } else {
+                    navigate('/setup/food')
                 }
+            }
              else {
                 setError('Incorrect Password')
                 setTimeout(() => {

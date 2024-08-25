@@ -9,6 +9,7 @@ const createAccount = require('./Auth/createAccount');
 const signinEmail = require('./Auth/signinEmail');
 const signinConfirm = require('./Auth/signinConfirm');
 const confirmVerification = require('./Auth/confirmVerification');
+const skipSetup = require('./Setup/skipSetup');
 
 
 app.get('/', (req, res) => {
@@ -19,6 +20,7 @@ app.put('/createAccount', createAccount);
 app.post('/signinEmail', signinEmail);
 app.post('/signinConfirm', signinConfirm);
 app.put('/confirmVerification', confirmVerification);
+app.put('/skipSetup', skipSetup);
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

@@ -13,6 +13,9 @@ import { ExercisePage } from "./MainPage/ExercisePage";
 import { ChangesPage } from "./MainPage/ChangesPage";
 import { ProfilePage } from "./Profile/ProfilePage";
 import { Verification } from "./Auth/Routes/Verification";
+import { SetupStep1 } from "./Setup/SetupStep1";
+import { SetupStep2 } from "./Setup/SetupStep2";
+import { SetupStep3 } from "./Setup/SetupStep3";
 
 
 
@@ -40,6 +43,11 @@ export function App() {
     <Route exact path="/confirm-signin" element={<ConfirmSignin/>} />
     <Route exact path="/profile" element={<ProfilePage/>} />
     <Route exact path="/verification" element={<Verification/>} />
+    <Route exact path="/setup/food" element={<SetupStep1/>} />
+    <Route exact path="/setup/exercise" element={<SetupStep2/>} />
+    <Route exact path="/setup/sleep" element={<SetupStep3/>} />
+
+    
 
 
 
