@@ -9,6 +9,7 @@ import { CreateAccPop } from '../CreateAccPop'
 
 
 export function CreateAccRoute() {
+    const navigate = useNavigate()
 
 
 
@@ -19,8 +20,7 @@ export function CreateAccRoute() {
 
 
          <CreateAccPop />
-
-        
+         <button onClick={() => navigate('/')} className='absolute top-2'><h1 className='text-3xl text-gray-700 font-poppins font-semibold'>Logo</h1></button>
        
 
     </div>  

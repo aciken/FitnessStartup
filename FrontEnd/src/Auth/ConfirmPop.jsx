@@ -40,7 +40,8 @@ export function ConfirmPop() {
                 console.log('red')
                 localStorage.setItem('user', JSON.stringify(res.data))
                 console.log(res.data.user.step)
-                if(res.data.user.step == 0){
+                console.log(res.data.user.step)
+                if(res.data.user.step == 0 || res.data.user.step == 2){
                     navigate('/feed/home')
                 } else {
                     navigate('/setup/food')

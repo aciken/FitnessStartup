@@ -5,9 +5,6 @@ import { useNavigate } from "react-router-dom";
 export function LeftTab({current}) {
 
     const [selected, setSelected] = useState(current);
-
-
-
     
     const navigate = useNavigate();
 
@@ -26,19 +23,9 @@ export function LeftTab({current}) {
 
 
 
-    console.log(user)
-
     const [logoutPop, setLogoutPop] = useState(false);
 
-    
- useEffect(() => {
-    console.log(selected);
- }, [selected])
 
-    
-
-
-    console.log(selected);
 
     return(
         <div onClick={() => setLogoutPop(false)} className="flex flex-col w-72 border border-r-gray-300 items-center relative ">

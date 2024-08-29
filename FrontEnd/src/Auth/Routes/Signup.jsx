@@ -33,7 +33,7 @@ export function Signup(){
             </div>
 
 
-           
+           <button onClick={() => navigate('/')} className='absolute top-2'><h1 className='text-3xl text-gray-700 font-poppins font-semibold'>Logo</h1></button>
 
         </div>
     )

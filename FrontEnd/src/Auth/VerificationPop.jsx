@@ -25,7 +25,11 @@ export function VerificationPop() {
         ).then(res => {
             if (res.data !== 'Incorrect verification code') {
                 localStorage.setItem('user', JSON.stringify(res.data));
+                if(res.data.user.step == 0){
                 navigate('/feed/home');
+                } else {
+                    navigate('/setup/food');
+                }
             } else {
                 setError('Incorrect verification code');
                 setTimeout(() => {

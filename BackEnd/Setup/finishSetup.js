@@ -1,11 +1,13 @@
 const User = require('../DataBase/DataBase');
 
-const skipSetup = async (req, res) => {
+const finishSetup = async (req, res) => {
     const {email} = req.body;
+    console.log(email)
     try{
         const user = await User.findOne({email: email});
-        user.step = 0;
+        user.step = 2;
         await user.save();
+        console.log(user)
         return res.json({user});
     } catch(err){
         return res.json(err);
@@ -13,4 +15,4 @@ const skipSetup = async (req, res) => {
 
 }
 
-module.exports = skipSetup;
+module.exports = finishSetup;

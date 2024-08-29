@@ -11,11 +11,24 @@ export function SetupStep3() {
     const skipSetup = () => {
         axios.put('http://localhost:3000/skipSetup', {
             email: JSON.parse(localStorage.getItem('user')).user.email
-        }).then(() => {
+        }).then((res) => {
+            localStorage.setItem('user', JSON.stringify(res.data))
             navigate('/feed/home')
     }).catch((err) => {
         console.log(err)
     })
+    }
+
+    const finishSetup = () => {
+        axios.put('http://localhost:3000/finishSetup', {
+            email: JSON.parse(localStorage.getItem('user')).user.email
+        }).then((res) => {
+            localStorage.setItem('user', JSON.stringify(res.data))
+            navigate('/feed/home')
+        }).catch((err) => {
+            console.log(err)
+        }
+        )
     }
 
 
@@ -26,7 +39,7 @@ export function SetupStep3() {
                     <button onClick={() => skipSetup()} className="font-poppins font-medium text-base absolute top-4 right-2 text-gray-400 underline hover:text-gray-600 ">Skip for now</button>
                         <h2 className="text-xl mb-4">Let's Set up your profile</h2>
                         <p>This is the popup content.</p>
-                        <button onClick={() => navigate('/feed/home')} className="px-4 py-1 bg-blue-500 text-white rounded-md absolute right-2 bottom-2 text-lg font-poppins font-base hover:bg-blue-600">Finish</button>
+                        <button onClick={() => finishSetup()} className="px-4 py-1 bg-blue-500 text-white rounded-md absolute right-2 bottom-2 text-lg font-poppins font-base hover:bg-blue-600">Finish</button>
                         <button onClick={() => navigate('/setup/exercise')} className="px-4 py-1 bg-blue-500 text-white rounded-md absolute left-2 bottom-2 text-lg font-poppins font-base hover:bg-blue-600">Back</button>
                     </div>
                 </div>

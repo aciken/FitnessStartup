@@ -46,6 +46,7 @@ export function CreateAccPop() {
                         setError('')
                     }, 2000)
                 } else {
+                    
                     localStorage.setItem('user', JSON.stringify(res.data))
                     navigate('/verification', {state: {email: email}})
                 }
