@@ -1,12 +1,20 @@
 import { HomePage } from "../MainPage/HomePage";
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { ProfilePage } from "../Profile/ProfilePage";
+import { number } from "prop-types";
+
+
+import twoOFthree from '../../assets/images/twoOFthree.png'
 
 export function SetupStep2() {
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const [setup, setSetup] = useState(location.state.setup);
+    console.log(setup)
 
     const skipSetup = () => {
         axios.put('http://localhost:3000/skipSetup', {
@@ -19,104 +27,69 @@ export function SetupStep2() {
     })
     }
 
-    const [number, setNumber] = useState(1);
     const [active, setActive] = useState(false);
 
-    const [exerciseOne, setExerciseOne] = useState({
-        type: 'none',
-        times: 'none'
-    })
-    
-    const [exerciseTwo, setExerciseTwo] = useState({
-        type: 'none',
-        times: 'none'
-    })
 
-    const [exerciseThree, setExerciseThree] = useState({
-        type: 'none',
-        times: 'none'
-    })
 
     useEffect(() => {
-        console.log(exerciseOne, exerciseTwo, exerciseThree)
-        if(number == 1){
-            if(exerciseOne.type !== 'none' && exerciseOne.times !== 'none'){
+        if(setup.number == 1){
+            if(setup.exercise1 !== 'none' && setup.exercise1Times !== 'none'){
                 setActive(true)
             } else {
                 setActive(false)
             }
-        } else if(number == 2){
-            if(exerciseOne.type !== 'none' && exerciseOne.times !== 'none' && exerciseTwo.type !== 'none' && exerciseTwo.times !== 'none'){
+        } else if(setup.number == 2){
+            if(setup.exercise1 !== 'none' && setup.exercise1Times !== 'none' && setup.exercise2 !== 'none' && setup.exercise2Times !== 'none'){
                 setActive(true)
             } else {
                 setActive(false)
             }
         } else {
-            if(exerciseOne.type !== 'none' && exerciseOne.times !== 'none' && exerciseTwo.type !== 'none' && exerciseTwo.times !== 'none' && exerciseThree.type !== 'none' && exerciseThree.times !== 'none'){
+            if(setup.exercise1 !== 'none' && setup.exercise1Times !== 'none' && setup.exercise2 !== 'none' && setup.exercise2Times !== 'none' && setup.exercise3 !== 'none' && setup.exercise3Times !== 'none'){
                 setActive(true)
             } else {
                 setActive(false)
             }
         }
 
-    } , [exerciseOne, exerciseTwo, exerciseThree, number]) 
+    } , [setup]) 
 
     const handleTypeChange1 = (e) => {
-        setExerciseOne((prevState) => ({
-            ...prevState,
-            type: e.target.value
-        }));
+        setSetup({...setup, exercise1: e.target.value})
     };
 
     const handleTimesChange1 = (e) => {
-        setExerciseOne((prevState) => ({
-            ...prevState,
-            times: e.target.value
-        }));
+        setSetup({...setup, exercise1Times: e.target.value})
     };
 
     const handleTypeChange2 = (e) => {
-        setExerciseTwo((prevState) => ({
-            ...prevState,
-            type: e.target.value
-        }));
+        setSetup({...setup, exercise2: e.target.value})
     }
 
     const handleTimesChange2 = (e) => {
-        setExerciseTwo((prevState) => ({
-            ...prevState,
-            times: e.target.value
-        }));
+        setSetup({...setup, exercise2Times: e.target.value})
     }
 
     const handleTypeChange3 = (e) => {
-        setExerciseThree((prevState) => ({
-            ...prevState,
-            type: e.target.value
-        }));
+        setSetup({...setup, exercise3: e.target.value})
     }
 
     const handleTimesChange3 = (e) => {
-        setExerciseThree((prevState) => ({
-            ...prevState,
-            times: e.target.value
-        }));
+        setSetup({...setup, exercise3Times: e.target.value})
     }
 
     const lower = () => {
-        setNumber(number - 1)
-        if(number - 1 == 1){
-            setExerciseTwo({
-                type: 'none',
-                times: 'none'
-            })
+        setSetup({...setup, number: setup.number - 1})
+        if(setup.number - 1 == 1){
+            setSetup({...setup, exercise2: 'none', exercise2Times: 'none', number: 1})
+
         } else {
-            setExerciseThree({
-                type: 'none',
-                times: 'none'
-            })
+            setSetup({...setup, exercise3: 'none', exercise3Times: 'none', number: 2})
         }
     }
+
+
+    
 
 
     return (
@@ -134,7 +107,7 @@ export function SetupStep2() {
                                 <div className="flex flex-col gap-2 items-center w-full">
                                     <div className="flex flex-row justify-between selection:outline-gray-600 w-full">
                                         <h1 className="text-gray-500 font-poppins font-medium">Types of exercise</h1>
-                                        <select onChange={(e) => handleTypeChange1(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
+                                        <select value={setup.exercise1} onChange={(e) => handleTypeChange1(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
                                             <option value="none" disabled selected></option>
                                             <option value="Bodybuilding">Bodybuilding</option>
                                             <option value="Powerlifting">Powerlifting</option>
@@ -143,7 +116,7 @@ export function SetupStep2() {
                                     </div>
                                     <div className="flex flex-row justify-between selection:outline-gray-600 w-full">
                                         <h1 className="text-gray-400 font-poppins font-light">Times a week:</h1>
-                                        <select onChange={(e) => handleTimesChange1(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
+                                        <select value={setup.exercise1Times} onChange={(e) => handleTimesChange1(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
                                             <option value="none" disabled selected></option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
@@ -155,11 +128,11 @@ export function SetupStep2() {
                                         </select>
                                     </div>
 
-                                    {number > 1 && (
+                                    {setup.number > 1 && (
                                         <div className="w-full mt-4 flex flex-col gap-2">
                                             <div className="flex flex-row justify-between selection:outline-gray-600 w-full">
                                                 <h1 className="text-gray-500 font-poppins font-medium">Types of exercise</h1>
-                                                <select onChange={(e) => handleTypeChange2(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
+                                                <select value={setup.exercise2} onChange={(e) => handleTypeChange2(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
                                                     <option value="none" disabled selected></option>
                                                     <option value="Bodybuilding">Bodybuilding</option>
                                                     <option value="Powerlifting">Powerlifting</option>
@@ -168,7 +141,7 @@ export function SetupStep2() {
                                             </div>
                                             <div className="flex flex-row justify-between selection:outline-gray-600 w-full">
                                                 <h1 className="text-gray-400 font-poppins font-light">Times a week:</h1>
-                                                <select onChange={(e) => handleTimesChange2(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
+                                                <select value={setup.exercise2Times} onChange={(e) => handleTimesChange2(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
                                                     <option value="none" disabled selected></option>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
@@ -182,11 +155,11 @@ export function SetupStep2() {
                                         </div>
                                     )}
 
-                                    {number > 2 && (
+                                    {setup.number > 2 && (
                                         <div className="w-full mt-4 flex flex-col gap-2">
                                             <div className="flex flex-row justify-between selection:outline-gray-600 w-full">
                                                 <h1 className="text-gray-500 font-poppins font-medium">Types of exercise</h1>
-                                                <select onChange={(e) => handleTypeChange3(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
+                                                <select value={setup.exercise3} onChange={(e) => handleTypeChange3(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
                                                     <option value="none" disabled selected></option>
                                                     <option value="Bodybuilding">Bodybuilding</option>
                                                     <option value="Powerlifting">Powerlifting</option>
@@ -195,7 +168,7 @@ export function SetupStep2() {
                                             </div>
                                             <div className="flex flex-row justify-between selection:outline-gray-600 w-full">
                                                 <h1 className="text-gray-400 font-poppins font-light">Times a week:</h1>
-                                                <select onChange={(e) => handleTimesChange3(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
+                                                <select value={setup.exercise3Times} onChange={(e) => handleTimesChange3(e)} className="rounded-md px-2 py-1 w-32 bg-gray-200 border border-gray-400 text-gray-700 font-poppins">
                                                     <option value="none" disabled selected></option>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
@@ -212,17 +185,18 @@ export function SetupStep2() {
                                     
 
                                     <div className="flex flex-row gap-4">
-                                        {number < 3 && <button onClick={() => setNumber(number + 1)} className="bg-gray-400 text-xl text-gray-100 h-6 w-16 flex flex-row justify-center items-center rounded-2xl pb-1 hover:bg-gray-500">+</button>}
-                                        {number > 1 && <button onClick={() => lower()} className="bg-gray-400 text-xl text-gray-100 h-6 w-16 flex flex-row justify-center items-center rounded-2xl pb-1 hover:bg-gray-500">-</button>}
+                                        {+setup.number < 3 && <button onClick={() => setSetup({...setup, number: setup.number + 1})} className="bg-gray-400 text-xl text-gray-100 h-6 w-16 flex flex-row justify-center items-center rounded-2xl pb-1 hover:bg-gray-500">+</button>}
+                                        {+setup.number > 1 && <button onClick={() => lower()} className="bg-gray-400 text-xl text-gray-100 h-6 w-16 flex flex-row justify-center items-center rounded-2xl pb-1 hover:bg-gray-500">-</button>}
                                     </div>
                                     
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="px-4 py-2 border-t border-gray-300 flex justify-between">
-                        <button onClick={() => navigate('/setup/food')} className="px-4 py-1 bg-blue-500 text-white rounded-md text-lg font-poppins font-semibold hover:bg-blue-600">Back</button>
-                        <button onClick={() => {if(active){navigate('/setup/sleep')}}} className={`px-4 py-1 text-white rounded-md text-lg font-poppins font-semibold  ${active ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}>Next</button>
+                    <div className="px-4 py-2 border-t border-gray-300 flex justify-between relative">
+                    <img className="absolute inset-0 m-auto w-20" src={twoOFthree} alt="" />
+                        <button onClick={() => navigate('/setup/food', {state: {setup:setup}})} className="px-4 py-1 bg-blue-500 text-white rounded-md text-lg font-poppins font-semibold hover:bg-blue-600">Back</button>
+                        <button onClick={() => {if(active){navigate('/setup/sleep', {state: {setup: setup}})}}} className={`px-4 py-1 text-white rounded-md text-lg font-poppins font-semibold  ${active ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}>Next</button>
                     </div>
                 </div>
             </div>
