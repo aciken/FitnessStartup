@@ -1,41 +1,87 @@
-import {LeftTab} from '../MainPage/LeftTab'; 
-import { useState } from 'react';
+import { LeftTab } from '../MainPage/LeftTab';
+import { useState, useEffect } from 'react';
 
-export function ProfilePage(){
-
+export function ProfilePage() {
     const [selected, setSelected] = useState('diet')
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')).user)
-    
-    return (
-        <div className="flex flex-row min-h-[100vh]">
-            <LeftTab current='Profile'/>
-            <div className='flex flex-col items-center w-full'>
-                <div className='flex flex-row justify-center items-start w-full p-6 gap-4 '>
-                    <button onClick={() => setSelected('diet')} className={`font-poppins font-semibold  drop-shadow-xl rounded-lg px-4   h-8 ${selected != 'diet' ? ' text-gray-700 border border-gray-700 bg-white hover:bg-gray-100' : 'text-white bg-blue-500 hover:bg-blue-600 '}` }>Diet</button>
-                    <button onClick={() => setSelected('exercise')} className={`font-poppins font-semibold  drop-shadow-xl rounded-lg px-4   h-8 ${selected != 'exercise' ? ' text-gray-700 border border-gray-700 bg-white hover:bg-gray-100' : 'text-white bg-blue-500 hover:bg-blue-600 '}` }>Exercise</button>
-                    <button onClick={() => setSelected('sleep')} className={`font-poppins font-semibold  drop-shadow-xl rounded-lg px-4   h-8 ${selected != 'sleep' ? ' text-gray-700 border border-gray-700 bg-white hover:bg-gray-100' : 'text-white bg-blue-500 hover:bg-blue-600 '}` }>Sleep</button>
-                </div>
-                {selected === 'diet' ? (
-                    <div className='flex flex-col font-poppins font-medium text-gray-700'>
-                        <h1>{user.setup.diet}</h1>
-                        <h1>{user.setup.meals}</h1>
-                        <h1>{user.setup.fast}</h1>
-                    </div>
-                ) : selected == 'exercise' ? (
-                    <div className='flex flex-col font-poppins font-medium text-gray-700'>
-                        <h1>{user.setup.exercise1}</h1>
-                        <h1>{user.setup.exercise1Times}</h1>
-                    </div>
-                ) : (
-                
-                    <div className='flex flex-col font-poppins font-medium text-gray-700'>
-                        <h1>{user.setup.sleep}</h1>
-                        <h1>{user.setup.bed}</h1>
-                        <h1>{user.setup.varies}</h1>
-                    </div>
-                )}
-            </div>
+    const [user, setUser] = useState(null)
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user')
+        if (storedUser) {
+            setUser(JSON.parse(storedUser).user)
+        }
+    }, [])
+
+    const renderInfoCard = (title, value) => (
+        <div className="bg-white border border-gray-200 p-6 rounded-md shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-700 mb-2">{title}</h2>
+            <p className="text-xl font-medium text-gray-900">{value || 'Not specified'}</p>
+        </div>
+    )
+
+    const tabs = ['diet', 'exercise', 'sleep'];
+
+    const getInfoCards = () => {
+        switch(selected) {
+            case 'diet':
+                return [
+                    { title: 'Diet Type', value: user.setup?.diet },
+                    { title: 'Meals per Day', value: user.setup?.meals },
+                    { title: 'Fasting Schedule', value: user.setup?.fast }
+                ];
+            case 'exercise':
+                return [
+                    { title: 'Exercise Type', value: user.setup?.exercise1 },
+                    { title: 'Exercise Frequency', value: user.setup?.exercise1Times },
+                    { title: 'Fitness Goal', value: 'Not specified' }
+                ];
+            case 'sleep':
+                return [
+                    { title: 'Sleep Duration', value: `${user.setup?.sleep} hours` },
+                    { title: 'Bedtime', value: `${user.setup?.bed}:00` },
+                    { title: 'Sleep Variation', value: `${user.setup?.varies}/10` }
+                ];
+            default:
+                return [];
+        }
+    }
+
+    return (
+        <div className="flex flex-row min-h-screen bg-gray-50">
+            <LeftTab current='Profile' />
+            <div className='w-full p-8'>
+                <div className='max-w-4xl mx-auto'>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-8">Profile Information</h1>
+                    <div className='mb-8 border-b border-gray-200'>
+                        <nav className='-mb-px flex space-x-8'>
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setSelected(tab)}
+                                    className={`${
+                                        selected === tab
+                                            ? 'border-blue-500 text-blue-600'
+                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm uppercase`}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+                    {user ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {getInfoCards().map((card, index) => (
+                                renderInfoCard(card.title, card.value)
+                            ))}
+                        </div>
+                    ) : (
+                        <div className='bg-white border border-gray-200 rounded-md p-8 text-center'>
+                            <p className="text-xl text-gray-600">No user data available</p>
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     )
 }

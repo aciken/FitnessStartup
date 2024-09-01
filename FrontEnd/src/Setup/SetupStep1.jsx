@@ -141,7 +141,7 @@ export function SetupStep1() {
                                     </select>
                                 </div>
                             </div>
-                            <div className="bg-gray-50 p-4 rounded-lg shadow-md mb-4">
+                            <div className="bg-gray-50 p-4 rounded-lg shadow-md mb-">
                                 <h1 className="text-gray-600 font-poppins font-medium mb-2 text-center">Do you fast:</h1>
                                 <div className="flex flex-row justify-center">
                                     <select value={setup.fast} onChange={(e) => changeFast(e)} className="rounded-md px-3 py-2 w-36 bg-white border border-gray-300 text-gray-700 font-poppins shadow-sm">
