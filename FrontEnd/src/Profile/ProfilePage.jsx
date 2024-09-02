@@ -27,7 +27,7 @@ export function ProfilePage() {
     const getInfoCards = () => {
         if (!user || !user.setup) return [];
 
-        const { diet, meals, fast, fastHours, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies } = user.setup;
+        const { diet, meals, fast, fastHours, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies, calories } = user.setup;
 
         const formatExercise = (exercise, times) => {
             if (exercise === 'none') return null;
@@ -41,10 +41,10 @@ export function ProfilePage() {
         switch (selected) {
             case 'diet':
                 return [
+                    {title: 'Calorie Intake', value: `${calories} calories`},
                     { title: 'Diet Type', value: diet },
                     { title: 'Meals per Day', value: meals },
-                    { title: 'Fasting Schedule', value: fast },
-                    { title: 'Fasting Hours', value: fastHours }
+                    { title: 'Fasting Hours', value: `${fast} Hours` }
                 ];
             case 'exercise':
                 return [
@@ -55,7 +55,7 @@ export function ProfilePage() {
             case 'sleep':
                 return [
                     { title: 'Sleep Duration', value: `${sleep} hours` },
-                    { title: 'Bedtime', value: `${bed}:00` },
+                    { title: 'Bedtime', value: `${bed}` },
                     { title: 'Sleep Variation', value: `${varies}/10` }
                 ];
             default:
@@ -88,12 +88,20 @@ export function ProfilePage() {
                                     </button>
                                 ))}
                             </div>
-                            <button
-                                onClick={() => navigate('/profile/change')}
-                                className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none h-10  transition duration-200"
-                            >
-                                Change
-                            </button>
+                            <div className='flex flex-row gap-4 items-end '>
+                                <button 
+                                onClick={() => setSelected('changing')}
+                                className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm uppercase ${selected === 'changing' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>
+
+                                    Currently Changing
+                                </button>
+                                <button
+                                    onClick={() => navigate('/profile/change')}
+                                    className="bg-blue-500 text-white font-semibold py-2 px-4 mb-2 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none h-10  transition duration-200"
+                                >
+                                    Change
+                                </button>
+                            </div>
                         </nav>
                     </div>
                     {user ? (
