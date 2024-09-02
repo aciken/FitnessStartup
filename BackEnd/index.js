@@ -11,6 +11,7 @@ const signinConfirm = require('./Auth/signinConfirm');
 const confirmVerification = require('./Auth/confirmVerification');
 const skipSetup = require('./Setup/skipSetup');
 const finishSetup = require('./Setup/finishSetup');
+const addChange = require('./Change/addChange');
 
 
 app.get('/', (req, res) => {
@@ -23,7 +24,7 @@ app.post('/signinConfirm', signinConfirm);
 app.put('/confirmVerification', confirmVerification);
 app.put('/skipSetup', skipSetup);
 app.put('/finishSetup', finishSetup);
-
+app.put('/addChange', addChange);
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
   });

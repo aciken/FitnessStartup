@@ -26,6 +26,24 @@ const UserSchema = new mongoose.Schema({
   },
   setup:{
       type: Object
+  },
+  changing:{
+    type: Object,
+    default:{
+      diet: '', 
+      meals: '',
+      fast: '',
+      exercise1: '',
+      exercise1Times: '',
+      exercise2: '',
+      exercise2Times: '',
+      exercise3: '',
+      exercise3Times: '',
+      sleep: '',
+      bed: '',
+      varies: '',
+      calories: '',
+    }
   }
 });
 

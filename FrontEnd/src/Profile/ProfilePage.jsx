@@ -1,12 +1,16 @@
 import { LeftTab } from '../MainPage/LeftTab';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash } from 'react-icons/fa';
+import { PostPopup } from '../Post/PostPopup';
 
 export function ProfilePage() {
     const navigate = useNavigate();
     const [selected, setSelected] = useState('diet');
     const [user, setUser] = useState(null);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [expandedCard, setExpandedCard] = useState(null);
+    const [isPostPopupOpen, setIsPostPopupOpen] = useState(false);
+    const [selectedChange, setSelectedChange] = useState(null);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -15,62 +19,167 @@ export function ProfilePage() {
         }
     }, []);
 
-    const renderInfoCard = (title, value) => (
-        <div className="bg-white border border-gray-200 p-6 rounded-md shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-700 mb-2">{title}</h2>
-            <p className="text-xl font-medium text-gray-900">{value || 'Not specified'}</p>
+    const renderInfoCard = (title, value, changingValue, isChanging, index) => (
+        <div 
+            className={`
+                bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out
+                ${isChanging ? 'border-l-4 border-blue-500' : ''}
+                ${expandedCard === index ? 'max-h-96' : 'max-h-48'}
+                ${isChanging ? 'hover:bg-gray-50 cursor-pointer' : ''}
+            `}
+            onClick={() => {
+                if (isChanging) {
+                    setExpandedCard(expandedCard === index ? null : index);
+                }
+            }}
+        >
+            <div className="p-6">
+                <div className="flex justify-between items-center mb-3">
+                    <h2 className="text-lg font-semibold text-gray-800">{title}</h2>
+                    {isChanging && (
+                        <span className="flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+                            <FaExchangeAlt className="mr-1" />
+                            Changing
+                        </span>
+                    )}
+                </div>
+                <p className="text-2xl font-bold text-gray-900 mb-2">
+                    {selected === 'changing' ? changingValue : value || 'Not specified'}
+                </p>
+                {isChanging && (
+                    <div className="flex items-center text-sm text-blue-600 font-medium">
+                        <span>{expandedCard === index ? 'Hide details' : 'View details'}</span>
+                        {expandedCard === index ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />}
+                    </div>
+                )}
+            </div>
+            {isChanging && (
+                <div className={`bg-gray-50 p-6 transition-all duration-300 ease-in-out ${expandedCard === index ? 'opacity-100 max-h-48' : 'opacity-0 max-h-0'}`}>
+                    <p className="text-sm font-medium text-gray-500 mb-2">
+                        {selected === 'changing' ? 'Current value:' : 'Changing to:'}
+                    </p>
+                    <p className="text-xl font-bold text-blue-700 mb-4">
+                        {selected === 'changing' ? value : changingValue || 'Not specified'}
+                    </p>
+                    {selected !== 'changing' && expandedCard === index && (
+                        <div className="flex justify-between items-center">
+                            <div className='flex flex-row gap-2'>
+                                <button
+                                    className="bg-blue-500 text-white font-semibold py-1 px-3 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 flex items-center text-sm"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handlePostClick(title, value, changingValue);
+                                    }}
+                                >
+                                    <FaCheck className="mr-1" />
+                                    Post
+                                </button>
+                                <button
+                                    className="bg-white text-black font-semibold py-1 px-3 rounded-md drop-shadow-xl border border-gray-300 hover:bg-gray-100 focus:outline-none transition duration-150 flex items-center text-sm"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                    }}
+                                >
+                                    
+                                    Finish Change
+                                </button>
+                            </div>
+                            <button
+                                className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Add your delete functionality here
+                                    console.log(`Deleting change for ${title}`);
+                                }}
+                            >
+                                <FaTrash className="text-xl" />
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 
-    const tabs = ['diet', 'exercise', 'sleep'];
+    const tabs = ['diet', 'exercise', 'sleep', 'changing'];
 
     const getInfoCards = () => {
         if (!user || !user.setup) return [];
 
         const { diet, meals, fast, fastHours, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies, calories } = user.setup;
+        const changing = user.changing || {};
 
         const formatExercise = (exercise, times) => {
             if (exercise === 'none') return null;
-            return (
-                <>
-                    {exercise} <span className="text-blue-600 font-semibold">({times} times a week)</span>
-                </>
-            );
+            return `${exercise} (${times} times a week)`;
         };
 
         switch (selected) {
             case 'diet':
                 return [
-                    {title: 'Calorie Intake', value: `${calories} calories`},
-                    { title: 'Diet Type', value: diet },
-                    { title: 'Meals per Day', value: meals },
-                    { title: 'Fasting Hours', value: `${fast} Hours` }
+                    { title: 'Calorie Intake', value: `${calories} calories`, changingValue: changing.calories ? `${changing.calories} calories` : undefined, isChanging: !!changing.calories },
+                    { title: 'Diet Type', value: diet, changingValue: changing.diet, isChanging: !!changing.diet },
+                    { title: 'Meals per Day', value: meals, changingValue: changing.meals, isChanging: !!changing.meals },
+                    { title: 'Fasting Schedule', value: fast, changingValue: changing.fast, isChanging: !!changing.fast },
+                    { title: 'Fasting Hours', value: fastHours, changingValue: changing.fastHours, isChanging: !!changing.fastHours }
                 ];
             case 'exercise':
                 return [
-                    { title: 'Exercise 1', value: formatExercise(exercise1, exercise1Times) },
-                    { title: 'Exercise 2', value: formatExercise(exercise2, exercise2Times) },
-                    { title: 'Exercise 3', value: formatExercise(exercise3, exercise3Times) }
+                    { title: 'Exercise 1', value: formatExercise(exercise1, exercise1Times), changingValue: changing.exercise1 ? formatExercise(changing.exercise1, changing.exercise1Times) : undefined, isChanging: !!changing.exercise1 },
+                    { title: 'Exercise 2', value: formatExercise(exercise2, exercise2Times), changingValue: changing.exercise2 ? formatExercise(changing.exercise2, changing.exercise2Times) : undefined, isChanging: !!changing.exercise2 },
+                    { title: 'Exercise 3', value: formatExercise(exercise3, exercise3Times), changingValue: changing.exercise3 ? formatExercise(changing.exercise3, changing.exercise3Times) : undefined, isChanging: !!changing.exercise3 }
                 ];
             case 'sleep':
                 return [
-                    { title: 'Sleep Duration', value: `${sleep} hours` },
-                    { title: 'Bedtime', value: `${bed}` },
-                    { title: 'Sleep Variation', value: `${varies}/10` }
+                    { title: 'Sleep Duration', value: `${sleep} hours`, changingValue: changing.sleep ? `${changing.sleep} hours` : undefined, isChanging: !!changing.sleep },
+                    { title: 'Bedtime', value: bed, changingValue: changing.bed, isChanging: !!changing.bed },
+                    { title: 'Sleep Variation', value: `${varies}/10`, changingValue: changing.varies ? `${changing.varies}/10` : undefined, isChanging: !!changing.varies }
                 ];
+            case 'changing':
+                return Object.entries(changing)
+                    .filter(([_, value]) => value !== null && value !== undefined && value !== '')
+                    .map(([key, value]) => ({ 
+                        title: getBetterName(key), 
+                        value: user.setup[key], 
+                        changingValue: String(value), 
+                        isChanging: true 
+                    }));
             default:
                 return [];
         }
     };
 
+    const getBetterName = (key) => {
+        const nameMap = {
+            diet: 'Diet Type',
+            meals: 'Meals per Day',
+            fast: 'Fasting Schedule',
+            fastHours: 'Fasting Hours',
+            exercise1: 'Exercise 1',
+            exercise1Times: 'Exercise 1 Frequency',
+            exercise2: 'Exercise 2',
+            exercise2Times: 'Exercise 2 Frequency',
+            exercise3: 'Exercise 3',
+            exercise3Times: 'Exercise 3 Frequency',
+            sleep: 'Sleep Duration',
+            bed: 'Bedtime',
+            varies: 'Sleep Variation',
+            calories: 'Calorie Intake'
+        };
+        return nameMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    };
 
+    const handlePostClick = (title, value, changingValue) => {
+        setSelectedChange({ title, fromValue: value, toValue: changingValue });
+        setIsPostPopupOpen(true);
+    };
 
     return (
-        <div className="flex flex-row min-h-screen bg-gray-50">
+        <div className="flex flex-row min-h-screen bg-gray-100">
             <LeftTab current='Profile' />
             <div className='w-full p-8'>
-                <div className='max-w-4xl mx-auto'>
-                    <h1 className="text-3xl font-bold text-gray-800 mb-8">Profile Information</h1>
+                <div className='max-w-6xl mx-auto'>
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">Profile Information</h1>
                     <div className='mb-8 border-b border-gray-200'>
                         <nav className='flex flex-row justify-between items-center'>
                             <div className='-mb-px flex flex-row space-x-8'>
@@ -82,47 +191,38 @@ export function ProfilePage() {
                                             selected === tab
                                                 ? 'border-blue-500 text-blue-600'
                                                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                        } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm uppercase`}
+                                        } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm uppercase transition duration-150 ease-in-out`}
                                     >
                                         {tab}
                                     </button>
                                 ))}
                             </div>
-                            <div className='flex flex-row gap-4 items-end '>
-                                <button 
-                                onClick={() => setSelected('changing')}
-                                className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm uppercase ${selected === 'changing' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>
-
-                                    Currently Changing
-                                </button>
-                                <button
-                                    onClick={() => navigate('/profile/change')}
-                                    className="bg-blue-500 text-white font-semibold py-2 px-4 mb-2 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none h-10  transition duration-200"
-                                >
-                                    Change
-                                </button>
-                            </div>
+                            <button
+                                onClick={() => navigate('/profile/change')}
+                                className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150"
+                            >
+                                Change
+                            </button>
                         </nav>
                     </div>
                     {user ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {getInfoCards().map((card, index) => (
-                                card.value && (
-                                    <div key={index} className="bg-white border border-gray-200 p-6 rounded-md shadow-sm">
-                                        <h2 className="text-lg font-semibold text-gray-700 mb-2">{card.title}</h2>
-                                        <p className="text-xl font-medium text-gray-900">{card.value}</p>
-                                    </div>
-                                )
+                                card.value && renderInfoCard(card.title, card.value, card.changingValue, card.isChanging, index)
                             ))}
                         </div>
                     ) : (
-                        <div className='bg-white border border-gray-200 rounded-md p-8 text-center'>
+                        <div className='bg-white border border-gray-200 rounded-lg p-8 text-center shadow-md'>
                             <p className="text-xl text-gray-600">No user data available</p>
                         </div>
                     )}
                 </div>
             </div>
-
+            <PostPopup 
+                isOpen={isPostPopupOpen}
+                onClose={() => setIsPostPopupOpen(false)}
+                changeInfo={selectedChange}
+            />
         </div>
     );
 }

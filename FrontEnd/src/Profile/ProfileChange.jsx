@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ProfilePage } from "./ProfilePage";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaUtensils, FaDumbbell, FaBed, FaArrowLeft, FaTimes } from 'react-icons/fa';
+import axios from "axios";
 
 export function ProfileChange() {
     const navigate = useNavigate();
@@ -9,11 +10,12 @@ export function ProfileChange() {
     const [selectedOption, setSelectedOption] = useState(null);
     const [userData, setUserData] = useState(null);
     const [newValue, setNewValue] = useState('');
-
+    const [userEmail, setUserEmail] = useState('');
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             setUserData(JSON.parse(storedUser).user.setup);
+            setUserEmail(JSON.parse(storedUser).user.email);
         }
     }, []);
 
@@ -33,7 +35,7 @@ export function ProfileChange() {
     const fastingScheduleOptions = ["16/8", "18/6", "20/4", "None"];
     const mealOptions = Array.from({ length: 6 }, (_, i) => (i + 1).toString());
     const fastingHoursOptions = ["Not Fasting", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"];
-    const exerciseOptions = ["Running", "Cycling", "Swimming", "Weightlifting", "Yoga", "None"];
+    const exerciseOptions = ['Bodybuilding', 'Powerlifting', 'Running', 'Cycling', 'Swimming', 'Yoga', 'Pilates', 'CrossFit', 'HIIT', 'Dancing', 'Boxing', 'Martial Arts', 'Hiking', 'Rowing', 'Tennis', 'Basketball', 'Soccer', 'Golf', 'Skiing', 'Snowboarding', 'Skating', 'Climbing', 'Surfing', 'Kayaking', 'Horseback Riding'];
     const sleepVariationOptions = Array.from({ length: 11 }, (_, i) => i.toString());
 
     const handleCategorySelect = (category) => {
@@ -77,21 +79,59 @@ export function ProfileChange() {
         return 'N/A';
     };
 
+    const getCurrentChange = (category, option) => {
+        if (!userData) return 'Loading...';
+
+        switch (category) {
+            case 'diet':
+                switch (option) {
+                    case 'Calorie Intake': return 'calories';
+                    case 'Diet Type': return 'diet';
+                    case 'Meals per Day': return 'meals';
+                    case 'Fasting': return 'fast';
+                }
+                break;
+            case 'exercise':
+                switch (option) {
+                    case 'Exercise 1': return 'exercise1';
+                    case 'Exercise 2': return 'exercise2';
+                    case 'Exercise 3': return 'exercise3';
+                }
+                break;
+            case 'sleep':
+                switch (option) {
+                    case 'Sleep Duration': return 'sleep';
+                    case 'Bedtime': return 'bed';
+                    case 'Sleep Variation': return 'varies';
+                }
+                break;
+        }
+        return 'N/A';
+    };
+
     const renderInput = () => {
         switch (selectedCategory) {
             case 'diet':
                 switch (selectedOption) {
                     case 'Calorie Intake':
                         return (
-                            <input 
-                                type="range" 
-                                min="1" 
-                                max="10000" 
-                                step="10" 
-                                value={newValue} 
-                                onChange={(e) => setNewValue(e.target.value)}
-                                className="w-full"
-                            />
+                            <div className="flex items-center space-x-4">
+                                <input 
+                                    type="range" 
+                                    min="10" 
+                                    max="10000" 
+                                    step="10" 
+                                    value={newValue} 
+                                    onChange={(e) => setNewValue(e.target.value)}
+                                    className="w-full"
+                                />
+                                <input 
+                                    type="number" 
+                                    value={newValue} 
+                                    onChange={(e) => setNewValue(e.target.value)}
+                                    className="w-20 p-2 border rounded"
+                                />
+                            </div>
                         );
                     case 'Diet Type':
                         return (
@@ -179,6 +219,23 @@ export function ProfileChange() {
                 break;
         }
     };
+
+    const addChange = async(change, value) => {
+        await axios.put('http://localhost:3000/addChange',{
+            change: change,
+            value: value,
+            email: userEmail
+        })
+        .then((res) => {
+            if(res.data != 'User not found' || res.data != 'Internal Server Error'){
+                localStorage.setItem('user', JSON.stringify(res.data));
+                navigate('/profile');
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    }
     
     return (
         <div className="min-h-[100vh] w-full relative">
@@ -250,7 +307,7 @@ export function ProfileChange() {
                             </button>
                             <div className="mt-6 flex justify-end">
                                 <button
-                                    onClick={() => {/* Add your change logic here */}}
+                                    onClick={() => {addChange(getCurrentChange(selectedCategory, selectedOption),newValue);}}
                                     className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none  transition duration-200 flex items-center ${newValue != getCurrentValue(selectedCategory, selectedOption) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
                                 >
                                     Change
