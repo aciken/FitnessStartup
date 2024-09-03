@@ -20,6 +20,7 @@ import { ProfileChange } from "./Profile/ProfileChange";
 import { ProfileSleep } from "./Profile/ProfileSleep";
 import {ProfileExercise} from "./Profile/ProfileExercise";
 import {ProfileDiet} from "./Profile/ProfileDiet";
+import {ProfileChangePage} from "./Profile/ProfileChangePage";
 
 
 
@@ -50,11 +51,14 @@ export function App() {
     <Route exact path="/profile/diet" element={<ProfileDiet/>} />
     <Route exact path="/profile/sleep" element={<ProfileSleep/>} />
     <Route exact path="/profile/exercise" element={<ProfileExercise/>} />
+    <Route exact path="/profile/changing" element={<ProfileChangePage/>} />
     <Route exact path="/verification" element={<Verification/>} />
     <Route exact path="/setup/food" element={<SetupStep1/>} />
     <Route exact path="/setup/exercise" element={<SetupStep2/>} />
     <Route exact path="/setup/sleep" element={<SetupStep3/>} />
     <Route path="/profile/change" element={<ProfileChange />} />
+    <Route path="/profile/change/:category" element={<ProfileChange />} />
+    <Route path="/profile/change/:category/:option" element={<ProfileChange />} />
 
 
     

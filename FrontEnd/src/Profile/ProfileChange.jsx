@@ -1,26 +1,45 @@
 import { useState, useEffect } from "react";
 import { ProfilePage } from "./ProfilePage";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaUser, FaUtensils, FaDumbbell, FaBed, FaArrowLeft, FaTimes } from 'react-icons/fa';
 import axios from "axios";
 
 export function ProfileChange() {
     const navigate = useNavigate();
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedOption, setSelectedOption] = useState(null);
+    const { category, option } = useParams();
+    const [selectedCategory, setSelectedCategory] = useState(category || null);
+    const [selectedOption, setSelectedOption] = useState(option ? option.replace(/-/g, ' ') : null);
     const [userData, setUserData] = useState(null);
     const [newValue, setNewValue] = useState('');
     const [userEmail, setUserEmail] = useState('');
+
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-            setUserData(JSON.parse(storedUser).user.setup);
-            setUserEmail(JSON.parse(storedUser).user.email);
+            const parsedUser = JSON.parse(storedUser).user;
+            setUserData(parsedUser.setup);
+            setUserEmail(parsedUser.email);
         }
     }, []);
 
+    useEffect(() => {
+        if (category) {
+            setSelectedCategory(category);
+        }
+        if (option) {
+            const formattedOption = option.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            setSelectedOption(formattedOption);
+        }
+    }, [category, option]);
+
+    useEffect(() => {
+        if (selectedCategory && selectedOption && userData) {
+            setNewValue(getCurrentValue(selectedCategory, selectedOption));
+        }
+    }, [selectedCategory, selectedOption, userData]);
+
     const categories = {
-        diet: ['Calorie Intake', 'Diet Type', 'Meals per Day', 'Fasting'],
+        diet: ['Calorie Intake', 'Diet Type', 'Meals Per Day', 'Fasting'],
         exercise: ['Exercise 1', 'Exercise 2', 'Exercise 3'],
         sleep: ['Sleep Duration', 'Bedtime', 'Sleep Variation']
     };
@@ -32,9 +51,8 @@ export function ProfileChange() {
     };
 
     const dietOptions = ["Omnivore", "Vegetarian", "Vegan", "Pescatarian", "Keto", "Paleo"];
-    const fastingScheduleOptions = ["16/8", "18/6", "20/4", "None"];
-    const mealOptions = Array.from({ length: 6 }, (_, i) => (i + 1).toString());
-    const fastingHoursOptions = ["Not Fasting", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"];
+    const fastingScheduleOptions = ["Not Fasting", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"];
+    const mealOptions = ['1', '2', '3', '4', '5', '6'];
     const exerciseOptions = ['Bodybuilding', 'Powerlifting', 'Running', 'Cycling', 'Swimming', 'Yoga', 'Pilates', 'CrossFit', 'HIIT', 'Dancing', 'Boxing', 'Martial Arts', 'Hiking', 'Rowing', 'Tennis', 'Basketball', 'Soccer', 'Golf', 'Skiing', 'Snowboarding', 'Skating', 'Climbing', 'Surfing', 'Kayaking', 'Horseback Riding'];
     const sleepVariationOptions = Array.from({ length: 11 }, (_, i) => i.toString());
 
@@ -42,71 +60,36 @@ export function ProfileChange() {
         setSelectedCategory(category);
         setSelectedOption(null);
         setNewValue('');
+        navigate(`/profile/change/${category}`);
     };
 
     const handleOptionSelect = (option) => {
         setSelectedOption(option);
         setNewValue(getCurrentValue(selectedCategory, option));
+        navigate(`/profile/change/${selectedCategory}/${option.replace(/ /g, '-').toLowerCase()}`);
     };
 
     const getCurrentValue = (category, option) => {
         if (!userData) return 'Loading...';
 
-        switch (category) {
-            case 'diet':
-                switch (option) {
-                    case 'Calorie Intake': return userData.calories;
-                    case 'Diet Type': return userData.diet;
-                    case 'Meals per Day': return userData.meals;
-                    case 'Fasting': return userData.fast;
-                }
-                break;
-            case 'exercise':
-                switch (option) {
-                    case 'Exercise 1': return userData.exercise1;
-                    case 'Exercise 2': return userData.exercise2;
-                    case 'Exercise 3': return userData.exercise3;
-                }
-                break;
-            case 'sleep':
-                switch (option) {
-                    case 'Sleep Duration': return userData.sleep;
-                    case 'Bedtime': return userData.bed;
-                    case 'Sleep Variation': return userData.varies;
-                }
-                break;
-        }
-        return 'N/A';
+        const key = getKeyFromOption(option);
+        return userData[key] || 'N/A';
     };
 
-    const getCurrentChange = (category, option) => {
-        if (!userData) return 'Loading...';
-
-        switch (category) {
-            case 'diet':
-                switch (option) {
-                    case 'Calorie Intake': return 'calories';
-                    case 'Diet Type': return 'diet';
-                    case 'Meals per Day': return 'meals';
-                    case 'Fasting': return 'fast';
-                }
-                break;
-            case 'exercise':
-                switch (option) {
-                    case 'Exercise 1': return 'exercise1';
-                    case 'Exercise 2': return 'exercise2';
-                    case 'Exercise 3': return 'exercise3';
-                }
-                break;
-            case 'sleep':
-                switch (option) {
-                    case 'Sleep Duration': return 'sleep';
-                    case 'Bedtime': return 'bed';
-                    case 'Sleep Variation': return 'varies';
-                }
-                break;
-        }
-        return 'N/A';
+    const getKeyFromOption = (option) => {
+        const keyMap = {
+            'Calorie Intake': 'calories',
+            'Diet Type': 'diet',
+            'Meals Per Day': 'meals',
+            'Fasting': 'fast',
+            'Exercise 1': 'exercise1',
+            'Exercise 2': 'exercise2',
+            'Exercise 3': 'exercise3',
+            'Sleep Duration': 'sleep',
+            'Bedtime': 'bed',
+            'Sleep Variation': 'varies'
+        };
+        return keyMap[option] || option.toLowerCase().replace(/ /g, '');
     };
 
     const renderInput = () => {
@@ -145,15 +128,18 @@ export function ProfileChange() {
                                 ))}
                             </select>
                         );
-                    case 'Meals per Day':
+                    case 'Meals Per Day':
                         return (
                             <select 
                                 value={newValue} 
                                 onChange={(e) => setNewValue(e.target.value)}
                                 className="w-full p-2 border rounded"
                             >
-                                {mealOptions.map(option => (
-                                    <option key={option} value={option}>{option}</option>
+                                {mealOptions.map(num => (
+                                    <>
+                                        <p>{num}</p>
+                                        <option key={num} value={num.toString()}>{num}</option>
+                                    </>
                                 ))}
                             </select>
                         );
@@ -164,7 +150,7 @@ export function ProfileChange() {
                                 onChange={(e) => setNewValue(e.target.value)}
                                 className="w-full p-2 border rounded"
                             >
-                                {fastingHoursOptions.map(option => (
+                                {fastingScheduleOptions.map(option => (
                                     <option key={option} value={option}>{option}</option>
                                 ))}
                             </select>
@@ -221,20 +207,20 @@ export function ProfileChange() {
     };
 
     const addChange = async(change, value) => {
-        await axios.put('http://localhost:3000/addChange',{
-            change: change,
-            value: value,
-            email: userEmail
-        })
-        .then((res) => {
-            if(res.data != 'User not found' || res.data != 'Internal Server Error'){
-                localStorage.setItem('user', JSON.stringify(res.data));
+        try {
+            const stringValue = value.toString();
+            const response = await axios.put('http://localhost:3000/addChange',{
+                change: change,
+                value: stringValue,
+                email: userEmail
+            })
+            if(response.data != 'User not found' || response.data != 'Internal Server Error'){
+                localStorage.setItem('user', JSON.stringify(response.data));
                 navigate('/profile/' + selectedCategory);
             }
-        })
-        .catch((err) => {
+        } catch (err) {
             console.log(err);
-        })
+        }
     }
     
     return (
@@ -285,7 +271,10 @@ export function ProfileChange() {
                                 ))}
                             </div>
                             <button
-                                onClick={() => setSelectedCategory(null)}
+                                onClick={() => {
+                                    setSelectedCategory(null);
+                                    navigate('/profile/change');
+                                }}
                                 className="mt-4 text-sm text-blue-600 hover:text-blue-800 focus:outline-none focus:underline flex items-center"
                             >
                                 <FaArrowLeft className="inline-block mr-1" />
@@ -299,7 +288,10 @@ export function ProfileChange() {
                             <p className="mb-2 text-gray-600">Enter new value:</p>
                             {renderInput()}
                             <button
-                                onClick={() => setSelectedOption(null)}
+                                onClick={() => {
+                                    setSelectedOption(null);
+                                    navigate(`/profile/change/${selectedCategory}`);
+                                }}
                                 className="mt-4 text-sm text-blue-600 hover:text-blue-800 focus:outline-none focus:underline flex items-center"
                             >
                                 <FaArrowLeft className="inline-block mr-1" />
@@ -307,8 +299,8 @@ export function ProfileChange() {
                             </button>
                             <div className="mt-6 flex justify-end">
                                 <button
-                                    onClick={() => {addChange(getCurrentChange(selectedCategory, selectedOption),newValue);}}
-                                    className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none  transition duration-200 flex items-center ${newValue != getCurrentValue(selectedCategory, selectedOption) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+                                    onClick={() => {addChange(getKeyFromOption(selectedOption), newValue);}}
+                                    className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none  transition duration-200 flex items-center ${newValue !== getCurrentValue(selectedCategory, selectedOption) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
                                 >
                                     Change
                                 </button>
