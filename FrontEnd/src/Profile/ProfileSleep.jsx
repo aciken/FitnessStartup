@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash } from 'react-icons/fa';
 import { PostPopup } from '../Post/PostPopup';
 
-export function ProfilePage() {
+export function ProfileSleep() {
     const navigate = useNavigate();
-    const [selected, setSelected] = useState('diet');
+    const [selected, setSelected] = useState('sleep');
     const [user, setUser] = useState(null);
     const [expandedCard, setExpandedCard] = useState(null);
     const [isPostPopupOpen, setIsPostPopupOpen] = useState(false);
@@ -239,7 +239,7 @@ export function ProfilePage() {
                                 {tabs.map((tab) => (
                                     <button
                                         key={tab}
-                                        onClick={() => setSelected(tab)}
+                                        onClick={() => {if(selected != tab)navigate('/profile/' + tab)}}
                                         className={`${
                                             selected === tab
                                                 ? 'border-blue-500 text-blue-600'

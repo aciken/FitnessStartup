@@ -229,7 +229,7 @@ export function ProfileChange() {
         .then((res) => {
             if(res.data != 'User not found' || res.data != 'Internal Server Error'){
                 localStorage.setItem('user', JSON.stringify(res.data));
-                navigate('/profile');
+                navigate('/profile/' + selectedCategory);
             }
         })
         .catch((err) => {
@@ -247,7 +247,7 @@ export function ProfileChange() {
                             Change Information
                         </h2>
                         <button
-                            onClick={() => navigate('/profile')}
+                            onClick={() => navigate('/profile/diet')}
                             className="text-gray-500 hover:text-gray-700 transition duration-200"
                         >
                             <FaTimes size={24} />

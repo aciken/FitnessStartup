@@ -17,6 +17,10 @@ import { SetupStep1 } from "./Setup/SetupStep1";
 import { SetupStep2 } from "./Setup/SetupStep2";
 import { SetupStep3 } from "./Setup/SetupStep3";
 import { ProfileChange } from "./Profile/ProfileChange";
+import { ProfileSleep } from "./Profile/ProfileSleep";
+import {ProfileExercise} from "./Profile/ProfileExercise";
+import {ProfileDiet} from "./Profile/ProfileDiet";
+
 
 
 
@@ -43,12 +47,15 @@ export function App() {
     <Route exact path="/signin" element={<SigninRoute/>} />
     <Route exact path="/create-account" element={<CreateAccRoute/>} />
     <Route exact path="/confirm-signin" element={<ConfirmSignin/>} />
-    <Route exact path="/profile" element={<ProfilePage/>} />
+    <Route exact path="/profile/diet" element={<ProfileDiet/>} />
+    <Route exact path="/profile/sleep" element={<ProfileSleep/>} />
+    <Route exact path="/profile/exercise" element={<ProfileExercise/>} />
     <Route exact path="/verification" element={<Verification/>} />
     <Route exact path="/setup/food" element={<SetupStep1/>} />
     <Route exact path="/setup/exercise" element={<SetupStep2/>} />
     <Route exact path="/setup/sleep" element={<SetupStep3/>} />
-    <Route exact path="/profile/change" element={<ProfileChange/>} />
+    <Route path="/profile/change" element={<ProfileChange />} />
+
 
     
 
