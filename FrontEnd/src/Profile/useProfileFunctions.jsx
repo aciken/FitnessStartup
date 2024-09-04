@@ -1,13 +1,20 @@
 import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash, FaEdit } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash, FaEdit, FaPencilAlt } from 'react-icons/fa';
+import { PostPopup } from '../Post/PostPopup';
+import { PostDeletePopup } from '../Post/PostDeletePopup';
+import { PostFinishPopup } from '../Post/PostFinishPopup';
 
 export function useProfileFunctions() {
     const [user, setUser] = useState(null);
     const [expandedCard, setExpandedCard] = useState(null);
     const [isPostPopupOpen, setIsPostPopupOpen] = useState(false);
+    const [isPostDeletePopupOpen, setIsPostDeletePopupOpen] = useState(false);
+    const [isFinishChangePopupOpen, setIsFinishChangePopupOpen] = useState(false);
     const [selectedChange, setSelectedChange] = useState(null);
+    const [selectedDelete, setSelectedDelete] = useState(null);
+    const [selectedFinish, setSelectedFinish] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,8 +25,9 @@ export function useProfileFunctions() {
     }, []);
 
     const removeChange = useCallback(async (change, email) => {
+        console.log(change, email)
         try {
-            console.log(change, email)
+
             const response = await axios.put('http://localhost:3000/removeChange', {
                 change, email
             });
@@ -32,9 +40,81 @@ export function useProfileFunctions() {
                 ...updatedUser,
                 changing: updatedUser.changing || {}
             }));
+            window.location.reload();
         } catch (err) {
             console.error('Error removing change:', err);
         }
+    }, []);
+
+    const removeChangeAndPost = useCallback(async (change, email, postContent) => {
+        console.log(change, email)
+            axios.put('http://localhost:3000/addPost', {
+                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email, postContent, postType: 'delete'
+            })
+            .then(res => {
+            removeChange(getFromBetterName(change.title), email);
+            })
+            .catch(err => {
+                console.error('Error removing change:', err);
+                throw err;
+            })
+        
+
+
+
+    }, []);
+
+
+    const justPost = useCallback(async (change, email, postContent) => {
+        console.log(change, email, postContent)
+
+            axios.put('http://localhost:3000/addPost', {
+                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'change'
+            })
+            .then(res => {
+                console.log(res.data.post)
+            // const updatedUser = res.data.user;
+            // localStorage.setItem('user', JSON.stringify({ user: updatedUser }));
+            // setUser(updatedUser);
+            // window.location.reload();
+            })
+            .catch(err => {
+                console.error('Error removing change:', err);
+                throw err;
+            })  
+        
+
+    }, []);
+
+
+    const finishChange = useCallback(async (change, email) => {
+        axios.put('http://localhost:3000/finishChange', {
+            title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email
+        })
+        .then(res => {
+            const updatedUser = res.data.user;
+            localStorage.setItem('user', JSON.stringify({ user: updatedUser }));
+            setUser(updatedUser);
+            window.location.reload();
+        })
+        .catch(err => {
+            console.error('Error finishing change:', err);
+            throw err;
+        })
+    }, []);
+
+    const finishChangeAndPost = useCallback(async (change, email, postContent) => {
+        console.log(change, email)
+            axios.put('http://localhost:3000/addPost', {
+                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email, postContent, postType: 'finish'
+            })
+            .then(res => {
+            finishChange(change, email);
+            })
+            .catch(err => {
+                console.error('Error removing change:', err);
+                throw err;
+            })
     }, []);
 
     const getFromBetterName = (key) => {
@@ -81,6 +161,33 @@ export function useProfileFunctions() {
         setSelectedChange({ title, fromValue: value, toValue: changingValue });
         setIsPostPopupOpen(true);
     }, []);
+
+    const handleDeleteClick = (title, value, changingValue) => {
+        setSelectedDelete({ title, fromValue: value, toValue: changingValue });
+        setIsPostDeletePopupOpen(true);
+    };
+
+    const handleConfirmDelete = () => {
+        if (selectedDelete) {
+            removeChange(getFromBetterName(selectedDelete.title), user.email, selectedDelete.fromValue, selectedDelete.toValue);
+        }
+        setIsPostDeletePopupOpen(false);
+    };
+
+    const handleFinishClick = (title, value, changingValue) => {
+        console.log(title, value, changingValue)
+        setSelectedFinish({ title, fromValue: value, toValue: changingValue });
+        setIsFinishChangePopupOpen(true);
+    };
+
+    const handleConfirmFinish = () => {
+        if (selectedFinish) {
+            // Implement the logic to finish the change
+            console.log(`Finishing change for ${selectedFinish.title}`);
+            // You might want to call an API or update the state here
+        }
+        setIsFinishChangePopupOpen(false);
+    };
 
     const handleEditClick = useCallback((category, option) => {
         const formattedCategory = category.toLowerCase();
@@ -129,7 +236,7 @@ export function useProfileFunctions() {
                         className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs"
                         onClick={(e) => {
                             e.stopPropagation();
-                            handleFinishChange(title);
+                            handleFinishClick(title, value,changingValue);
                         }}
                     >
                         <FaCheck className="mr-1 text-xs" />
@@ -149,7 +256,8 @@ export function useProfileFunctions() {
                         className="bg-red-500 text-white p-1.5 rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                         onClick={(e) => {
                             e.stopPropagation();
-                            removeChange(getFromBetterName(title), user.email);
+                            console.log(title, value, changingValue)
+                            handleDeleteClick(title, value,changingValue);
                         }}
                     >
                         <FaTrash className="text-xs" />
@@ -191,7 +299,41 @@ export function useProfileFunctions() {
                 {isChanging && expandedCard === index && renderExpandedContent()}
             </div>
         );
-    }, [expandedCard, handlePostClick, removeChange, user, handleEditClick]);
+    }, [expandedCard, handlePostClick, removeChange, user, handleEditClick, handleFinishClick]);
+
+    const renderChangingCategory = () => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {getInfoCards('changing').map((card, index) => (
+                <div key={index} className="bg-white rounded-lg shadow-md p-4">
+                    <h3 className="text-lg font-semibold mb-2">{card.title}</h3>
+                    <p className="text-sm text-gray-600 mb-1">Current: {card.value}</p>
+                    <p className="text-sm font-medium text-blue-600 mb-3">Changing to: {card.changingValue}</p>
+                    <div className="flex justify-end space-x-2">
+                        <button
+                            className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs"
+                            onClick={() => handleFinishClick(card.title, card.value, card.changingValue)}
+                        >
+                            <FaCheck className="mr-1 text-xs" />
+                            Finish
+                        </button>
+                        <button
+                            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs"
+                            onClick={() => handlePostClick(card.title, card.value, card.changingValue)}
+                        >
+                            <FaEdit className="mr-1 text-xs" />
+                            Post
+                        </button>
+                        <button
+                            className="bg-red-500 text-white p-1.5 rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                            onClick={() => handleDeleteClick(card.title, card.value)}
+                        >
+                            <FaTrash className="text-xs" />
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
 
     const getInfoCards = useCallback((selected) => {
         if (!user || !user.setup) return [];
@@ -245,14 +387,29 @@ export function useProfileFunctions() {
         setExpandedCard,
         isPostPopupOpen,
         setIsPostPopupOpen,
+        isPostDeletePopupOpen,
+        setIsPostDeletePopupOpen,
+        isFinishChangePopupOpen,
+        setIsFinishChangePopupOpen,
         selectedChange,
         setSelectedChange,
+        selectedDelete,
+        selectedFinish,
+        handleConfirmDelete,
+        handleConfirmFinish,
         removeChange,
         getFromBetterName,
         getBetterName,
         handlePostClick,
+        handleFinishClick,
         getInfoCards,
         renderInfoCard,
-        handleEditClick
+        renderChangingCategory,
+        handleEditClick,
+        handleDeleteClick,
+        removeChangeAndPost,
+        justPost,
+        finishChangeAndPost,
+        finishChange,
     };
 }

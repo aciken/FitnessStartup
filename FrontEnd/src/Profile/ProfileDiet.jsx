@@ -4,7 +4,9 @@ import { LeftTab } from '../MainPage/LeftTab';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash, FaPencilAlt } from 'react-icons/fa';
 import { PostPopup } from '../Post/PostPopup';
+import { PostDeletePopup } from '../Post/PostDeletePopup';
 import { useProfileFunctions } from './useProfileFunctions';
+import { PostFinishPopup } from '../Post/PostFinishPopup';
 
 export function ProfileDiet() {
     const navigate = useNavigate();
@@ -15,7 +17,16 @@ export function ProfileDiet() {
         setIsPostPopupOpen,
         selectedChange,
         getInfoCards,
-        renderInfoCard
+        renderInfoCard,
+        isPostDeletePopupOpen,
+        setIsPostDeletePopupOpen,
+        selectedDelete,
+        handleConfirmDelete,
+        isFinishChangePopupOpen,
+        setIsFinishChangePopupOpen,
+        selectedFinish,
+        handleConfirmFinish,
+        handleFinishClick,
     } = useProfileFunctions();
 
     const tabs = ['diet', 'exercise', 'sleep', 'changing'];
@@ -69,6 +80,19 @@ export function ProfileDiet() {
                 isOpen={isPostPopupOpen}
                 onClose={() => setIsPostPopupOpen(false)}
                 changeInfo={selectedChange}
+            />
+            <PostDeletePopup 
+                isOpen={isPostDeletePopupOpen}
+                onClose={() => setIsPostDeletePopupOpen(false)}
+                onConfirm={handleConfirmDelete}
+                changeInfo={selectedDelete}
+            />
+
+            <PostFinishPopup 
+                isOpen={isFinishChangePopupOpen}
+                onClose={() => setIsFinishChangePopupOpen(false)}
+                onConfirm={handleConfirmFinish}
+                changeInfo={selectedFinish}
             />
         </div>
     );

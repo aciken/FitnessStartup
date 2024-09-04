@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { PostPopup } from '../Post/PostPopup';
 import { useProfileFunctions } from './useProfileFunctions';
 import { FaPencilAlt } from 'react-icons/fa';
+import { PostDeletePopup } from '../Post/PostDeletePopup';
+import { PostFinishPopup } from '../Post/PostFinishPopup';
+
 
 
 
@@ -16,7 +19,16 @@ export function ProfileSleep() {
         setIsPostPopupOpen,
         selectedChange,
         getInfoCards,
-        renderInfoCard
+        renderInfoCard,
+        isPostDeletePopupOpen,
+        setIsPostDeletePopupOpen,
+        selectedDelete,
+        handleConfirmDelete,
+        isFinishChangePopupOpen,
+        setIsFinishChangePopupOpen,
+        selectedFinish,
+        handleConfirmFinish,
+        handleFinishClick,
     } = useProfileFunctions();
 
     const tabs = ['diet', 'exercise', 'sleep', 'changing'];
@@ -70,6 +82,18 @@ export function ProfileSleep() {
                 isOpen={isPostPopupOpen}
                 onClose={() => setIsPostPopupOpen(false)}
                 changeInfo={selectedChange}
+            />
+                        <PostDeletePopup 
+                isOpen={isPostDeletePopupOpen}
+                onClose={() => setIsPostDeletePopupOpen(false)}
+                onConfirm={handleConfirmDelete}
+                changeInfo={selectedDelete}
+            />
+            <PostFinishPopup 
+                isOpen={isFinishChangePopupOpen}
+                onClose={() => setIsFinishChangePopupOpen(false)}
+                onConfirm={handleConfirmFinish}
+                changeInfo={selectedFinish}
             />
         </div>
     );

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash, FaPencilAlt, FaEdit } from 'react-icons/fa';
 import { PostPopup } from '../Post/PostPopup';
 import { useProfileFunctions } from './useProfileFunctions';
+import { PostDeletePopup } from '../Post/PostDeletePopup';
+import { PostFinishPopup } from '../Post/PostFinishPopup';
 
 // Add this button style at the top of your component or in a separate styles file
 const buttonStyle = "bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs";
@@ -23,7 +25,17 @@ export function ProfileChangePage() {
         getFromBetterName,
         handlePostClick,
         getInfoCards,
-        handleFinishChange
+        handleFinishChange,
+        isPostDeletePopupOpen,
+        setIsPostDeletePopupOpen,
+        selectedDelete,
+        handleConfirmDelete,
+        handleDeleteClick,
+        isFinishChangePopupOpen,
+        setIsFinishChangePopupOpen,
+        selectedFinish,
+        handleConfirmFinish,
+        handleFinishClick,
     } = useProfileFunctions();
 
     const renderInfoCard = (title, value, changingValue, isChanging, index) => (
@@ -65,7 +77,7 @@ export function ProfileChangePage() {
                                     className={greenButtonStyle}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        handleFinishChange(title);
+                                        handleFinishClick(title,value, changingValue);
                                     }}
                                 >
                                     <FaCheck className="mr-1 text-xs" />
@@ -86,7 +98,8 @@ export function ProfileChangePage() {
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         console.log(getFromBetterName(title), title);
-                                        removeChange(getFromBetterName(title), user.email);
+                                        handleDeleteClick(title, value, changingValue);
+                                        // removeChange(getFromBetterName(title), user.email);
                                     }}
                                 >
                                     <FaTrash className="text-xs" />
@@ -121,7 +134,8 @@ export function ProfileChangePage() {
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     console.log('asd');
-                                    removeChange(getFromBetterName(title), user.email);
+                                    handleDeleteClick(title, value, changingValue);
+                                    // removeChange(getFromBetterName(title), user.email);
                                 }}
                             >
                                 <FaTrash className="text-xs" />
@@ -184,6 +198,18 @@ export function ProfileChangePage() {
                 isOpen={isPostPopupOpen}
                 onClose={() => setIsPostPopupOpen(false)}
                 changeInfo={selectedChange}
+            />
+            <PostDeletePopup 
+                isOpen={isPostDeletePopupOpen}
+                onClose={() => setIsPostDeletePopupOpen(false)}
+                onConfirm={handleConfirmDelete}
+                changeInfo={selectedDelete}
+            />
+            <PostFinishPopup 
+                isOpen={isFinishChangePopupOpen}
+                onClose={() => setIsFinishChangePopupOpen(false)}
+                onConfirm={handleConfirmFinish}
+                changeInfo={selectedFinish}
             />
         </div>
     );

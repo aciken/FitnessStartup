@@ -13,6 +13,9 @@ const skipSetup = require('./Setup/skipSetup');
 const finishSetup = require('./Setup/finishSetup');
 const addChange = require('./Change/addChange');
 const removeChange = require('./Change/removeChange');
+const addPost = require('./Posts/addPost');
+const finishChange = require('./Change/finishChange');
+
 
 
 
@@ -28,6 +31,10 @@ app.put('/skipSetup', skipSetup);
 app.put('/finishSetup', finishSetup);
 app.put('/addChange', addChange);
 app.put('/removeChange', removeChange);
+app.put('/addPost', addPost);
+app.put('/finishChange', finishChange);
+
+
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
   });

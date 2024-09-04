@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaArrowRight } from 'react-icons/fa';
+import { FaTimes, FaArrowRight, FaCheck } from 'react-icons/fa';
 import { useProfileFunctions } from '../Profile/useProfileFunctions';
-export function PostPopup({ isOpen, onClose, changeInfo }) {
+
+export function PostFinishPopup({ isOpen, onClose, changeInfo }) {
     const [postContent, setPostContent] = useState('');
     const [isVisible, setIsVisible] = useState(false);
 
-    const {
-        user,
-        justPost
+    const{ 
+    user,
+    finishChangeAndPost,
+    finishChange,
     } = useProfileFunctions();
 
     useEffect(() => {
@@ -39,8 +41,8 @@ export function PostPopup({ isOpen, onClose, changeInfo }) {
                     <p className="text-xl font-semibold text-gray-700 mb-2">{title}</p>
                     <div className="flex items-center text-gray-600">
                         <span className="font-medium">{fromValue}</span>
-                        <FaArrowRight className="mx-2 text-blue-500" />
-                        <span className="font-medium text-blue-600">{toValue}</span>
+                        <FaCheck className="mx-2 text-green-500" />
+                        <span className="font-medium text-green-600">{toValue}</span>
                     </div>
                 </div>
 
@@ -52,17 +54,25 @@ export function PostPopup({ isOpen, onClose, changeInfo }) {
                 ></textarea>
 
                 <div className="mt-6 flex justify-end gap-2">
+                <button
+                        className=" text-green-700 border border-green-600 hover:bg-green-50 font-semibold py-2 px-6 rounded-lg shadow-md  transition duration-150 "
+                        onClick={() => {
+                            finishChange(changeInfo, user.email);
+                        }}
+                    >
+                        Finish Without Posting
+                    </button>
                     <button
-                        className="bg-blue-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 transform "
+                        className="bg-green-500 text-green-100 font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-green-600 focus:outline-none  transition duration-150 transform"
                         onClick={() => {
                             if(postContent == ''){
                                 alert('Post cannot be empty');
                                 return;
                             }
-                            justPost(changeInfo, user.email, postContent);
+                            finishChangeAndPost(changeInfo, user.email, postContent);
                         }}
                     >
-                        Post
+                        Post and Finish
                     </button>
                     
                 </div>
