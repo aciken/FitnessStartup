@@ -1,17 +1,42 @@
 import { useState, useEffect } from "react";
 import { ProfilePage } from "./ProfilePage";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { FaUser, FaUtensils, FaDumbbell, FaBed, FaArrowLeft, FaTimes } from 'react-icons/fa';
+import { ProfileDiet } from "./ProfileDiet";
+import { ProfileExercise } from "./ProfileExercise";
+import { ProfileSleep } from "./ProfileSleep";
+import { ProfileChangePage } from "./ProfileChangePage";
 import axios from "axios";
 
 export function ProfileChange() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { category, option } = useParams();
+    const from = location.state?.from;
     const [selectedCategory, setSelectedCategory] = useState(category || null);
     const [selectedOption, setSelectedOption] = useState(option ? option.replace(/-/g, ' ') : null);
     const [userData, setUserData] = useState(null);
     const [newValue, setNewValue] = useState('');
     const [userEmail, setUserEmail] = useState('');
+
+    useEffect(() => {
+        console.log(from)
+    }, [from])
+
+    const getFromPage = () => {
+        switch(from){
+            case 'diet':
+                return <ProfileDiet/>;
+            case 'exercise':
+                return <ProfileExercise/>;
+            case 'sleep':
+                return <ProfileSleep/>;
+            default:
+                return <ProfileChangePage/>;
+        }
+    }
+
+    
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
@@ -60,13 +85,13 @@ export function ProfileChange() {
         setSelectedCategory(category);
         setSelectedOption(null);
         setNewValue('');
-        navigate(`/profile/change/${category}`);
+        navigate(`/profile/change/${category}`, {state: {from: from}});
     };
 
     const handleOptionSelect = (option) => {
         setSelectedOption(option);
         setNewValue(getCurrentValue(selectedCategory, option));
-        navigate(`/profile/change/${selectedCategory}/${option.replace(/ /g, '-').toLowerCase()}`);
+        navigate(`/profile/change/${selectedCategory}/${option.replace(/ /g, '-').toLowerCase()}`, {state: {from: from}});
     };
 
     const getCurrentValue = (category, option) => {
@@ -233,7 +258,7 @@ export function ProfileChange() {
                             Change Information
                         </h2>
                         <button
-                            onClick={() => navigate('/profile/diet')}
+                            onClick={() => navigate('/profile/' + from)}
                             className="text-gray-500 hover:text-gray-700 transition duration-200"
                         >
                             <FaTimes size={24} />
@@ -273,7 +298,7 @@ export function ProfileChange() {
                             <button
                                 onClick={() => {
                                     setSelectedCategory(null);
-                                    navigate('/profile/change');
+                                    navigate('/profile/change', {state: {from: from}});
                                 }}
                                 className="mt-4 text-sm text-blue-600 hover:text-blue-800 focus:outline-none focus:underline flex items-center"
                             >
@@ -290,7 +315,7 @@ export function ProfileChange() {
                             <button
                                 onClick={() => {
                                     setSelectedOption(null);
-                                    navigate(`/profile/change/${selectedCategory}`);
+                                    navigate(`/profile/change/${selectedCategory}`, {state: {from: from}});
                                 }}
                                 className="mt-4 text-sm text-blue-600 hover:text-blue-800 focus:outline-none focus:underline flex items-center"
                             >
@@ -309,7 +334,7 @@ export function ProfileChange() {
                     )}
                 </div>
             </div>
-            <ProfilePage/>
+            {getFromPage()}
         </div>
     )
 }

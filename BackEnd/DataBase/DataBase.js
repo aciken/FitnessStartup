@@ -44,6 +44,10 @@ const UserSchema = new mongoose.Schema({
       varies: '',
       calories: '',
     }
+  },
+  posts: {
+    type: Array,
+    default: []
   }
 });
 

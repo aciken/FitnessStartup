@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { LeftTab } from '../MainPage/LeftTab';
 import { useNavigate } from 'react-router-dom';
-import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash, FaPencilAlt, FaEdit } from 'react-icons/fa';
 import { PostPopup } from '../Post/PostPopup';
 import { useProfileFunctions } from './useProfileFunctions';
+
+// Add this button style at the top of your component or in a separate styles file
+const buttonStyle = "bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs";
+const greenButtonStyle = "bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs";
 
 export function ProfileChangePage() {
     const navigate = useNavigate();
@@ -18,7 +22,8 @@ export function ProfileChangePage() {
         removeChange,
         getFromBetterName,
         handlePostClick,
-        getInfoCards
+        getInfoCards,
+        handleFinishChange
     } = useProfileFunctions();
 
     const renderInfoCard = (title, value, changingValue, isChanging, index) => (
@@ -50,30 +55,41 @@ export function ProfileChangePage() {
                 </p>
                 {isChanging && (
                     <div className="flex justify-between items-center">
-                        <div className="flex items-center text-sm text-blue-600 font-medium">
+                        <div className="flex items-center text-xs text-blue-600 font-medium">
                             <span>{expandedCard === index ? 'Hide details' : 'View details'}</span>
-                            {expandedCard === index ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />}
+                            {expandedCard === index ? <FaChevronUp className="ml-1 text-xs" /> : <FaChevronDown className="ml-1 text-xs" />}
                         </div>
                         {selected === 'changing' && (
                             <div className="flex items-center space-x-2">
                                 <button
-                                    className="bg-blue-500 text-white font-semibold py-1 px-3 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 flex items-center text-sm"
+                                    className={greenButtonStyle}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleFinishChange(title);
+                                    }}
+                                >
+                                    <FaCheck className="mr-1 text-xs" />
+                                    Finish
+                                </button>
+                                <button
+                                    className={buttonStyle}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handlePostClick(title, value, changingValue);
                                     }}
                                 >
-                                    <FaCheck className="mr-1" />
+                                    <FaEdit className="mr-1 text-xs" />
                                     Post
                                 </button>
                                 <button
-                                    className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150"
+                                    className="bg-red-500 text-white p-1.5 rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                                     onClick={(e) => {
                                         e.stopPropagation();
+                                        console.log(getFromBetterName(title), title);
                                         removeChange(getFromBetterName(title), user.email);
                                     }}
                                 >
-                                    <FaTrash className="text-lg" />
+                                    <FaTrash className="text-xs" />
                                 </button>
                             </div>
                         )}
@@ -91,7 +107,7 @@ export function ProfileChangePage() {
                     {selected !== 'changing' && (
                         <div className="flex items-center space-x-2">
                             <button
-                                className="bg-blue-500 text-white font-semibold py-1 px-3 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 flex items-center text-sm"
+                                className={buttonStyle}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     handlePostClick(title, value, changingValue);
@@ -101,13 +117,14 @@ export function ProfileChangePage() {
                                 Post
                             </button>
                             <button
-                                className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150"
+                                className="bg-red-500 text-white p-1.5 rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    console.log('asd');
                                     removeChange(getFromBetterName(title), user.email);
                                 }}
                             >
-                                <FaTrash className="text-lg" />
+                                <FaTrash className="text-xs" />
                             </button>
                         </div>
                     )}
@@ -142,9 +159,10 @@ export function ProfileChangePage() {
                                 ))}
                             </div>
                             <button
-                                onClick={() => navigate('/profile/change')}
-                                className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150"
+                                onClick={() => navigate('/profile/change', {state: {from: 'changing'}})}
+                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                             >
+                                <FaPencilAlt className="mr-2 text-sm" />
                                 Change
                             </button>
                         </nav>

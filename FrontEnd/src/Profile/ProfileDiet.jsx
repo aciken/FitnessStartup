@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { LeftTab } from '../MainPage/LeftTab';
 import { useNavigate } from 'react-router-dom';
-import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash, FaPencilAlt } from 'react-icons/fa';
 import { PostPopup } from '../Post/PostPopup';
 import { useProfileFunctions } from './useProfileFunctions';
 
@@ -44,9 +44,10 @@ export function ProfileDiet() {
                                 ))}
                             </div>
                             <button
-                                onClick={() => navigate('/profile/change')}
-                                className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150"
+                                onClick={() => navigate('/profile/change', {state: {from: 'diet'}})}
+                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                             >
+                                <FaPencilAlt className="mr-2 text-sm" />
                                 Change
                             </button>
                         </nav>

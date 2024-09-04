@@ -1,6 +1,3 @@
-
-
-
 import { useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +19,7 @@ export function useProfileFunctions() {
 
     const removeChange = useCallback(async (change, email) => {
         try {
+            console.log(change, email)
             const response = await axios.put('http://localhost:3000/removeChange', {
                 change, email
             });
@@ -43,7 +41,7 @@ export function useProfileFunctions() {
         const nameMap = {
             'Diet Type': 'diet',
             'Meals per Day': 'meals',
-            'Fasting Schedule': 'fast',
+            'Fasting': 'fast',
             'Fasting Hours': 'fastHours',
             'Exercise 1': 'exercise1',
             'Exercise 1 Frequency': 'exercise1Times',
@@ -63,7 +61,7 @@ export function useProfileFunctions() {
         const nameMap = {
             diet: 'Diet Type',
             meals: 'Meals per Day',
-            fast: 'Fasting Schedule',
+            fast: 'Fasting',
             fastHours: 'Fasting Hours',
             exercise1: 'Exercise 1',
             exercise1Times: 'Exercise 1 Frequency',
@@ -87,7 +85,7 @@ export function useProfileFunctions() {
     const handleEditClick = useCallback((category, option) => {
         const formattedCategory = category.toLowerCase();
         const formattedOption = option.toLowerCase().replace(/ /g, '-');
-        navigate(`/profile/change/${formattedCategory}/${formattedOption}`);
+        navigate(`/profile/change/${formattedCategory}/${formattedOption}`, {state: {from: category}});
     }, [navigate]);
 
     const renderInfoCard = useCallback((title, value, changingValue, isChanging, index, category) => {
@@ -119,32 +117,42 @@ export function useProfileFunctions() {
         );
 
         const renderExpandedContent = () => (
-            <div className="bg-gray-50 p-6 transition-all duration-300 ease-in-out">
+            <div className="bg-gray-50 p-4 transition-all duration-300 ease-in-out">
                 <p className="text-sm font-medium text-gray-500 mb-2">
                     {isChangingTab ? 'Current value:' : 'Changing to:'}
                 </p>
-                <p className="text-xl font-bold text-blue-700 mb-4">
+                <p className="text-lg font-bold text-blue-700 mb-3">
                     {isChangingTab ? value : changingValue}
                 </p>
                 <div className="flex justify-end space-x-2">
                     <button
-                        className="bg-blue-500 text-white font-semibold py-1 px-3 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 flex items-center text-sm"
+                        className="bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleFinishChange(title);
+                        }}
+                    >
+                        <FaCheck className="mr-1 text-xs" />
+                        Finish
+                    </button>
+                    <button
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs"
                         onClick={(e) => {
                             e.stopPropagation();
                             handlePostClick(title, value, changingValue);
                         }}
                     >
-                        <FaCheck className="mr-1" />
+                        <FaEdit className="mr-1 text-xs" />
                         Post
                     </button>
                     <button
-                        className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150"
+                        className="bg-red-500 text-white p-1.5 rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                         onClick={(e) => {
                             e.stopPropagation();
                             removeChange(getFromBetterName(title), user.email);
                         }}
                     >
-                        <FaTrash className="text-lg" />
+                        <FaTrash className="text-xs" />
                     </button>
                 </div>
             </div>
@@ -189,7 +197,7 @@ export function useProfileFunctions() {
         if (!user || !user.setup) return [];
 
         const { setup, changing } = user;
-        const { diet, meals, fast, fastHours, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies, calories } = setup;
+        const { diet, meals, fast, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies, calories } = setup;
 
         const formatExercise = (exercise, times) => {
             if (exercise === 'none') return null;
@@ -202,7 +210,7 @@ export function useProfileFunctions() {
                     { title: 'Calorie Intake', value: `${calories} calories`, changingValue: changing.calories ? `${changing.calories} calories` : undefined, isChanging: !!changing.calories },
                     { title: 'Diet Type', value: diet, changingValue: changing.diet, isChanging: !!changing.diet },
                     { title: 'Meals per Day', value: meals, changingValue: changing.meals, isChanging: !!changing.meals },
-                    { title: 'Fasting', value: fast, changingValue: changing.fast, isChanging: !!changing.fast }
+                    { title: 'Fasting', value: fast, changingValue: changing.fast === 'No' ? changing.fast + ' Hours' : changing.fast, isChanging: !!changing.fast }
                 ];
             case 'exercise':
                 return [

@@ -3,6 +3,9 @@ import { LeftTab } from '../MainPage/LeftTab';
 import { useNavigate } from 'react-router-dom';
 import { PostPopup } from '../Post/PostPopup';
 import { useProfileFunctions } from './useProfileFunctions';
+import { FaPencilAlt } from 'react-icons/fa';
+
+
 
 export function ProfileSleep() {
     const navigate = useNavigate();
@@ -42,9 +45,10 @@ export function ProfileSleep() {
                                 ))}
                             </div>
                             <button
-                                onClick={() => navigate('/profile/change')}
-                                className="bg-blue-600 text-white font-semibold py-2 px-6 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150"
+                                onClick={() => navigate('/profile/change', {state: {from: 'sleep'}})}
+                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                             >
+                                <FaPencilAlt className="mr-2 text-sm" />
                                 Change
                             </button>
                         </nav>
