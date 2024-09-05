@@ -65,18 +65,14 @@ export function useProfileFunctions() {
     }, []);
 
 
-    const justPost = useCallback(async (change, email, postContent) => {
-        console.log(change, email, postContent)
+    const justPost = useCallback(async (change, user, postContent) => {
 
             axios.put('http://localhost:3000/addPost', {
-                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'change'
+                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'change',category: getCategory(change.title)
             })
             .then(res => {
-                console.log(res.data.post)
-            // const updatedUser = res.data.user;
-            // localStorage.setItem('user', JSON.stringify({ user: updatedUser }));
-            // setUser(updatedUser);
-            // window.location.reload();
+            console.log(res.data.post)
+            window.location.reload();
             })
             .catch(err => {
                 console.error('Error removing change:', err);
@@ -106,7 +102,7 @@ export function useProfileFunctions() {
     const finishChangeAndPost = useCallback(async (change, email, postContent) => {
         console.log(change, email)
             axios.put('http://localhost:3000/addPost', {
-                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email, postContent, postType: 'finish'
+                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email, postContent, postType: 'finish', 
             })
             .then(res => {
             finishChange(change, email);
@@ -156,6 +152,30 @@ export function useProfileFunctions() {
         };
         return nameMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
     }, []);
+
+
+    const getCategory = useCallback((key) => {
+        const nameMap = {
+            'Diet Type': 'diet',
+            'Meals per Day': 'diet',
+            'Fasting': 'diet',
+            'Fasting Hours': 'diet',
+            'Exercise 1': 'exercise',
+            'Exercise 1 Times': 'exercise',
+            'Exercise 2': 'exercise',
+            'Exercise 2 Times': 'exercise',
+            'Exercise 3': 'exercise',
+            'Exercise 3 Times': 'exercise',
+            'Sleep Duration': 'sleep',
+            'Bedtime': 'sleep',
+            'Sleep Variation': 'sleep',
+            'Calorie Intake': 'diet'
+        };
+        return nameMap[key] || key.charAt(0).toLowerCase() + key.slice(1);
+    }, []);
+    
+  
+    
 
     const handlePostClick = useCallback((title, value, changingValue) => {
         setSelectedChange({ title, fromValue: value, toValue: changingValue });

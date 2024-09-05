@@ -2,8 +2,16 @@ const User = require('../Database/DataBase')
 const Post = require('../DataBase/Posts')
 
 const addPost = async (req, res) => {
-    const { title, toValue, fromValue, user, postContent, postType } = req.body;
-    console.log(user)
+    const { title, toValue, fromValue, user, postContent, postType, category } = req.body;
+    console.log(category)
+
+
+    try{
+    const person = await User.findOne({ email: user.email });
+
+    if(!person){
+        return res.json('User not found');
+    }
 
     const post = new Post({
         userId: user._id,
@@ -12,23 +20,22 @@ const addPost = async (req, res) => {
         toValue: toValue,
         fromValue: fromValue,
         postType: postType,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        likes: 0,
-        comments: []
+        category: category,
     })
 
-    try{
         await post.save();
-        res.json({post});
+        person.posts.push(post._id);
+        await person.save();
+
+        return res.json({user: person, post: post});
     } catch (error) {
-        res.json('Error adding post');
+       return res.json('Error adding post');
     }
 
 
     // const post = {
     //     title,
-    //     toValue,
+    //     toValue, 
     //     fromValue,
     //     content: postContent,
     //     postType: postType,

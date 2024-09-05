@@ -2,10 +2,26 @@ import React from 'react';
 import {LeftTab} from './LeftTab';
 import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { PostCard } from './PostCardComponent';
 
 export function HomePage() {
 
     const navigate = useNavigate();
+
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        axios.post('http://localhost:3000/getPosts')
+        .then(res => {
+            setPosts(res.data.posts);
+            console.log(res.data.posts);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }, [])
+
 
 
 
@@ -17,9 +33,16 @@ export function HomePage() {
 
 
     return (
-        <div className="flex flex-row min-h-[100vh]">
+        <div className="flex flex-row min-h-screen bg-gray-50">
             <LeftTab current='Home'/>
-            <div className='w-full'>Home</div>
+            <div className='flex-grow p-6 md:p-8 lg:p-12'>
+                <h1 className="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight">Recent Posts</h1>
+                <div className="space-y-8">
+                    {posts.map((post) => (
+                        <PostCard key={post._id} post={post} />
+                    ))}
+                </div>
+            </div>
         </div>
-    )
+    );
 }

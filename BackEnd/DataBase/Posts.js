@@ -9,6 +9,7 @@ const postSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     postType: String,
+    category: String,
     likes: { type: Number, default: 0 },
     comments: [{
       userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

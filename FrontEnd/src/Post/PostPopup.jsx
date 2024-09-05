@@ -59,7 +59,7 @@ export function PostPopup({ isOpen, onClose, changeInfo }) {
                                 alert('Post cannot be empty');
                                 return;
                             }
-                            justPost(changeInfo, user.email, postContent);
+                            justPost(changeInfo, user, postContent);
                         }}
                     >
                         Post
