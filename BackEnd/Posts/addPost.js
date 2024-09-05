@@ -15,6 +15,7 @@ const addPost = async (req, res) => {
 
     const post = new Post({
         userId: user._id,
+        username: user.username,
         content: postContent,
         title: title,
         toValue: toValue,

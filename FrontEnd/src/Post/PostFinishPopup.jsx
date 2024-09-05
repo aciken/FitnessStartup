@@ -69,7 +69,7 @@ export function PostFinishPopup({ isOpen, onClose, changeInfo }) {
                                 alert('Post cannot be empty');
                                 return;
                             }
-                            finishChangeAndPost(changeInfo, user.email, postContent);
+                            finishChangeAndPost(changeInfo, user, postContent);
                         }}
                     >
                         Post and Finish

@@ -7,6 +7,8 @@ import { ProfileExercise } from "./ProfileExercise";
 import { ProfileSleep } from "./ProfileSleep";
 import { ProfileChangePage } from "./ProfileChangePage";
 import axios from "axios";
+import { PostStartPopup } from "../Post/PostStartPopup";
+import { useProfileFunctions } from "./useProfileFunctions";
 
 export function ProfileChange() {
     const navigate = useNavigate();
@@ -18,6 +20,19 @@ export function ProfileChange() {
     const [userData, setUserData] = useState(null);
     const [newValue, setNewValue] = useState('');
     const [userEmail, setUserEmail] = useState('');
+
+
+
+    const{ 
+        isStartChangePopupOpen,
+        setIsStartChangePopupOpen,
+        selectedStart,
+        setSelectedStart,
+        handleStartClick,
+        handleConfirmStart,
+
+        } = useProfileFunctions();
+
 
     useEffect(() => {
         console.log(from)
@@ -324,7 +339,8 @@ export function ProfileChange() {
                             </button>
                             <div className="mt-6 flex justify-end">
                                 <button
-                                    onClick={() => {addChange(getKeyFromOption(selectedOption), newValue);}}
+                                    // onClick={() => {addChange(getKeyFromOption(selectedOption), newValue);}}
+                                    onClick={() => {if(newValue !== getCurrentValue(selectedCategory, selectedOption)){handleStartClick(selectedOption, getCurrentValue(selectedCategory, selectedOption), newValue);}}}
                                     className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none  transition duration-200 flex items-center ${newValue !== getCurrentValue(selectedCategory, selectedOption) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
                                 >
                                     Change
@@ -334,6 +350,12 @@ export function ProfileChange() {
                     )}
                 </div>
             </div>
+            <PostStartPopup
+                isOpen={isStartChangePopupOpen}
+                onClose={() => setIsStartChangePopupOpen(false)}
+                onConfirm={handleConfirmStart}
+                changeInfo={selectedStart}
+            />
             {getFromPage()}
         </div>
     )

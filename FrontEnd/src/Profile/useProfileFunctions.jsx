@@ -15,6 +15,9 @@ export function useProfileFunctions() {
     const [selectedChange, setSelectedChange] = useState(null);
     const [selectedDelete, setSelectedDelete] = useState(null);
     const [selectedFinish, setSelectedFinish] = useState(null);
+    const [isStartChangePopupOpen, setIsStartChangePopupOpen] = useState(false);
+    const [selectedStart, setSelectedStart] = useState(null);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,6 +26,24 @@ export function useProfileFunctions() {
             setUser(JSON.parse(storedUser).user);
         }
     }, []);
+
+    
+    const addChange = async(change, value,userEmail) => {
+        try {
+            const stringValue = value.toString();
+            const response = await axios.put('http://localhost:3000/addChange',{
+                change: change,
+                value: stringValue,
+                email: userEmail
+            })
+            if(response.data != 'User not found' || response.data != 'Internal Server Error'){
+                localStorage.setItem('user', JSON.stringify(response.data));
+                navigate('/profile/' + getCategory(getBetterName(change)))
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     const removeChange = useCallback(async (change, email) => {
         console.log(change, email)
@@ -46,13 +67,13 @@ export function useProfileFunctions() {
         }
     }, []);
 
-    const removeChangeAndPost = useCallback(async (change, email, postContent) => {
-        console.log(change, email)
+    const removeChangeAndPost = useCallback(async (change, user, postContent) => {
+
             axios.put('http://localhost:3000/addPost', {
-                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email, postContent, postType: 'delete'
+                title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'remove',category: getCategory(change.title)
             })
             .then(res => {
-            removeChange(getFromBetterName(change.title), email);
+            removeChange(getFromBetterName(change.title), user.email);
             })
             .catch(err => {
                 console.error('Error removing change:', err);
@@ -68,7 +89,7 @@ export function useProfileFunctions() {
     const justPost = useCallback(async (change, user, postContent) => {
 
             axios.put('http://localhost:3000/addPost', {
-                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'change',category: getCategory(change.title)
+                title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'change',category: getCategory(change.title)
             })
             .then(res => {
             console.log(res.data.post)
@@ -99,13 +120,13 @@ export function useProfileFunctions() {
         })
     }, []);
 
-    const finishChangeAndPost = useCallback(async (change, email, postContent) => {
-        console.log(change, email)
+    const finishChangeAndPost = useCallback(async (change, user, postContent) => {
+
             axios.put('http://localhost:3000/addPost', {
-                title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email, postContent, postType: 'finish', 
+                title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'finish', category: getCategory(change.title)
             })
             .then(res => {
-            finishChange(change, email);
+            finishChange(change, user.email);
             })
             .catch(err => {
                 console.error('Error removing change:', err);
@@ -113,10 +134,16 @@ export function useProfileFunctions() {
             })
     }, []);
 
+    const startChange = useCallback(async (change, user) => {
+        console.log(change, user)
+        addChange(getFromBetterName(change.title), change.toValue, user.email);
+    }, []);
+
+
     const getFromBetterName = (key) => {
         const nameMap = {
             'Diet Type': 'diet',
-            'Meals per Day': 'meals',
+            'Meals Per Day': 'meals',
             'Fasting': 'fast',
             'Fasting Hours': 'fastHours',
             'Exercise 1': 'exercise1',
@@ -136,7 +163,7 @@ export function useProfileFunctions() {
     const getBetterName = useCallback((key) => {
         const nameMap = {
             diet: 'Diet Type',
-            meals: 'Meals per Day',
+            meals: 'Meals Per Day',
             fast: 'Fasting',
             fastHours: 'Fasting Hours',
             exercise1: 'Exercise 1',
@@ -157,7 +184,7 @@ export function useProfileFunctions() {
     const getCategory = useCallback((key) => {
         const nameMap = {
             'Diet Type': 'diet',
-            'Meals per Day': 'diet',
+            'Meals Per Day': 'diet',
             'Fasting': 'diet',
             'Fasting Hours': 'diet',
             'Exercise 1': 'exercise',
@@ -209,6 +236,20 @@ export function useProfileFunctions() {
         setIsFinishChangePopupOpen(false);
     };
 
+    const handleStartClick = (title, value, changingValue) => {
+        setSelectedStart({ title, fromValue: value, toValue: changingValue });
+        setIsStartChangePopupOpen(true);
+    };
+
+    const handleConfirmStart = () => {
+        if (selectedStart) {
+            // Implement the logic to start the change
+            console.log(`Starting change for ${selectedStart.title}`);
+            // You might want to call an API or update the state here
+        }
+        setIsStartChangePopupOpen(false);
+    };
+    
     const handleEditClick = useCallback((category, option) => {
         const formattedCategory = category.toLowerCase();
         const formattedOption = option.toLowerCase().replace(/ /g, '-');
@@ -371,7 +412,7 @@ export function useProfileFunctions() {
                 return [
                     { title: 'Calorie Intake', value: `${calories} calories`, changingValue: changing.calories ? `${changing.calories} calories` : undefined, isChanging: !!changing.calories },
                     { title: 'Diet Type', value: diet, changingValue: changing.diet, isChanging: !!changing.diet },
-                    { title: 'Meals per Day', value: meals, changingValue: changing.meals, isChanging: !!changing.meals },
+                    { title: 'Meals Per Day', value: meals, changingValue: changing.meals, isChanging: !!changing.meals },
                     { title: 'Fasting', value: fast, changingValue: changing.fast === 'No' ? changing.fast + ' Hours' : changing.fast, isChanging: !!changing.fast }
                 ];
             case 'exercise':
@@ -431,5 +472,12 @@ export function useProfileFunctions() {
         justPost,
         finishChangeAndPost,
         finishChange,
+        handleStartClick,
+        handleConfirmStart,
+        isStartChangePopupOpen,
+        setIsStartChangePopupOpen,
+        selectedStart,
+        setSelectedStart,
+        startChange
     };
 }

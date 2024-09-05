@@ -2,6 +2,8 @@ const User = require('../DataBase/DataBase')
 
 const addChange = async(req, res) => {
     const {change, value, email} = req.body;
+
+    console.log(change, value, email)
     try {
         console.log('Attempting to update:', {change, value, email});  
 

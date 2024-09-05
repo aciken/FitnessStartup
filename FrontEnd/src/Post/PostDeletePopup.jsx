@@ -73,7 +73,7 @@ export function PostDeletePopup({ isOpen, onClose, changeInfo }) {
                                 alert('Post cannot be empty');
                                 return;
                             }
-                            removeChangeAndPost(changeInfo, user.email, postContent);
+                            removeChangeAndPost(changeInfo, user, postContent);
                         }}
                     >
                         Post and Finish
