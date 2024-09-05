@@ -1,9 +1,7 @@
 import React from 'react';
-import { FaHeart, FaComment, FaExchangeAlt, FaUser, FaUtensils, FaDumbbell, FaBed, FaTimes, FaCheck } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { FaHeart, FaComment, FaExchangeAlt, FaUser, FaUtensils, FaDumbbell, FaBed, FaTimes, FaCheck, FaFlag } from 'react-icons/fa';
 
 export function PostCard({ post }) {
-    const navigate = useNavigate();
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         return new Date(dateString).toLocaleDateString(undefined, options);
@@ -76,6 +74,28 @@ export function PostCard({ post }) {
                         </div>
                     </div>
                 );
+            case 'start':
+                return (
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 text-gray-700 p-4 rounded-xl mb-4 border border-blue-100 shadow-sm">
+                        <div className="flex items-center mb-2">
+                            <div className="bg-blue-500 text-white p-1.5 rounded-full mr-2">
+                                <FaFlag className="text-sm" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-blue-800">New Goal Started!</h3>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                            <div className="flex-1 bg-white rounded p-2 border border-blue-200">
+                                <p className="text-xs text-blue-600 mb-1">Starting Point</p>
+                                <div className="text-sm font-medium text-gray-800">{post.fromValue}</div>
+                            </div>
+                            <FaExchangeAlt className="text-blue-500 text-lg" />
+                            <div className="flex-1 bg-blue-100 rounded p-2 border border-blue-300">
+                                <p className="text-xs text-blue-800 mb-1">Goal</p>
+                                <div className="text-sm font-medium text-blue-900">{post.toValue}</div>
+                            </div>
+                        </div>
+                    </div>
+                );
             default:
                 return null;
         }
@@ -85,28 +105,25 @@ export function PostCard({ post }) {
         <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-all duration-300 max-w-3xl mx-auto border border-gray-100">
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-2 rounded-full text-white">
+                    <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-2 rounded-full text-white">
                         <FaUser />
                     </div>
                     <div>
                         <h2 className="text-xl font-semibold text-gray-800 tracking-tight">{post.title}</h2>
                         <p className="text-sm text-gray-500">
-                            Posted by <a href="#" className="underline hover:text-blue-600">{post.username}</a> on {formatDate(post.createdAt)}
+                            Posted by {post.username} on {formatDate(post.createdAt)}
                         </p>
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                    <span className={`text-sm font-medium cursor-pointer px-3 py-1 rounded-full capitalize flex items-center space-x-1 ${getCategoryColor(post.category)}`}
-                        onClick={() => {
-                            navigate(`/feed/${post.category}`);
-                        }}
-                    >
+                    <span className={`text-sm font-medium px-3 py-1 rounded-full capitalize flex items-center space-x-1 ${getCategoryColor(post.category)}`}>
                         {getCategoryIcon(post.category)}
                         <span>{post.category}</span>
                     </span>
                     <span className={`text-sm font-medium px-3 py-1 rounded-full capitalize ${
                         post.postType === 'remove' ? 'bg-red-100 text-red-800' :
                         post.postType === 'finish' ? 'bg-green-100 text-green-800' :
+                        post.postType === 'start' ? 'bg-blue-100 text-blue-800' :
                         'bg-gray-100 text-gray-800'
                     }`}>
                         {post.postType}

@@ -73,6 +73,7 @@ export function useProfileFunctions() {
                 title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'remove',category: getCategory(change.title)
             })
             .then(res => {
+                console.log(change.title)
             removeChange(getFromBetterName(change.title), user.email);
             })
             .catch(err => {
@@ -137,6 +138,19 @@ export function useProfileFunctions() {
     const startChange = useCallback(async (change, user) => {
         console.log(change, user)
         addChange(getFromBetterName(change.title), change.toValue, user.email);
+    }, []);
+
+    const startChangeAndPost = useCallback(async (change, user, postContent) => {
+        axios.put('http://localhost:3000/addPost', {
+            title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'start', category: getCategory(change.title)
+        })
+        .then(res => {
+        startChange(change, user);
+        })
+        .catch(err => {
+            console.error('Error removing change:', err);
+            throw err;
+        })
     }, []);
 
 
@@ -478,6 +492,7 @@ export function useProfileFunctions() {
         setIsStartChangePopupOpen,
         selectedStart,
         setSelectedStart,
-        startChange
+        startChange,
+        startChangeAndPost
     };
 }
