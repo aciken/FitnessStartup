@@ -90,7 +90,7 @@ export function useProfileFunctions() {
     const justPost = useCallback(async (change, user, postContent) => {
 
             axios.put('http://localhost:3000/addPost', {
-                title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'change',category: getCategory(change.title)
+                title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'post',category: getCategory(change.title)
             })
             .then(res => {
             console.log(res.data.post)

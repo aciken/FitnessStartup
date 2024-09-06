@@ -16,6 +16,7 @@ const removeChange = require('./Change/removeChange');
 const addPost = require('./Posts/addPost');
 const finishChange = require('./Change/finishChange');
 const getPosts = require('./Posts/getPosts');
+const likePost = require('./Posts/likePost');
 
 
 
@@ -36,6 +37,8 @@ app.put('/removeChange', removeChange);
 app.put('/addPost', addPost);
 app.put('/finishChange', finishChange); 
 app.post('/getPosts', getPosts);
+app.put('/likePost', likePost);
+
 
 
 app.listen(port, () => {
