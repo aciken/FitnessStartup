@@ -12,6 +12,29 @@ export function SleepPage() {
     const navigate = useNavigate();
 
     const [posts, setPosts] = useState([]);
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+
+    const [likedPosts, setLikedPosts] = useState([]);
+    const [dislikedPosts, setDislikedPosts] = useState([]);
+
+    const addLikedPost = (postId) => {
+        console.log(postId)
+        if(!user.user.likedPosts.includes(postId)){
+        if(likedPosts.includes(postId)){
+            setLikedPosts(likedPosts.filter(id => id !== postId));
+        } else {
+            setLikedPosts([...likedPosts, postId]);
+        } 
+    }else{
+        if(dislikedPosts.includes(postId)){
+            setDislikedPosts(dislikedPosts.filter(id => id !== postId));
+        } else{
+            setDislikedPosts([...dislikedPosts, postId]);
+        }
+
+    }
+    console.log(likedPosts, dislikedPosts)
+    }
 
     useEffect(() => {
         axios.post('http://localhost:3000/getPosts', {category: 'sleep'})
@@ -40,7 +63,7 @@ export function SleepPage() {
                 <h1 className="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight">Recent Posts</h1>
                 <div className="space-y-8">
                     {posts.map((post) => (
-                        <PostCard key={post._id} post={post} />
+                        <PostCard key={post._id} post={post} addLikedPost={addLikedPost} likedPosts={likedPosts} dislikedPosts={dislikedPosts} user={user} />
                     ))}
                 </div>
             </div>

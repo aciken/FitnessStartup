@@ -4,16 +4,28 @@ import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PostCard } from './PostCardComponent';
+import { TopCategories } from './TopCategories';
 
 export function HomePage() {
 
     const navigate = useNavigate();
-
+    const [selectedTimeRange, setSelectedTimeRange] = useState('all');
+    const [selectedAction, setSelectedAction] = useState('all');
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
     const [likedPosts, setLikedPosts] = useState([]);
     const [dislikedPosts, setDislikedPosts] = useState([]);
+
+    const handleTimeRangeChange = (range) => {
+        setSelectedTimeRange(range);
+    };
+
+    const handleActionChange = (action) => {
+        setSelectedAction(action);
+        // Here you can add logic to handle the selected action
+        console.log('Selected action:', action);
+    };
 
     useEffect(() => {
         if(JSON.parse(localStorage.getItem('user')) == null) {
@@ -71,12 +83,17 @@ export function HomePage() {
 
 
     return (
-        <div className="flex flex-row min-h-screen bg-gray-50">
+        <div className="flex flex-row min-h-screen bg-gray-50 relative">
+            <TopCategories
+ selectedTimeRange={selectedTimeRange}
+ onTimeRangeChange={handleTimeRangeChange}
+ selectedAction={selectedAction}
+ onActionChange={handleActionChange}
+                                />
             <div className="fixed top-0 left-0 h-full">
                 <LeftTab current='Home'/>
             </div>
-            <div className='flex-grow ml-64 p-6 md:p-8 lg:p-12 overflow-y-auto'>
-                <h1 className="text-3xl font-extrabold text-gray-900 mb-8 tracking-tight">Recent Posts</h1>
+            <div className='flex-grow ml-64 p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
                 <div className="space-y-8">
                     {posts.map((post) => (
                         <PostCard key={post._id} post={post} addLikedPost={addLikedPost} likedPosts={likedPosts} dislikedPosts={dislikedPosts} user={user} />
