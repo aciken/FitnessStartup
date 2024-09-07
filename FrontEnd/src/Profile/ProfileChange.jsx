@@ -39,6 +39,15 @@ export function ProfileChange() {
         console.log(from)
     }, [from])
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            console.log(isStartChangePopupOpen);
+        }, 3000);
+
+        // Clean up the interval on component unmount
+        return () => clearInterval(intervalId);
+    }, [isStartChangePopupOpen])
+
     const getFromPage = () => {
         switch(from){
             case 'diet':

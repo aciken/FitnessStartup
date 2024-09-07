@@ -138,6 +138,8 @@ export function useProfileFunctions() {
     const startChange = useCallback(async (change, user) => {
         console.log(change, user)
         addChange(getFromBetterName(change.title), change.toValue, user.email);
+
+        
     }, []);
 
     const startChangeAndPost = useCallback(async (change, user, postContent) => {
@@ -251,19 +253,28 @@ export function useProfileFunctions() {
     };
 
     const handleStartClick = (title, value, changingValue) => {
+        console.log(title, value, changingValue)
+
         setSelectedStart({ title, fromValue: value, toValue: changingValue });
         setIsStartChangePopupOpen(true);
+
+        console.log(selectedStart, isStartChangePopupOpen)
+
+
     };
 
     const handleConfirmStart = () => {
+        console.log(selectedStart)
         if (selectedStart) {
             // Implement the logic to start the change
             console.log(`Starting change for ${selectedStart.title}`);
             // You might want to call an API or update the state here
         }
+        console.log(selectedStart)
         setIsStartChangePopupOpen(false);
     };
     
+
     const handleEditClick = useCallback((category, option, from) => {
         const formattedCategory = category.toLowerCase();
         const formattedOption = option.toLowerCase().replace(/ /g, '-');
@@ -493,6 +504,7 @@ export function useProfileFunctions() {
         selectedStart,
         setSelectedStart,
         startChange,
-        startChangeAndPost
+        startChangeAndPost,
+
     };
 }

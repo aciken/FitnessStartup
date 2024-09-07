@@ -17,8 +17,11 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
     };
 
 
-    const {
-        handleEditClick
+    const  {
+        handleEditClick,
+        handleStartClick,
+        getFromBetterName,
+        setIsStartChangePopupOpen,
     } = useProfileFunctions();
     
 
@@ -190,7 +193,8 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 </div>
                 {tryButton &&
                 <button
-                onClick={() => {handleEditClick(post.category, post.title, 'main')}}
+                // onClick={() => {handleEditClick(post.category, post.title, 'main')}}
+                onClick={() => {setIsStartChangePopupOpen(true);handleStartClick(post.title, post.fromValue , post.toValue)} }
                     className={`mt-4 w-30 ${styles.bg} ${styles.title} hover:scale-105 font-semibold py-2 px-4 border ${styles.border} rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 absolute right-0 bottom--10`}
                 >
                     Try This Goal

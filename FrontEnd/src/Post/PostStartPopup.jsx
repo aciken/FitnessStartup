@@ -12,7 +12,10 @@ export function PostStartPopup({ isOpen, onClose, changeInfo }) {
         startChangeAndPost,
     } = useProfileFunctions();
 
+
+
     useEffect(() => {
+
         if (isOpen) {
             setIsVisible(true);
         } else {

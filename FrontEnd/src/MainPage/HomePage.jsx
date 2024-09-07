@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PostCard } from './PostCardComponent';
 import { TopCategories } from './TopCategories';
+import { useProfileFunctions } from '../Profile/useProfileFunctions';
+import { PostStartPopup } from '../Post/PostStartPopup';
 
 export function HomePage() {
 
@@ -13,9 +15,25 @@ export function HomePage() {
     const [selectedAction, setSelectedAction] = useState('all');
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+
+    const {
+        isStartChangePopupOpen,
+        setIsStartChangePopupOpen,
+        handleConfirmStart,
+        selectedStart,
+        
+    } = useProfileFunctions();
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            console.log(isStartChangePopupOpen);
+        }, 3000);
+
+        // Clean up the interval on component unmount
+        return () => clearInterval(intervalId);
+    }, [isStartChangePopupOpen])
     
 
-    let likedBy = [];
 
     const [likedPosts, setLikedPosts] = useState([]);
     const [dislikedPosts, setDislikedPosts] = useState([]);
@@ -114,7 +132,7 @@ export function HomePage() {
 
 
     return (
-        <div className="flex flex-row min-h-screen bg-gray-50 z-10">
+        <div className="flex flex-row min-h-screen  bg-gray-50 z-10">
             <TopCategories
  selectedTimeRange={selectedTimeRange}
  onTimeRangeChange={handleTimeRangeChange}
@@ -131,6 +149,12 @@ export function HomePage() {
                     ))}
                 </div>
             </div>
+            <PostStartPopup
+                isOpen={isStartChangePopupOpen}
+                onClose={() => setIsStartChangePopupOpen(false)}
+                onConfirm={handleConfirmStart}
+                changeInfo={selectedStart}
+            />
         </div>
     );
 }
