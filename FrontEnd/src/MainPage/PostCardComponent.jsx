@@ -7,7 +7,7 @@ import axios from 'axios';
 
 
 
-export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user }) {
+export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, handleActionChange }) {
     const navigate = useNavigate();
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -48,7 +48,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user }
 
     const getPostTypeStyles = (postType) => {
         switch (postType) {
-            case 'post':
+            case 'update':
                 return {
                     bg: 'bg-gradient-to-r from-blue-50 to-indigo-50',
                     border: 'border-blue-200',
@@ -148,13 +148,13 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user }
             <div className={`${styles.bg} text-gray-700 p-4 rounded-xl mb-4 border ${styles.border} shadow-sm`}>
                 <div className="flex items-center mb-2">
                     <div className={`${styles.icon} text-white p-1.5 rounded-full mr-2`}>
-                        {post.postType === 'post' && <FaExchangeAlt className="text-sm" />}
+                        {post.postType === 'update' && <FaExchangeAlt className="text-sm" />}
                         {post.postType === 'start' && <FaFlag className="text-sm" />}
                         {post.postType === 'finish' && <FaCheck className="text-sm" />}
                         {post.postType === 'remove' && <FaTimes className="text-sm" />}
                     </div>
                     <h3 className={`text-lg font-semibold ${styles.title}`}>
-                        {post.postType === 'post' && 'Progress Update'}
+                        {post.postType === 'update' && 'Progress Update'}
                         {post.postType === 'start' && 'New Goal Started!'}
                         {post.postType === 'finish' && 'Goal Achieved!'}
                         {post.postType === 'remove' && 'Goal Removed'}
@@ -172,7 +172,9 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user }
                         <p className={`text-xs ${styles.rightText} mb-1`}>
                             {post.postType === 'remove' ? 'Removed' : post.postType === 'finish' ? 'Achieved' : 'Goal'}
                         </p>
-                        <div className={`text-sm font-medium ${styles.rightText} ${post.postType === 'remove' ? 'line-through' : ''}`}>
+                        <div className={`text-sm cursor-pointer font-medium ${styles.rightText} ${post.postType === 'remove' ? 'line-through' : ''}`}
+                        
+                        >
                             {post.toValue}
                         </div>
                     </div>
@@ -202,13 +204,15 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user }
                         {getCategoryIcon(post.category)}
                         <span>{post.category}</span>
                     </span>
-                    <span className={`text-sm font-medium px-3 py-1 rounded-full capitalize ${
+                    <span className={`text-sm font-medium px-3 py-1 rounded-full capitalize cursor-pointer ${
                         post.postType === 'remove' ? 'bg-red-100 text-red-800' :
                         post.postType === 'finish' ? 'bg-green-100 text-green-800' :
                         post.postType === 'start' ? 'bg-teal-100 text-teal-800' :
-                        post.postType === 'post' ? 'bg-blue-100 text-blue-800' :
+                        post.postType === 'update' ? 'bg-blue-100 text-blue-800' :
                         'bg-gray-100 text-gray-800'
-                    }`}>
+                    }`}
+                    onClick={() => handleActionChange(post.postType.toLowerCase())}
+                    >
                         {post.postType}
                     </span>
                 </div>

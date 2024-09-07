@@ -67,15 +67,16 @@ export function HomePage() {
 
 
     useEffect(() => {
-        axios.post('http://localhost:3000/getPosts', {category: 'all'})
+        axios.post('http://localhost:3000/getPosts', {category: 'all', timeRange: selectedTimeRange, action: selectedAction})
         .then(res => {
             setPosts(res.data.posts);
             console.log(res.data.posts);
+
         })
         .catch(err => {
             console.log(err);
         })
-    }, [])
+    }, [selectedTimeRange, selectedAction])
 
 
 
@@ -96,7 +97,7 @@ export function HomePage() {
             <div className='flex-grow ml-64 p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
                 <div className="space-y-8">
                     {posts.map((post) => (
-                        <PostCard key={post._id} post={post} addLikedPost={addLikedPost} likedPosts={likedPosts} dislikedPosts={dislikedPosts} user={user} />
+                        <PostCard key={post._id} post={post} addLikedPost={addLikedPost} likedPosts={likedPosts} dislikedPosts={dislikedPosts} user={user} handleActionChange={handleActionChange} />
                     ))}
                 </div>
             </div>

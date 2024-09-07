@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaChevronDown, FaClock, FaCog } from 'react-icons/fa';
+import { FaChevronDown, FaClock, FaCog, FaPlus } from 'react-icons/fa';
 
 const timeRanges = [
   { value: 'today', label: 'Today' },
@@ -80,10 +80,13 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
           />
           <Dropdown
             options={postActions}
-            selected={selectedAction}
+            selected={selectedAction} 
             onSelect={onActionChange}
             icon={FaCog}
           />
+          <button className="bg-blue-500 text-white flex flex-row items-center justify-center px-4 py-2 w-20 rounded-full hover:bg-blue-600 transition-colors duration-300 hover:shadow-lg font-medium">
+            Post
+          </button>
         </div>
       </div>
     </div>
