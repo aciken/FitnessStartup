@@ -9,6 +9,7 @@ import { ProfileChangePage } from "./ProfileChangePage";
 import axios from "axios";
 import { PostStartPopup } from "../Post/PostStartPopup";
 import { useProfileFunctions } from "./useProfileFunctions";
+import { HomePage } from "../MainPage/HomePage";
 
 export function ProfileChange() {
     const navigate = useNavigate();
@@ -46,6 +47,8 @@ export function ProfileChange() {
                 return <ProfileExercise/>;
             case 'sleep':
                 return <ProfileSleep/>;
+            case 'main':
+                return <HomePage/>;
             default:
                 return <ProfileChangePage/>;
         }
@@ -264,16 +267,17 @@ export function ProfileChange() {
     }
     
     return (
-        <div className="min-h-[100vh] w-full relative">
-            <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black bg-opacity-50">
-                <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <div className="min-h-[100vh] w-full z-1000">
+            <div className="fixed inset-0 flex items-center justify-center z-[1001]">
+                <div className="fixed inset-0 backdrop-blur-sm bg-black bg-opacity-50 z-[1002]"></div>
+                <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full z-[1003] relative">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-2xl font-bold text-gray-800 flex items-center">
                             <FaUser className="inline-block mr-2" />
                             Change Information
                         </h2>
                         <button
-                            onClick={() => navigate('/profile/' + from)}
+                            onClick={() => {if(from == 'main')navigate('/feed/home'); else navigate('/profile/' + from)}}
                             className="text-gray-500 hover:text-gray-700 transition duration-200"
                         >
                             <FaTimes size={24} />

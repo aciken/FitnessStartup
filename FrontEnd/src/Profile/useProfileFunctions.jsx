@@ -264,10 +264,10 @@ export function useProfileFunctions() {
         setIsStartChangePopupOpen(false);
     };
     
-    const handleEditClick = useCallback((category, option) => {
+    const handleEditClick = useCallback((category, option, from) => {
         const formattedCategory = category.toLowerCase();
         const formattedOption = option.toLowerCase().replace(/ /g, '-');
-        navigate(`/profile/change/${formattedCategory}/${formattedOption}`, {state: {from: category}});
+        navigate(`/profile/change/${formattedCategory}/${formattedOption}`, {state: {from: from}});
     }, [navigate]);
 
     const renderInfoCard = useCallback((title, value, changingValue, isChanging, index, category) => {
@@ -362,7 +362,7 @@ export function useProfileFunctions() {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleEditClick(category, title);
+                                handleEditClick(category, title, category);
                             }}
                             className="mt-2 text-blue-600 hover:text-blue-800 focus:outline-none focus:underline flex items-center"
                         >

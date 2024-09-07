@@ -4,6 +4,8 @@ import { FaHeart, FaComment, FaExchangeAlt, FaUser, FaUtensils, FaDumbbell, FaBe
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useProfileFunctions } from '../Profile/useProfileFunctions';
+
 
 
 
@@ -15,7 +17,10 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
     };
 
 
-
+    const {
+        handleEditClick
+    } = useProfileFunctions();
+    
 
 
 
@@ -139,13 +144,17 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         })
     };
 
+    const [tryButton, setTryButton] = useState(false);
+
 
 
     const renderChangeContent = () => {
         const styles = getPostTypeStyles(post.postType);
         
         return (
-            <div className={`${styles.bg} text-gray-700 p-4 rounded-xl mb-4 border ${styles.border} shadow-sm`}>
+            <div className={`${styles.bg} text-gray-700 hover:drop-shadow-md transition-all duration-300 p-4 rounded-xl mb-4 border ${styles.border} shadow-sm cursor-pointer relative`}
+            onClick={() => {if(tryButton){setTryButton(false)}else{setTryButton(true)}}}
+            >
                 <div className="flex items-center mb-2">
                     <div className={`${styles.icon} text-white p-1.5 rounded-full mr-2`}>
                         {post.postType === 'update' && <FaExchangeAlt className="text-sm" />}
@@ -179,12 +188,22 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                         </div>
                     </div>
                 </div>
+                {tryButton &&
+                <button
+                onClick={() => {handleEditClick(post.category, post.title, 'main')}}
+                    className={`mt-4 w-30 ${styles.bg} ${styles.title} hover:scale-105 font-semibold py-2 px-4 border ${styles.border} rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 absolute right-0 bottom--10`}
+                >
+                    Try This Goal
+                </button>
+                }
             </div>
         );
     };
 
     return (
-        <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-all duration-300 max-w-3xl mx-auto border border-gray-100">
+        <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-all duration-300 max-w-3xl mx-auto border border-gray-100"
+        onClick={() => {if(tryButton){setTryButton(false)}}}
+        >
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center space-x-3">
                     <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-2 rounded-full text-white">
@@ -223,8 +242,9 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 <div className="flex items-center space-x-6">
                     <button
                     onClick={() => {addLike(post._id, user.user._id)}}
-                    className={`flex items-center space-x-2 text-gray-500 hover:text-gray-600 transition-colors duration-200 ${(likedPosts.includes(post._id) || user.user.likedPosts.includes(post._id)) && !dislikedPosts.includes(post._id) ? 'text-pink-500 hover:text-pink-700' : dislikedPosts.includes(post._id)  ? 'text-gray-500 hover:text-gray-600' : ''}`}>
+                    className={`flex items-center space-x-2 text-gray-500 hover:text-gray-600 transition-colors duration-200 ${(likedPosts.includes(post._id) || post.likedBy.includes(user.user._id)) && !dislikedPosts.includes(post._id) ? 'text-pink-500 hover:text-pink-700' : dislikedPosts.includes(post._id)  ? 'text-gray-500 hover:text-gray-600' : ''}`}>
                         <FaHeart className="text-lg" />
+                
                         <span className="font-medium">{likedPosts.includes(post._id) ?  post.likes + 1 : dislikedPosts.includes(post._id) ? post.likes - 1 : post.likes}</span>
                     </button>
                     <button className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors duration-200">
@@ -249,6 +269,7 @@ PostCard.propTypes = {
         postType: PropTypes.string.isRequired,
         likes: PropTypes.number.isRequired,
         commentCount: PropTypes.number.isRequired,
+        likedBy: PropTypes.array.isRequired,
     }).isRequired,
     addLikedPost: PropTypes.func.isRequired,
     likedPosts: PropTypes.array.isRequired,

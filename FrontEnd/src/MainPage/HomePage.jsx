@@ -13,18 +13,28 @@ export function HomePage() {
     const [selectedAction, setSelectedAction] = useState('all');
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+    
+
+    let likedBy = [];
 
     const [likedPosts, setLikedPosts] = useState([]);
     const [dislikedPosts, setDislikedPosts] = useState([]);
 
     const handleTimeRangeChange = (range) => {
         setSelectedTimeRange(range);
+        if(range != selectedTimeRange){
+            setLikedPosts([]);
+            setDislikedPosts([]);
+        }
     };
 
     const handleActionChange = (action) => {
         setSelectedAction(action);
-        // Here you can add logic to handle the selected action
-        console.log('Selected action:', action);
+        if(action != selectedAction){
+            setLikedPosts([]);
+            setDislikedPosts([]);
+        }
+
     };
 
     useEffect(() => {
@@ -36,24 +46,7 @@ export function HomePage() {
     }, [])
 
 
-    const addLikedPost = (postId) => {
-        console.log(postId)
-        if(!user.user.likedPosts.includes(postId)){
-        if(likedPosts.includes(postId)){
-            setLikedPosts(likedPosts.filter(id => id !== postId));
-        } else {
-            setLikedPosts([...likedPosts, postId]);
-        } 
-    }else{
-        if(dislikedPosts.includes(postId)){
-            setDislikedPosts(dislikedPosts.filter(id => id !== postId));
-        } else{
-            setDislikedPosts([...dislikedPosts, postId]);
-        }
 
-    }
-    console.log(likedPosts, dislikedPosts)
-    }
 
     
     useEffect(() => {
@@ -71,12 +64,49 @@ export function HomePage() {
         .then(res => {
             setPosts(res.data.posts);
             console.log(res.data.posts);
-
+            likedBy = res.data.posts.likedBy;
         })
         .catch(err => {
             console.log(err);
         })
     }, [selectedTimeRange, selectedAction])
+
+    const addLikedPost = (postId) => {
+        console.log(posts)
+        const post = posts.find(post => post._id === postId);
+        if (post && post.likedBy.includes(user.user._id)) {
+            if (dislikedPosts.includes(postId)) {
+                setDislikedPosts(dislikedPosts.filter(id => id !== postId));
+            } else {
+                setDislikedPosts([...dislikedPosts, postId]);
+            }
+        } else {
+            if (likedPosts.includes(postId)) {
+                setLikedPosts(likedPosts.filter(id => id !== postId));
+            } else {
+                setLikedPosts([...likedPosts, postId]);
+            }
+        }
+    }
+
+
+    //     console.log(postId)
+    //     if(!user.user.likedPosts.includes(postId)){
+    //     if(likedPosts.includes(postId)){
+    //         setLikedPosts(likedPosts.filter(id => id !== postId));
+    //     } else {
+    //         setLikedPosts([...likedPosts, postId]);
+    //     } 
+    // }else{
+    //     if(dislikedPosts.includes(postId)){
+    //         setDislikedPosts(dislikedPosts.filter(id => id !== postId));
+    //     } else{
+    //         setDislikedPosts([...dislikedPosts, postId]);
+    //     }
+
+    // }
+    console.log(likedPosts, dislikedPosts)
+    
 
 
 
@@ -84,7 +114,7 @@ export function HomePage() {
 
 
     return (
-        <div className="flex flex-row min-h-screen bg-gray-50 relative">
+        <div className="flex flex-row min-h-screen bg-gray-50 z-10">
             <TopCategories
  selectedTimeRange={selectedTimeRange}
  onTimeRangeChange={handleTimeRangeChange}

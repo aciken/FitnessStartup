@@ -23,12 +23,15 @@ export function DietPage() {
     
     const handleTimeRangeChange = (range) => {
         console.log(range)
-        setSelectedTimeRange(range);
+            setSelectedTimeRange(range);
+ 
     };
 
     const handleActionChange = (action) => {
         console.log(action)
-        setSelectedAction(action);
+
+            setSelectedAction(action);
+
         // Here you can add logic to handle the selected action
         console.log('Selected action:', action);
     };

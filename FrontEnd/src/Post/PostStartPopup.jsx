@@ -25,8 +25,8 @@ export function PostStartPopup({ isOpen, onClose, changeInfo }) {
     const { title, fromValue, toValue } = changeInfo || {};
 
     return (
-        <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity duration-300 backdrop-blur-sm ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
-            <div className={`bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>
+        <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity duration-300 backdrop-blur-sm ${isOpen ? 'opacity-100' : 'opacity-0 '} z-[2000]`}>
+            <div className={`bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'} `}>
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-3xl font-bold text-gray-800">Start Change</h2>
                     <button 
