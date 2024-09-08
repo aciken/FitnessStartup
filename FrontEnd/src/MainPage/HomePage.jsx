@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PostCard } from './PostCardComponent';
 import { TopCategories } from './TopCategories';
-import { useProfileFunctions } from '../Profile/useProfileFunctions';
+import { MainPageFunctions } from './MainPageFunctions';
 import { PostStartPopup } from '../Post/PostStartPopup';
 
 export function HomePage() {
@@ -16,22 +16,18 @@ export function HomePage() {
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
-    const {
+    const 
+    {
         isStartChangePopupOpen,
         setIsStartChangePopupOpen,
-        handleConfirmStart,
         selectedStart,
-        
-    } = useProfileFunctions();
+        handleStartClick,
+        handleConfirmStart
+    } = MainPageFunctions();
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            console.log(isStartChangePopupOpen);
-        }, 3000);
 
-        // Clean up the interval on component unmount
-        return () => clearInterval(intervalId);
-    }, [isStartChangePopupOpen])
+
+
     
 
 
@@ -82,7 +78,6 @@ export function HomePage() {
         .then(res => {
             setPosts(res.data.posts);
             console.log(res.data.posts);
-            likedBy = res.data.posts.likedBy;
         })
         .catch(err => {
             console.log(err);
@@ -124,6 +119,14 @@ export function HomePage() {
 
     // }
     console.log(likedPosts, dislikedPosts)
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            console.log('isStartChangePopupOpen:', isStartChangePopupOpen);
+        }, 3000);
+
+        return () => clearInterval(intervalId);
+    }, [isStartChangePopupOpen]);
     
 
 
@@ -145,7 +148,16 @@ export function HomePage() {
             <div className='flex-grow ml-64 p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
                 <div className="space-y-8">
                     {posts.map((post) => (
-                        <PostCard key={post._id} post={post} addLikedPost={addLikedPost} likedPosts={likedPosts} dislikedPosts={dislikedPosts} user={user} handleActionChange={handleActionChange} />
+                        <PostCard 
+                            key={post._id} 
+                            post={post} 
+                            addLikedPost={addLikedPost} 
+                            likedPosts={likedPosts} 
+                            dislikedPosts={dislikedPosts} 
+                            user={user} 
+                            handleActionChange={handleActionChange}
+                            handleStartClick={handleStartClick}  // Pass this down
+                        />
                     ))}
                 </div>
             </div>

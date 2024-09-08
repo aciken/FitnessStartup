@@ -4,12 +4,14 @@ import { FaHeart, FaComment, FaExchangeAlt, FaUser, FaUtensils, FaDumbbell, FaBe
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useProfileFunctions } from '../Profile/useProfileFunctions';
+import { MainPageFunctions } from './MainPageFunctions';
 
 
 
 
-export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, handleActionChange }) {
+
+
+export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, handleActionChange, handleStartClick }) {
     const navigate = useNavigate();
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -17,13 +19,10 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
     };
 
 
-    const  {
-        handleEditClick,
-        handleStartClick,
-        getFromBetterName,
-        setIsStartChangePopupOpen,
-    } = useProfileFunctions();
-    
+
+
+
+
 
 
 
@@ -149,14 +148,24 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
 
     const [tryButton, setTryButton] = useState(false);
 
+    const handleCardClick = () => {
+        if (tryButton) {
+            setTryButton(false);
+        }
+        navigate(`/post/${post._id}`);
+    };
 
+    const handleInteractionClick = (e, action) => {
+        e.stopPropagation();
+        action();
+    };
 
     const renderChangeContent = () => {
         const styles = getPostTypeStyles(post.postType);
         
         return (
             <div className={`${styles.bg} text-gray-700 hover:drop-shadow-md transition-all duration-300 p-4 rounded-xl mb-4 border ${styles.border} shadow-sm cursor-pointer relative`}
-            onClick={() => {if(tryButton){setTryButton(false)}else{setTryButton(true)}}}
+            onClick={(e) => {e.stopPropagation();if(tryButton){setTryButton(false)}else{setTryButton(true)}}}
             >
                 <div className="flex items-center mb-2">
                     <div className={`${styles.icon} text-white p-1.5 rounded-full mr-2`}>
@@ -194,7 +203,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 {tryButton &&
                 <button
                 // onClick={() => {handleEditClick(post.category, post.title, 'main')}}
-                onClick={() => {setIsStartChangePopupOpen(true);handleStartClick(post.title, post.fromValue , post.toValue)} }
+                onClick={() => {handleStartClick(post.title, post.fromValue , post.toValue)} }
                     className={`mt-4 w-30 ${styles.bg} ${styles.title} hover:scale-105 font-semibold py-2 px-4 border ${styles.border} rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 absolute right-0 bottom--10`}
                 >
                     Try This Goal
@@ -205,8 +214,8 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
     };
 
     return (
-        <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-all duration-300 max-w-3xl mx-auto border border-gray-100"
-        onClick={() => {if(tryButton){setTryButton(false)}}}
+        <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-all duration-300 max-w-3xl mx-auto border border-gray-100 cursor-pointer"
+            onClick={handleCardClick}
         >
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center space-x-3">
@@ -222,19 +231,21 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 </div>
                 <div className="flex items-center space-x-2">
                     <span 
-                    onClick={() => navigate(`/feed/${post.category}`)}
-                    className={`text-sm font-medium px-3 py-1 cursor-pointer rounded-full capitalize flex items-center space-x-1 ${getCategoryColor(post.category)}`}>
+                        onClick={(e) => handleInteractionClick(e, () => navigate(`/feed/${post.category}`))}
+                        className={`text-sm font-medium px-3 py-1 cursor-pointer rounded-full capitalize flex items-center space-x-1 ${getCategoryColor(post.category)}`}
+                    >
                         {getCategoryIcon(post.category)}
                         <span>{post.category}</span>
                     </span>
-                    <span className={`text-sm font-medium px-3 py-1 rounded-full capitalize cursor-pointer ${
-                        post.postType === 'remove' ? 'bg-red-100 text-red-800' :
-                        post.postType === 'finish' ? 'bg-green-100 text-green-800' :
-                        post.postType === 'start' ? 'bg-teal-100 text-teal-800' :
-                        post.postType === 'update' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
-                    }`}
-                    onClick={() => handleActionChange(post.postType.toLowerCase())}
+                    <span 
+                        className={`text-sm font-medium px-3 py-1 rounded-full capitalize cursor-pointer ${
+                            post.postType === 'remove' ? 'bg-red-100 text-red-800' :
+                            post.postType === 'finish' ? 'bg-green-100 text-green-800' :
+                            post.postType === 'start' ? 'bg-teal-100 text-teal-800' :
+                            post.postType === 'update' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
+                        }`}
+                        onClick={(e) => handleInteractionClick(e, () => handleActionChange(post.postType.toLowerCase()))}
                     >
                         {post.postType}
                     </span>
@@ -245,18 +256,24 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
             <div className="flex justify-between items-center text-sm border-t pt-4 border-gray-100">
                 <div className="flex items-center space-x-6">
                     <button
-                    onClick={() => {addLike(post._id, user.user._id)}}
-                    className={`flex items-center space-x-2 text-gray-500 hover:text-gray-600 transition-colors duration-200 ${(likedPosts.includes(post._id) || post.likedBy.includes(user.user._id)) && !dislikedPosts.includes(post._id) ? 'text-pink-500 hover:text-pink-700' : dislikedPosts.includes(post._id)  ? 'text-gray-500 hover:text-gray-600' : ''}`}>
+                        onClick={(e) => handleInteractionClick(e, () => addLike(post._id, user.user._id))}
+                        className={`flex items-center space-x-2 text-gray-500 hover:text-gray-600 transition-colors duration-200 ${(likedPosts.includes(post._id) || post.likedBy.includes(user.user._id)) && !dislikedPosts.includes(post._id) ? 'text-pink-500 hover:text-pink-700' : dislikedPosts.includes(post._id)  ? 'text-gray-500 hover:text-gray-600' : ''}`}
+                    >
                         <FaHeart className="text-lg" />
-                
                         <span className="font-medium">{likedPosts.includes(post._id) ?  post.likes + 1 : dislikedPosts.includes(post._id) ? post.likes - 1 : post.likes}</span>
                     </button>
-                    <button className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors duration-200">
+                    <button 
+                        className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors duration-200"
+                        onClick={(e) => handleInteractionClick(e, () => {/* Handle comment action */})}
+                    >
                         <FaComment className="text-lg" />
                         <span className="font-medium">{post.commentCount}</span>
                     </button>
                 </div>
-                <button className="text-sm font-medium text-blue-500 hover:text-blue-600 transition-colors duration-200">
+                <button 
+                    className="text-sm font-medium text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                    onClick={(e) => handleInteractionClick(e, () => {/* Handle read more action */})}
+                >
                     Read More
                 </button>
             </div>

@@ -17,6 +17,8 @@ const addPost = require('./Posts/addPost');
 const finishChange = require('./Change/finishChange');
 const getPosts = require('./Posts/getPosts');
 const likePost = require('./Posts/likePost');
+const getOnePost = require('./Posts/getOnePost');
+
 
 
 
@@ -38,6 +40,8 @@ app.put('/addPost', addPost);
 app.put('/finishChange', finishChange); 
 app.post('/getPosts', getPosts);
 app.put('/likePost', likePost);
+app.post('/getOnePost', getOnePost);
+
 
 
 

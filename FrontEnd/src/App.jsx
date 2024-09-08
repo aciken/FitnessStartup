@@ -21,6 +21,8 @@ import { ProfileSleep } from "./Profile/ProfileSleep";
 import {ProfileExercise} from "./Profile/ProfileExercise";
 import {ProfileDiet} from "./Profile/ProfileDiet";
 import {ProfileChangePage} from "./Profile/ProfileChangePage";
+import {PostShow} from "./Post/PostShow";
+
 
 
 
@@ -59,6 +61,7 @@ export function App() {
     <Route path="/profile/change" element={<ProfileChange />} />
     <Route path="/profile/change/:category" element={<ProfileChange />} />
     <Route path="/profile/change/:category/:option" element={<ProfileChange />} />
+    <Route path="/post/:id" element={<PostShow />} />
 
 
     

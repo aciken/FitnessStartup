@@ -219,14 +219,17 @@ export function useProfileFunctions() {
     
   
     
-
     const handlePostClick = useCallback((title, value, changingValue) => {
-        setSelectedChange({ title, fromValue: value, toValue: changingValue });
+        const trimmedValue = value.split(' ')[0];
+        const trimmedChangingValue = changingValue.split(' ')[0];
+        setSelectedChange({ title, fromValue: trimmedValue, toValue: trimmedChangingValue });
         setIsPostPopupOpen(true);
     }, []);
 
     const handleDeleteClick = (title, value, changingValue) => {
-        setSelectedDelete({ title, fromValue: value, toValue: changingValue });
+        const trimmedValue = value.split(' ')[0];
+        const trimmedChangingValue = changingValue ? changingValue.split(' ')[0] : undefined;
+        setSelectedDelete({ title, fromValue: trimmedValue, toValue: trimmedChangingValue });
         setIsPostDeletePopupOpen(true);
     };
 
@@ -239,7 +242,9 @@ export function useProfileFunctions() {
 
     const handleFinishClick = (title, value, changingValue) => {
         console.log(title, value, changingValue)
-        setSelectedFinish({ title, fromValue: value, toValue: changingValue });
+        const trimmedValue = value.split(' ')[0];
+        const trimmedChangingValue = changingValue.split(' ')[0];
+        setSelectedFinish({ title, fromValue: trimmedValue, toValue: trimmedChangingValue });
         setIsFinishChangePopupOpen(true);
     };
 
@@ -252,16 +257,26 @@ export function useProfileFunctions() {
         setIsFinishChangePopupOpen(false);
     };
 
-    const handleStartClick = (title, value, changingValue) => {
-        console.log(title, value, changingValue)
+    const handleStartClick = useCallback((title, value, changingValue) => {
+        console.log(title, value, changingValue); // Add this for debugging
 
-        setSelectedStart({ title, fromValue: value, toValue: changingValue });
+        const safelyTrimValue = (val) => {
+            if (typeof val === 'string') {
+                return val.split(' ')[0];
+            }
+            return val;
+        };
+
+        const trimmedValue = safelyTrimValue(value);
+        const trimmedChangingValue = safelyTrimValue(changingValue);
+
+        setSelectedStart({ 
+            title, 
+            fromValue: trimmedValue, 
+            toValue: trimmedChangingValue 
+        });
         setIsStartChangePopupOpen(true);
-
-        console.log(selectedStart, isStartChangePopupOpen)
-
-
-    };
+    }, []);
 
     const handleConfirmStart = () => {
         console.log(selectedStart)
