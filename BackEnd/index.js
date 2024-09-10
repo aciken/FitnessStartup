@@ -19,6 +19,7 @@ const getPosts = require('./Posts/getPosts');
 const likePost = require('./Posts/likePost');
 const getOnePost = require('./Posts/getOnePost');
 const addComment = require('./Posts/addComment');
+const likeComment = require('./Posts/likeComment');
 
 
 
@@ -44,6 +45,9 @@ app.post('/getPosts', getPosts);
 app.put('/likePost', likePost);
 app.post('/getOnePost', getOnePost);
 app.put('/addComment', addComment);
+app.put('/likeComment', likeComment);
+
+
 
 
 

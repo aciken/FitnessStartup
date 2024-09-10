@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { LeftTab } from "../MainPage/LeftTab";
 import { PostCard } from "../MainPage/PostCardComponent";
 import { useProfileFunctions } from "../Profile/useProfileFunctions";
-import { FaUser, FaArrowRight, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { FaUser, FaArrowRight, FaHeart, FaTimes } from 'react-icons/fa';
 
 
 export function PostShow() {
@@ -15,6 +15,10 @@ export function PostShow() {
     const [dislikedPosts, setDislikedPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [newComment, setNewComment] = useState('');
+
+    const [likedComments, setLikedComments] = useState([]);
+    const [dislikedComments, setDislikedComments] = useState([]);
+
 
     const {
         getFromBetterName
@@ -51,6 +55,7 @@ export function PostShow() {
     }
 
     const handleCommentSubmit = (comment, postId) => {
+        if(comment.length > 0){
         const category = getFromBetterName(post.title);
         axios.put(`http://localhost:3000/addComment`, { postId, comment, userId: user.user._id, username: user.user.username, fromValue: user.user.setup[category], toValue: user.user.changing[category]})
             .then(res => {
@@ -60,7 +65,35 @@ export function PostShow() {
             .catch(err => {
                 console.log(err);
             });
+        } else {
+            alert("Please enter a comment");
+        }
     }
+
+    const handleCommentLike = (commentId, postId, userId) => {
+        console.log(commentId)
+        axios.put(`http://localhost:3000/likeComment`, { commentId, postId, userId, interaction: "like" })
+            .then(res => {
+                setPost(res.data.post);
+                window.location.reload();
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
+    const handleCommentDislike = (commentId, postId, userId) => {
+
+        axios.put(`http://localhost:3000/likeComment`, { commentId, postId, userId, interaction: "dislike" })
+            .then(res => {
+                setPost(res.data.post);
+                window.location.reload();
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    }
+
 
     return (
         <div className="flex flex-row min-h-screen bg-gray-50 z-10">
@@ -126,22 +159,26 @@ export function PostShow() {
                                             </div>
                                             <div className="flex items-center mt-3 space-x-4">
                                                 <button
-                                                    className="flex items-center space-x-2 text-gray-500 hover:text-blue-600 transition-colors duration-300"
-                                                    onClick={() => handleCommentVote(comment._id, 'upvote')}
+                                                    className={`flex items-center space-x-2 transition-all duration-300 ${
+                                                        comment.likedBy && comment.likedBy.includes(user.user._id)
+                                                            ? 'text-blue-600 hover:text-blue-700'
+                                                            : 'text-gray-400 hover:text-blue-500'
+                                                    }`}
+                                                    onClick={() => handleCommentLike(comment._id, post._id, user.user._id)}
                                                 >
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                                    </svg>
-                                                    <span>{comment.upvotes || 0}</span>
+                                                    <FaHeart className="w-5 h-5" />
+                                                    <span className="font-medium">{comment.likes || 0}</span>
                                                 </button>
-                                                <button
-                                                    className="flex items-center space-x-2 text-gray-500 hover:text-red-600 transition-colors duration-300"
-                                                    onClick={() => handleCommentVote(comment._id, 'downvote')}
+                                                <button 
+                                                    className={`flex items-center space-x-2 transition-all duration-300 ${
+                                                        comment.dislikedBy && comment.dislikedBy.includes(user.user._id)
+                                                            ? 'text-pink-600 hover:text-pink-700'
+                                                            : 'text-gray-400 hover:text-pink-500'
+                                                    }`}
+                                                    onClick={() => handleCommentDislike(comment._id, post._id, user.user._id)}
                                                 >
-                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
-                                                    </svg>
-                                                    <span>{comment.downvotes || 0}</span>
+                                                    <FaTimes className="w-5 h-5" />
+                                                    <span className="font-medium">{comment.dislikes || 0}</span>
                                                 </button>
                                             </div>
                                         </div>

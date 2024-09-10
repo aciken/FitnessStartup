@@ -263,7 +263,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                         <span className="font-medium">{likedPosts.includes(post._id) ?  post.likes + 1 : dislikedPosts.includes(post._id) ? post.likes - 1 : post.likes}</span>
                     </button>
                     <button 
-                        className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors duration-200"
+                        className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors duration-200 "
                         onClick={(e) => handleInteractionClick(e, () => {/* Handle comment action */})}
                     >
                         <FaComment className="text-lg" />

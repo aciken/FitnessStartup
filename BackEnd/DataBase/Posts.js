@@ -14,12 +14,17 @@ const postSchema = new mongoose.Schema({
     likes: { type: Number, default: 0 },
     likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     comments: [{
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-      content: String,
+      _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+      content: { type: String, required: true },
       createdAt: { type: Date, default: Date.now },
       fromValue: String,
       toValue: String,
-      username: String
+      username: String,
+      likes: { type: Number, default: 0 },
+      dislikes: { type: Number, default: 0 },
+      likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+      dislikedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
     }]
 });
 
