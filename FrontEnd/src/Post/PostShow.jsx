@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { LeftTab } from "../MainPage/LeftTab";
 import { PostCard } from "../MainPage/PostCardComponent";
 import { useProfileFunctions } from "../Profile/useProfileFunctions";
-import { FaUser, FaArrowRight, FaHeart, FaTimes } from 'react-icons/fa';
-
+import { FaUser, FaArrowRight, FaHeart, FaTimes, FaArrowLeft } from 'react-icons/fa';
 
 export function PostShow() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
     const [post, setPost] = useState(null);
     const [likedPosts, setLikedPosts] = useState([]);
@@ -18,7 +18,6 @@ export function PostShow() {
 
     const [likedComments, setLikedComments] = useState([]);
     const [dislikedComments, setDislikedComments] = useState([]);
-
 
     const {
         getFromBetterName
@@ -75,7 +74,6 @@ export function PostShow() {
         axios.put(`http://localhost:3000/likeComment`, { commentId, postId, userId, interaction: "like" })
             .then(res => {
                 setPost(res.data.post);
-                window.location.reload();
             })
             .catch(err => {
                 console.log(err);
@@ -87,20 +85,27 @@ export function PostShow() {
         axios.put(`http://localhost:3000/likeComment`, { commentId, postId, userId, interaction: "dislike" })
             .then(res => {
                 setPost(res.data.post);
-                window.location.reload();
             })
             .catch(err => {
                 console.log(err);
             });
     }
 
-
     return (
-        <div className="flex flex-row min-h-screen bg-gray-50 z-10">
-            <div className="fixed top-0 left-0 h-full">
-                <LeftTab current='Diet'/>
+        <div className="flex flex-col min-h-screen bg-gray-50 z-10">
+            <div className="w-full p-4 bg-white shadow-md">
+                <div className="max-w-6xl mx-auto flex justify-between items-center">
+                    <h1 className="text-2xl font-bold text-gray-800">Post Details</h1>
+                    <button
+                        onClick={() => navigate('/feed/home')}
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
+                    >
+                        <FaArrowLeft className="mr-2" />
+                        Back to Feed
+                    </button>
+                </div>
             </div>
-            <div className="flex-grow ml-64 md:p-8 lg:p-12 overflow-y-auto">
+            <div className="flex-grow md:p-8 lg:p-12 overflow-y-auto">
                 {isLoading ? (
                     <div>Loading...</div>
                 ) : post ? (
@@ -134,7 +139,9 @@ export function PostShow() {
                                     </div>
                                 </div>
                                 <div className="space-y-6">
-                                    {post.comments && post.comments.map((comment, index) => (
+                                    {post.comments && post.comments
+                                        .sort((a, b) => (b.likes || 0) - (b.dislikes || 0) - ((a.likes || 0) - (a.dislikes || 0)))
+                                        .map((comment, index) => (
                                         <div key={index} className="bg-gray-50 p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
                                             <div className="flex items-center justify-between mb-3">
                                                 <div className="flex items-center cursor-pointer group">
@@ -161,8 +168,8 @@ export function PostShow() {
                                                 <button
                                                     className={`flex items-center space-x-2 transition-all duration-300 ${
                                                         comment.likedBy && comment.likedBy.includes(user.user._id)
-                                                            ? 'text-blue-600 hover:text-blue-700'
-                                                            : 'text-gray-400 hover:text-blue-500'
+                                                            ? 'text-blue-500 hover:text-blue-700'
+                                                            : 'text-gray-400 hover:text-gray-600'
                                                     }`}
                                                     onClick={() => handleCommentLike(comment._id, post._id, user.user._id)}
                                                 >
@@ -172,8 +179,8 @@ export function PostShow() {
                                                 <button 
                                                     className={`flex items-center space-x-2 transition-all duration-300 ${
                                                         comment.dislikedBy && comment.dislikedBy.includes(user.user._id)
-                                                            ? 'text-pink-600 hover:text-pink-700'
-                                                            : 'text-gray-400 hover:text-pink-500'
+                                                            ? 'text-pink-500 hover:text-pink-700'
+                                                            : 'text-gray-400 hover:text-gray-600'
                                                     }`}
                                                     onClick={() => handleCommentDislike(comment._id, post._id, user.user._id)}
                                                 >

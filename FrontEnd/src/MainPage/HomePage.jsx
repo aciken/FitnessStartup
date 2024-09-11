@@ -7,6 +7,8 @@ import { PostCard } from './PostCardComponent';
 import { TopCategories } from './TopCategories';
 import { MainPageFunctions } from './MainPageFunctions';
 import { PostStartPopup } from '../Post/PostStartPopup';
+import { CommentPopup } from './CommentPopup';
+
 
 export function HomePage() {
 
@@ -22,7 +24,14 @@ export function HomePage() {
         setIsStartChangePopupOpen,
         selectedStart,
         handleStartClick,
-        handleConfirmStart
+        handleConfirmStart,
+        isCommentPopupOpen,
+        setIsCommentPopupOpen,
+        commentValue,
+        setCommentValue,
+        handleConfirmComment,
+        handleCommentOpen,
+        handleCommentClose,
     } = MainPageFunctions();
 
 
@@ -118,34 +127,34 @@ export function HomePage() {
     //     }
 
     // }
-    console.log(likedPosts, dislikedPosts)
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            console.log('isStartChangePopupOpen:', isStartChangePopupOpen);
-        }, 3000);
-
-        return () => clearInterval(intervalId);
-    }, [isStartChangePopupOpen]);
     
 
+    const [selectedCategory, setSelectedCategory] = useState('all');
 
+const handleCategoryChange = (category) => {
+  setSelectedCategory(category);
+  // Add any additional logic you need when the category changes
+};
 
 
 
 
     return (
         <div className="flex flex-row min-h-screen  bg-gray-50 z-10">
-            <TopCategories
- selectedTimeRange={selectedTimeRange}
- onTimeRangeChange={handleTimeRangeChange}
- selectedAction={selectedAction}
- onActionChange={handleActionChange}
-                                />
+<TopCategories
+  selectedTimeRange={selectedTimeRange}
+  onTimeRangeChange={handleTimeRangeChange}
+  selectedAction={selectedAction}
+  onActionChange={handleActionChange}
+  selectedCategory={selectedCategory}
+  onCategoryChange={handleCategoryChange}
+/>
+                               
             <div className="fixed top-0 left-0 h-full">
-                <LeftTab current='Home'/>
+                {/* <LeftTab current='Home'/> */}
             </div>
-            <div className='flex-grow ml-64 p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
+            <div className='flex-grow p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
                 <div className="space-y-8">
                     {posts.map((post) => (
                         <PostCard 
@@ -156,7 +165,8 @@ export function HomePage() {
                             dislikedPosts={dislikedPosts} 
                             user={user} 
                             handleActionChange={handleActionChange}
-                            handleStartClick={handleStartClick}  // Pass this down
+                            handleStartClick={handleStartClick} 
+                            handleCommentOpen={handleCommentOpen}
                         />
                     ))}
                 </div>
@@ -166,6 +176,13 @@ export function HomePage() {
                 onClose={() => setIsStartChangePopupOpen(false)}
                 onConfirm={handleConfirmStart}
                 changeInfo={selectedStart}
+            />
+
+            <CommentPopup
+                isOpen={isCommentPopupOpen}
+                onClose={() => setIsCommentPopupOpen(false)}
+                onConfirm={handleConfirmComment}
+
             />
         </div>
     );

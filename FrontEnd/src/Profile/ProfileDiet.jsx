@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { LeftTab } from '../MainPage/LeftTab';
 import { useNavigate } from 'react-router-dom';
-import { FaChevronDown, FaChevronUp, FaExchangeAlt, FaCheck, FaTrash, FaPencilAlt } from 'react-icons/fa';
+import { FaChevronDown, FaUtensils, FaDumbbell, FaBed, FaExchangeAlt, FaCheck, FaTrash, FaPencilAlt, FaHome } from 'react-icons/fa';
 import { PostPopup } from '../Post/PostPopup';
 import { PostDeletePopup } from '../Post/PostDeletePopup';
 import { useProfileFunctions } from './useProfileFunctions';
@@ -33,10 +33,18 @@ export function ProfileDiet() {
 
     return (
         <div className="flex flex-row min-h-screen bg-gray-100">
-            <LeftTab current='Profile' />
             <div className='w-full p-8'>
                 <div className='max-w-6xl mx-auto'>
-                    <h1 className="text-3xl font-bold text-gray-800 mb-6">Profile Information</h1>
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-3xl font-bold text-gray-800">Profile Information</h1>
+                        <button
+                            onClick={() => navigate('/feed/home')}
+                            className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
+                        >
+                            <FaHome className="mr-2 text-sm" />
+                            Return to Home
+                        </button>
+                    </div>
                     <div className='mb-8 border-b border-gray-200'>
                         <nav className='flex flex-row justify-between items-center'>
                             <div className='-mb-px flex flex-row space-x-8'>
@@ -56,7 +64,7 @@ export function ProfileDiet() {
                             </div>
                             <button
                                 onClick={() => navigate('/profile/change', {state: {from: 'diet'}})}
-                                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
+                                className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                             >
                                 <FaPencilAlt className="mr-2 text-sm" />
                                 Change

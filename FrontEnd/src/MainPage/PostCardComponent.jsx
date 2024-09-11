@@ -11,18 +11,33 @@ import { MainPageFunctions } from './MainPageFunctions';
 
 
 
-export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, handleActionChange, handleStartClick }) {
+export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, handleActionChange, handleStartClick,handleCommentOpen }) {
     const navigate = useNavigate();
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
+    const {
+        isCommentPopupOpen,
+        setIsCommentPopupOpen,
+        commentValue,
+        setCommentValue,
+        handleConfirmComment,
+        handleCommentClose,
+    } = MainPageFunctions();
 
 
 
 
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            console.log('isCommentPopupOpen:', isCommentPopupOpen);
+        }, 3000);
+
+        return () => clearInterval(intervalId);
+    }, [isCommentPopupOpen]);
 
 
 
@@ -264,10 +279,10 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                     </button>
                     <button 
                         className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors duration-200 "
-                        onClick={(e) => handleInteractionClick(e, () => {/* Handle comment action */})}
+                        onClick={(e) => handleInteractionClick(e, () => {handleCommentOpen()})}
                     >
                         <FaComment className="text-lg" />
-                        <span className="font-medium">{post.commentCount}</span>
+                        <span className="font-medium">{post.comments.length}</span>
                     </button>
                 </div>
                 <button 

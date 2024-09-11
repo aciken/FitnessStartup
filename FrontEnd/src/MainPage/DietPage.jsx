@@ -7,6 +7,7 @@ import axios from 'axios';
 import { TopCategories } from './TopCategories';
 import { MainPageFunctions } from './MainPageFunctions';
 import { PostStartPopup } from '../Post/PostStartPopup';
+import { CommentPopup } from './CommentPopup';
 
 
 
@@ -25,7 +26,11 @@ export function DietPage() {
         setIsStartChangePopupOpen,
         selectedStart,
         handleStartClick,
-        handleConfirmStart
+        handleConfirmStart,
+        handleCommentOpen,
+        isCommentPopupOpen,
+        setIsCommentPopupOpen,
+        handleConfirmComment
     } = MainPageFunctions();
 
     const [likedPosts, setLikedPosts] = useState([]);
@@ -95,19 +100,28 @@ export function DietPage() {
         }
     }, [])
 
+    const [selectedCategory, setSelectedCategory] = useState('all');
+
+const handleCategoryChange = (category) => {
+  setSelectedCategory(category);
+  // Add any additional logic you need when the category changes
+};
+
 
     return (
         <div className="flex flex-row min-h-screen  bg-gray-50 z-10">
-            <TopCategories
- selectedTimeRange={selectedTimeRange}
- onTimeRangeChange={handleTimeRangeChange}
- selectedAction={selectedAction}
- onActionChange={handleActionChange}
-                                />
-            <div className="fixed top-0 left-0 h-full">
+<TopCategories
+  selectedTimeRange={selectedTimeRange}
+  onTimeRangeChange={handleTimeRangeChange}
+  selectedAction={selectedAction}
+  onActionChange={handleActionChange}
+  selectedCategory={selectedCategory}
+  onCategoryChange={handleCategoryChange}
+/>
+            {/* <div className="fixed top-0 left-0 h-full">
                 <LeftTab current='Diet'/>
-            </div>
-            <div className='flex-grow ml-64 p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
+            </div> */}
+            <div className='flex-grow p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
                 <div className="space-y-8">
                     {posts.map((post) => (
                         <PostCard 
@@ -119,6 +133,7 @@ export function DietPage() {
                             user={user} 
                             handleActionChange={handleActionChange}
                             handleStartClick={handleStartClick}
+                            handleCommentOpen={handleCommentOpen}
                         />
                     ))}
                 </div>
@@ -128,6 +143,12 @@ export function DietPage() {
                 onClose={() => setIsStartChangePopupOpen(false)}
                 onConfirm={handleConfirmStart}
                 changeInfo={selectedStart}
+            />
+                        <CommentPopup
+                isOpen={isCommentPopupOpen}
+                onClose={() => setIsCommentPopupOpen(false)}
+                onConfirm={handleConfirmComment}
+
             />
         </div>
     )

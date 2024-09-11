@@ -6,6 +6,9 @@ export function MainPageFunctions() {
 
     const [isStartChangePopupOpen, setIsStartChangePopupOpen] = useState(false);
     const [selectedStart, setSelectedStart] = useState(null);
+    const [isCommentPopupOpen, setIsCommentPopupOpen] = useState(false);
+    const [commentValue, setCommentValue] = useState("");
+
 
     const handleStartClick = (title, value, changingValue) => {
         console.log(title, value, changingValue)
@@ -29,6 +32,23 @@ export function MainPageFunctions() {
         setIsStartChangePopupOpen(false);
     };
 
+    const handleConfirmComment = () => {
+        
+        if (commentValue) {
+            console.log(commentValue)
+        }
+        setIsCommentPopupOpen(false);
+    };
+
+    const handleCommentOpen = () => {
+        setIsCommentPopupOpen(true);
+        console.log('set')
+    };
+
+    const handleCommentClose = () => {
+        setIsCommentPopupOpen(false);
+    };
+
 
 
     return {
@@ -37,6 +57,14 @@ export function MainPageFunctions() {
         selectedStart,
         setSelectedStart,
         handleStartClick,
+        handleConfirmStart,
+        isCommentPopupOpen,
+        setIsCommentPopupOpen,
+        commentValue,
+        setCommentValue,
+        handleConfirmComment,
+        handleCommentOpen,
+        handleCommentClose,
     }
     
 }
