@@ -1,10 +1,10 @@
 const User = require('../DataBase/DataBase')
 
 const removeChange = async (req, res) => {
-    const {change, email} = req.body
+    const {change, id} = req.body
     try {
         const updatedUser = await User.findOneAndUpdate(
-            { email: email },
+            { _id: id },
             { $set: { [`changing.${change}`]: '' } },
             { new: true, runValidators: true }
         );

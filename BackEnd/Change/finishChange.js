@@ -1,11 +1,11 @@
-const User = require('../Database/DataBase');
+const User = require('../DataBase/DataBase');
 
 const finishChange = async (req, res) => {
-    const { title, toValue, fromValue, email } = req.body;
+    const { title, toValue, fromValue, id } = req.body;
 
     try{
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ _id: id });
         if(user){
             user.setup[title] = toValue;
             user.changing[title] = '';

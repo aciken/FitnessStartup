@@ -146,7 +146,8 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
 
 
     const addLike = async (postId, userId) => {
-        console.log(user.user._id, post._id)
+        console.log(user)
+        console.log(user._id, post._id)
         addLikedPost(postId);
         axios.put('http://localhost:3000/likePost', {
             postId: postId,
@@ -154,7 +155,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         })
         .then(response => {
             console.log(response.data.user);
-             localStorage.setItem('user', JSON.stringify({ user: response.data.user }));
+             localStorage.setItem('user', JSON.stringify(response.data.user));
         })
         .catch(error => {
             console.log(error);
@@ -271,7 +272,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
             <div className="flex justify-between items-center text-sm border-t pt-4 border-gray-100">
                 <div className="flex items-center space-x-6">
                     <button
-                        onClick={(e) => handleInteractionClick(e, () => addLike(post._id, user.user._id))}
+                        onClick={(e) => handleInteractionClick(e, () => addLike(post._id, user._id))}
                         className={`flex items-center space-x-2 text-gray-500 hover:text-gray-600 transition-colors duration-200 ${(likedPosts.includes(post._id) || post.likedBy.includes(user._id)) && !dislikedPosts.includes(post._id) ? 'text-pink-500 hover:text-pink-700' : dislikedPosts.includes(post._id)  ? 'text-gray-500 hover:text-gray-600' : ''}`}
                     >
                         <FaHeart className="text-lg" />

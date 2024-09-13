@@ -28,16 +28,16 @@ export function useProfileFunctions() {
     }, []);
 
     
-    const addChange = async(change, value,userEmail) => {
+    const addChange = async(change, value,id) => {
         try {
             const stringValue = value.toString();
             const response = await axios.put('http://localhost:3000/addChange',{
                 change: change,
                 value: stringValue,
-                email: userEmail
+                id: id
             })
             if(response.data != 'User not found' || response.data != 'Internal Server Error'){
-                localStorage.setItem('user', JSON.stringify(response.data));
+                localStorage.setItem('user', JSON.stringify(response.data.user));
                 navigate('/profile/' + getCategory(getBetterName(change)))
             }
         } catch (err) {
@@ -45,16 +45,16 @@ export function useProfileFunctions() {
         }
     }
 
-    const removeChange = useCallback(async (change, email) => {
-        console.log(change, email)
+    const removeChange = useCallback(async (change, id) => {
+
         try {
 
             const response = await axios.put('http://localhost:3000/removeChange', {
-                change, email
+                change, id
             });
             
             const updatedUser = response.data.user;
-            localStorage.setItem('user', JSON.stringify({ user: updatedUser }));
+            localStorage.setItem('user', JSON.stringify(updatedUser));
             
             setUser(prevUser => ({
                 ...prevUser,
@@ -74,7 +74,7 @@ export function useProfileFunctions() {
             })
             .then(res => {
                 console.log(change.title)
-            removeChange(getFromBetterName(change.title), user.email);
+            removeChange(getFromBetterName(change.title), user._id);
             })
             .catch(err => {
                 console.error('Error removing change:', err);
@@ -105,13 +105,13 @@ export function useProfileFunctions() {
     }, []);
 
 
-    const finishChange = useCallback(async (change, email) => {
+    const finishChange = useCallback(async (change, id) => {
         axios.put('http://localhost:3000/finishChange', {
-            title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, email
+            title: getFromBetterName(change.title), toValue: change.toValue, fromValue: change.fromValue, id
         })
         .then(res => {
             const updatedUser = res.data.user;
-            localStorage.setItem('user', JSON.stringify({ user: updatedUser }));
+            localStorage.setItem('user', JSON.stringify(updatedUser ));
             setUser(updatedUser);
             window.location.reload();
         })
@@ -127,7 +127,7 @@ export function useProfileFunctions() {
                 title: change.title, toValue: change.toValue, fromValue: change.fromValue, user, postContent, postType: 'finish', category: getCategory(change.title)
             })
             .then(res => {
-            finishChange(change, user.email);
+            finishChange(change, user._id);
             })
             .catch(err => {
                 console.error('Error removing change:', err);
@@ -137,7 +137,7 @@ export function useProfileFunctions() {
 
     const startChange = useCallback(async (change, user) => {
         console.log(change, user)
-        addChange(getFromBetterName(change.title), change.toValue, user.email);
+        addChange(getFromBetterName(change.title), change.toValue, user._id);
 
         
     }, []);
@@ -235,7 +235,7 @@ export function useProfileFunctions() {
 
     const handleConfirmDelete = () => {
         if (selectedDelete) {
-            removeChange(getFromBetterName(selectedDelete.title), user.email, selectedDelete.fromValue, selectedDelete.toValue);
+            removeChange(getFromBetterName(selectedDelete.title), user._id, selectedDelete.fromValue, selectedDelete.toValue);
         }
         setIsPostDeletePopupOpen(false);
     };

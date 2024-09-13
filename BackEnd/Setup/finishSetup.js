@@ -1,10 +1,10 @@
 const User = require('../DataBase/DataBase');
 
 const finishSetup = async (req, res) => {
-    const {email, setup} = req.body;
-    console.log(email)
+    const {id, setup} = req.body;
+
     try{
-        const user = await User.findOne({email: email});
+        const user = await User.findOne({_id: id});
         user.step = 2;
         user.setup = setup;
         await user.save();

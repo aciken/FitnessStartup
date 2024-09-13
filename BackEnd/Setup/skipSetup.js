@@ -1,9 +1,9 @@
 const User = require('../DataBase/DataBase');
 
 const skipSetup = async (req, res) => {
-    const {email} = req.body;
+    const {id} = req.body;
     try{
-        const user = await User.findOne({email: email});
+        const user = await User.findOne({_id: id});
         user.step = 0;
         await user.save();
         return res.json({user});

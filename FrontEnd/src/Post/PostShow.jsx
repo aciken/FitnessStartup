@@ -38,7 +38,7 @@ export function PostShow() {
 
     const addLikedPost = (postId) => {
         console.log(post)
-        if (post && post.likedBy.includes(user.user._id)) {
+        if (post && post.likedBy.includes(user._id)) {
             if (dislikedPosts.includes(postId)) {
                 setDislikedPosts(dislikedPosts.filter(id => id !== postId));
             } else {
@@ -56,7 +56,7 @@ export function PostShow() {
     const handleCommentSubmit = (comment, postId) => {
         if(comment.length > 0){
         const category = getFromBetterName(post.title);
-        axios.put(`http://localhost:3000/addComment`, { postId, comment, userId: user.user._id, username: user.user.username, fromValue: user.user.setup[category], toValue: user.user.changing[category]})
+        axios.put(`http://localhost:3000/addComment`, { postId, comment, userId: user._id, username: user.username, fromValue: user.setup[category], toValue: user.changing[category]})
             .then(res => {
                 setPost(res.data.post);
                 window.location.reload();
@@ -167,22 +167,22 @@ export function PostShow() {
                                             <div className="flex items-center mt-3 space-x-4">
                                                 <button
                                                     className={`flex items-center space-x-2 transition-all duration-300 ${
-                                                        comment.likedBy && comment.likedBy.includes(user.user._id)
+                                                        comment.likedBy && comment.likedBy.includes(user._id)
                                                             ? 'text-blue-500 hover:text-blue-700'
                                                             : 'text-gray-400 hover:text-gray-600'
                                                     }`}
-                                                    onClick={() => handleCommentLike(comment._id, post._id, user.user._id)}
+                                                    onClick={() => handleCommentLike(comment._id, post._id, user._id)}
                                                 >
                                                     <FaHeart className="w-5 h-5" />
                                                     <span className="font-medium">{comment.likes || 0}</span>
                                                 </button>
                                                 <button 
                                                     className={`flex items-center space-x-2 transition-all duration-300 ${
-                                                        comment.dislikedBy && comment.dislikedBy.includes(user.user._id)
+                                                        comment.dislikedBy && comment.dislikedBy.includes(user._id)
                                                             ? 'text-pink-500 hover:text-pink-700'
                                                             : 'text-gray-400 hover:text-gray-600'
                                                     }`}
-                                                    onClick={() => handleCommentDislike(comment._id, post._id, user.user._id)}
+                                                    onClick={() => handleCommentDislike(comment._id, post._id, user._id)}
                                                 >
                                                     <FaTimes className="w-5 h-5" />
                                                     <span className="font-medium">{comment.dislikes || 0}</span>

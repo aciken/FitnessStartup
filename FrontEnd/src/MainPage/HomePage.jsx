@@ -18,6 +18,15 @@ export function HomePage() {
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const user = JSON.parse(localStorage.getItem('user'))
+            console.log('User from localStorage:', user);
+        }, 3000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
     const 
     {
         isStartChangePopupOpen,
@@ -96,7 +105,7 @@ export function HomePage() {
     const addLikedPost = (postId) => {
         console.log(posts)
         const post = posts.find(post => post._id === postId);
-        if (post && post.likedBy.includes(user.user._id)) {
+        if (post && post.likedBy.includes(user._id)) {
             if (dislikedPosts.includes(postId)) {
                 setDislikedPosts(dislikedPosts.filter(id => id !== postId));
             } else {

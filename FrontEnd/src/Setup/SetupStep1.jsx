@@ -10,6 +10,15 @@ export function SetupStep1() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const user = JSON.parse(localStorage.getItem('user'))._id
+            console.log('User from localStorage:', user);
+        }, 3000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
     const [setup, setSetup] = useState({
         diet: 'none',
         meals: 'none',
@@ -62,7 +71,7 @@ export function SetupStep1() {
         axios.put('http://localhost:3000/skipSetup', {
             id: JSON.parse(localStorage.getItem('user'))._id
         }).then((res) => {
-            localStorage.setItem('user', JSON.stringify(res.data));
+            localStorage.setItem('user', JSON.stringify(res.data.user));
             navigate('/feed/home');
         }).catch((err) => {
             console.log(err);

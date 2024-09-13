@@ -68,7 +68,7 @@ export function ProfileChange() {
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-            const parsedUser = JSON.parse(storedUser).user;
+            const parsedUser = JSON.parse(storedUser);
             setUserData(parsedUser.setup);
             setUserEmail(parsedUser.email);
         }
@@ -267,7 +267,7 @@ export function ProfileChange() {
                 email: userEmail
             })
             if(response.data != 'User not found' || response.data != 'Internal Server Error'){
-                localStorage.setItem('user', JSON.stringify(response.data));
+                localStorage.setItem('user', JSON.stringify(response.data.user));
                 navigate('/profile/' + selectedCategory);
             }
         } catch (err) {

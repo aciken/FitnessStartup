@@ -20,10 +20,10 @@ export function ProfilePage() {
         }
     }, []);
 
-    const removeChange = useCallback(async (change, email) => {
+    const removeChange = useCallback(async (change, id) => {
         try {
             const response = await axios.put('http://localhost:3000/removeChange', {
-                change, email
+                change, id
             });
             
             const updatedUser = response.data.user;
@@ -133,7 +133,7 @@ export function ProfilePage() {
                                     className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        removeChange(getFromBetterName(title), user.email);
+                                        removeChange(getFromBetterName(title), user._id);
                                     }}
                                 >
                                     <FaTrash className="text-lg" />
@@ -167,7 +167,7 @@ export function ProfilePage() {
                                 className="text-red-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    removeChange(getFromBetterName(title), user.email);
+                                    removeChange(getFromBetterName(title), user._id);
                                 }}
                             >
                                 <FaTrash className="text-lg" />

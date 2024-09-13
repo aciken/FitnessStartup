@@ -75,11 +75,16 @@ export function Signin() {
                         id: res.data.id,
                     })
                     .then((res) => {
+                      console.log(res.data.user)
                         if(res.data.user.username == ''){
                             navigate('/set-username', {state: {id: res.data.user._id}})
                         } else {
-                            localStorage.setItem('user', JSON.stringify(res.data.user))
+                          localStorage.setItem('user', JSON.stringify(res.data.user))
+                          if(res.data.user.step != 1){
+                            navigate('/feed/home')
+                          } else {
                             navigate('/setup/food')
+                          }
                         }
                         console.log(res.data.user);
                     })

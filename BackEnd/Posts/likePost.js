@@ -3,6 +3,8 @@ const Post = require('../DataBase/Posts');
 
 const likePost = async (req, res) => {
     const { postId, userId } = req.body;
+
+    console.log(postId, userId)
     try {
         const post = await Post.findById(postId);
         const user = await User.findById(userId);

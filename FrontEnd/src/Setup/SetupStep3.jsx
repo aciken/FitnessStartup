@@ -10,6 +10,16 @@ export function SetupStep3() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const user = JSON.parse(localStorage.getItem('user'))._id
+            console.log('User from localStorage:', user);
+        }, 3000);
+
+        // Clean up the interval when the component unmounts
+        return () => clearInterval(intervalId);
+    }, []);
+
     const [setup, setSetup] = useState({
         sleep: 'none',
         bed: 'none',
@@ -24,13 +34,14 @@ export function SetupStep3() {
     }, [location.state]);
 
     const finishSetup = () => {
-        console.log(JSON.parse(localStorage.getItem('user'))._id)
+        console.log(JSON.parse(localStorage.getItem('user')))
         if (setup.sleep !== 'none' && setup.bed !== 'none' && setup.varies !== 'none') {
             axios.put('http://localhost:3000/finishSetup', {
                 id: JSON.parse(localStorage.getItem('user'))._id,
                 setup: setup
             }).then((res) => {
-                localStorage.setItem('user', JSON.stringify(res.data));
+                console.log(res.data)
+                localStorage.setItem('user', JSON.stringify(res.data.user));
                 navigate('/feed/home');
             }).catch((err) => {
                 console.log(err);
@@ -54,7 +65,7 @@ export function SetupStep3() {
         axios.put('http://localhost:3000/skipSetup', {
             id: JSON.parse(localStorage.getItem('user'))._id
         }).then((res) => {
-            localStorage.setItem('user', JSON.stringify(res.data));
+            localStorage.setItem('user', JSON.stringify(res.data.user));
             navigate('/feed/home');
         }).catch((err) => {
             console.log(err);

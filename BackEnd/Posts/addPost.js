@@ -7,7 +7,7 @@ const addPost = async (req, res) => {
 
 
     try{
-    const person = await User.findOne({ email: user.email });
+    const person = await User.findOne({ _id: user._id });
 
     if(!person){
         return res.json('User not found');

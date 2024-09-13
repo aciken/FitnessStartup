@@ -1,14 +1,14 @@
 const User = require('../DataBase/DataBase')
 
 const addChange = async(req, res) => {
-    const {change, value, email} = req.body;
+    const {change, value, id} = req.body;
 
-    console.log(change, value, email)
+    console.log(change, value, id)
     try {
-        console.log('Attempting to update:', {change, value, email});  
+
 
         const updatedUser = await User.findOneAndUpdate(
-            { email: email },
+            { _id: id },
             { $set: { [`changing.${change}`]: value } },
             { new: true, runValidators: true }
         );

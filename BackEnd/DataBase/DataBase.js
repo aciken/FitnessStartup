@@ -6,20 +6,28 @@ mongoose.connect('mongodb://localhost:27017/Fitness')
 // Define your schema
 const userSchema = new mongoose.Schema({
   username: {
-      type: String,
-      required: true,
+    type: String,
+    default: ''
   },
   email: {
     type: String,
-    required: true,
+    default: ''
   },
   password: {
     type: String,
-    required: true
+    default: ''
   },
   verify:{
       type: Number,
       default: 0
+  },
+  google:{
+    type: Boolean,
+    default: false
+  },
+  googleId:{
+    type: String,
+    default: ''
   },
   step:{
       type: Number,
