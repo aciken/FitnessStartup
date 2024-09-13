@@ -58,8 +58,9 @@ export function SetupStep1() {
     };
 
     const skipSetup = () => {
+        console.log(JSON.parse(localStorage.getItem('user')));
         axios.put('http://localhost:3000/skipSetup', {
-            email: JSON.parse(localStorage.getItem('user')).user.email
+            id: JSON.parse(localStorage.getItem('user'))._id
         }).then((res) => {
             localStorage.setItem('user', JSON.stringify(res.data));
             navigate('/feed/home');

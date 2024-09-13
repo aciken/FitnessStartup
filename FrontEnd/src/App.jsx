@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './index.css'
 import {HomePage} from "./MainPage/HomePage";
 import { MainNotLoged } from "./NotLoged/MainNotLoged";
-import { Signup } from "./Auth/Routes/Signup";
+// import { Signup } from "./Auth/Routes/Signup";
 import {SigninRoute} from './Auth/Routes/SigninRoute';
 import { CreateAccRoute } from "./Auth/Routes/CreateAccRoute";
 import { ConfirmSignin } from "./Auth/Routes/ConfirmSignin";
@@ -12,7 +12,7 @@ import { SleepPage } from "./MainPage/SleepPage";
 import { ExercisePage } from "./MainPage/ExercisePage";
 import { ChangesPage } from "./MainPage/ChangesPage";
 import { ProfilePage } from "./Profile/ProfilePage";
-import { Verification } from "./Auth/Routes/Verification";
+import { Verification } from "./Auth/Verification";
 import { SetupStep1 } from "./Setup/SetupStep1";
 import { SetupStep2 } from "./Setup/SetupStep2";
 import { SetupStep3 } from "./Setup/SetupStep3";
@@ -22,6 +22,12 @@ import {ProfileExercise} from "./Profile/ProfileExercise";
 import {ProfileDiet} from "./Profile/ProfileDiet";
 import {ProfileChangePage} from "./Profile/ProfileChangePage";
 import {PostShow} from "./Post/PostShow";
+import { Signin } from "./Auth/Signin";
+import { Signup } from "./Auth/Signup";
+import { ContinueSignin } from "./Auth/ContinueSignin";
+import { SetUsername } from "./Auth/SetUsername";
+
+
 
 
 
@@ -47,7 +53,8 @@ export function App() {
     <Route exact path="/feed/exercise" element={<ExercisePage/>} />
     <Route exact path="/feed/changes" element={<ChangesPage/>} />
    <Route exact path="/signup" element={<Signup/>} />
-    <Route exact path="/signin" element={<SigninRoute/>} />
+    <Route exact path="/signin" element={<Signin/>} />
+    <Route exact path="/continue-signin" element={<ContinueSignin/>} />
     <Route exact path="/create-account" element={<CreateAccRoute/>} />
     <Route exact path="/confirm-signin" element={<ConfirmSignin/>} />
     <Route exact path="/profile/diet" element={<ProfileDiet/>} />
@@ -62,6 +69,7 @@ export function App() {
     <Route path="/profile/change/:category" element={<ProfileChange />} />
     <Route path="/profile/change/:category/:option" element={<ProfileChange />} />
     <Route path="/post/:id" element={<PostShow />} />
+    <Route path="/set-username" element={<SetUsername />} />
 
 
     

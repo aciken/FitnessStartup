@@ -7,8 +7,8 @@ import { PostDeletePopup } from '../Post/PostDeletePopup';
 import { PostFinishPopup } from '../Post/PostFinishPopup';
 
 // Add this button style at the top of your component or in a separate styles file
-const buttonStyle = "bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs";
-const greenButtonStyle = "bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs";
+const buttonStyle = "bg-gradient-to-r from-blue-500 to-blue-700 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-blue-600 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs";
+const greenButtonStyle = "bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold py-1.5 px-3 rounded-full shadow-sm hover:from-green-600 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-xs";
 
 export function ProfileChangePage() {
     const navigate = useNavigate();
@@ -93,7 +93,7 @@ export function ProfileChangePage() {
                                     Post
                                 </button>
                                 <button
-                                    className="bg-red-500 text-white p-1.5 rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                                    className="bg-gradient-to-r  from-red-500 to-red-700 text-white p-1.5 rounded-full shadow-sm hover:from-red-600 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         console.log(getFromBetterName(title), title);
@@ -156,7 +156,7 @@ export function ProfileChangePage() {
                         <h1 className="text-3xl font-bold text-gray-800">Profile Information</h1>
                         <button
                             onClick={() => navigate('/feed/home')}
-                            className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
+                            className="bg-gradient-to-r from-purple-700 to-indigo-800 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-purple-800 hover:to-indigo-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                         >
                             <FaHome className="mr-2 text-sm" />
                             Return to Home

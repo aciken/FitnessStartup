@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaChevronDown, FaClock, FaCog, FaPlus, FaFilter, FaList, FaUtensils, FaDumbbell, FaBed, FaBrain, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaChevronDown, FaClock, FaCog, FaPlus, FaFilter, FaList, FaUtensils, FaDumbbell, FaBed, FaUser, FaSignOutAlt, FaTrash, FaEdit, FaCheck, FaPaperPlane } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -14,10 +14,10 @@ const timeRanges = [
 const postActions = [
   { value: 'all', label: 'All Posts', icon: FaFilter },
   { value: 'start', label: 'Start', icon: FaPlus },
-  { value: 'finish', label: 'Finish', icon: FaCog },
-  { value: 'update', label: 'Update', icon: FaCog },
-  { value: 'remove', label: 'Remove', icon: FaCog },
-  { value: 'post', label: 'Post', icon: FaPlus },
+  { value: 'finish', label: 'Finish', icon: FaCheck },
+  { value: 'update', label: 'Update', icon: FaEdit },
+  { value: 'remove', label: 'Remove', icon: FaTrash },
+  { value: 'post', label: 'Post', icon: FaPaperPlane },
 ];
 
 const categories = [
@@ -45,6 +45,9 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
     };
   }, []);
 
+  const selectedOption = options.find(option => option.value === selected);
+  const SelectedIcon = selectedOption ? selectedOption.icon : Icon;
+
   return (
     <div className="relative" ref={dropdownRef}>
       <motion.button
@@ -54,8 +57,8 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
         className="flex items-center justify-between w-full px-4 py-2 bg-white border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
       >
         <div className="flex items-center">
-          <Icon className="mr-2 text-indigo-500" />
-          <span>{options.find(option => option.value === selected)?.label}</span>
+          <SelectedIcon className="mr-2 text-indigo-500" />
+          <span>{selectedOption?.label}</span>
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -215,8 +218,24 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      console.log('Current user in localStorage:', user);
+    }, 3000);
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
+
   const handleProfileClick = () => {
-    navigate('/profile/diet');
+    console.log(JSON.parse(localStorage.getItem('user')));
+    if(JSON.parse(localStorage.getItem('user')).step != 2) {
+      navigate('/setup/food');
+    } else {
+      navigate('/profile/diet');
+    }
+
   };
 
   return (
@@ -258,7 +277,10 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
                   <FaPlus className="mr-2" />
                   Post
                 </motion.button>
-                <ProfileDropdown onLogout={onLogout} onProfileClick={handleProfileClick} />
+                <ProfileDropdown onLogout={() => {
+                  localStorage.removeItem('user');
+                  navigate('/');
+                }} onProfileClick={handleProfileClick} />
               </div>
             </div>
           </div>

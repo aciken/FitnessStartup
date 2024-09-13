@@ -24,9 +24,10 @@ export function SetupStep3() {
     }, [location.state]);
 
     const finishSetup = () => {
+        console.log(JSON.parse(localStorage.getItem('user'))._id)
         if (setup.sleep !== 'none' && setup.bed !== 'none' && setup.varies !== 'none') {
             axios.put('http://localhost:3000/finishSetup', {
-                email: JSON.parse(localStorage.getItem('user')).user.email,
+                id: JSON.parse(localStorage.getItem('user'))._id,
                 setup: setup
             }).then((res) => {
                 localStorage.setItem('user', JSON.stringify(res.data));
@@ -51,7 +52,7 @@ export function SetupStep3() {
 
     const skipSetup = () => {
         axios.put('http://localhost:3000/skipSetup', {
-            email: JSON.parse(localStorage.getItem('user')).user.email
+            id: JSON.parse(localStorage.getItem('user'))._id
         }).then((res) => {
             localStorage.setItem('user', JSON.stringify(res.data));
             navigate('/feed/home');

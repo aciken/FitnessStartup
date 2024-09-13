@@ -272,7 +272,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 <div className="flex items-center space-x-6">
                     <button
                         onClick={(e) => handleInteractionClick(e, () => addLike(post._id, user.user._id))}
-                        className={`flex items-center space-x-2 text-gray-500 hover:text-gray-600 transition-colors duration-200 ${(likedPosts.includes(post._id) || post.likedBy.includes(user.user._id)) && !dislikedPosts.includes(post._id) ? 'text-pink-500 hover:text-pink-700' : dislikedPosts.includes(post._id)  ? 'text-gray-500 hover:text-gray-600' : ''}`}
+                        className={`flex items-center space-x-2 text-gray-500 hover:text-gray-600 transition-colors duration-200 ${(likedPosts.includes(post._id) || post.likedBy.includes(user._id)) && !dislikedPosts.includes(post._id) ? 'text-pink-500 hover:text-pink-700' : dislikedPosts.includes(post._id)  ? 'text-gray-500 hover:text-gray-600' : ''}`}
                     >
                         <FaHeart className="text-lg" />
                         <span className="font-medium">{likedPosts.includes(post._id) ?  post.likes + 1 : dislikedPosts.includes(post._id) ? post.likes - 1 : post.likes}</span>
