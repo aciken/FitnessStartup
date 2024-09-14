@@ -269,14 +269,14 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
                   onSelect={handleCategoryChange}
                   icon={FaList}
                 />
-                <motion.button
+                {/* <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex items-center justify-center px-6 py-2 rounded-full hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
                 >
                   <FaPlus className="mr-2" />
                   Post
-                </motion.button>
+                </motion.button> */}
                 <ProfileDropdown onLogout={() => {
                   localStorage.removeItem('user');
                   navigate('/');

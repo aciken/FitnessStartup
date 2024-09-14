@@ -53,10 +53,10 @@ export function PostShow() {
         }
     }
 
-    const handleCommentSubmit = (comment, postId) => {
+    const handleCommentSubmit = async(comment, postId) => {
         if(comment.length > 0){
         const category = getFromBetterName(post.title);
-        axios.put(`http://localhost:3000/addComment`, { postId, comment, userId: user._id, username: user.username, fromValue: user.setup[category], toValue: user.changing[category]})
+           await axios.put(`http://localhost:3000/addComment`, { postId, comment, userId: user._id, username: user.username, fromValue: user.setup[category], toValue: user.changing[category]})
             .then(res => {
                 setPost(res.data.post);
                 window.location.reload();
@@ -131,10 +131,10 @@ export function PostShow() {
                                     ></textarea>
                                     <div className="flex justify-end mt-3">
                                         <button
-                                        className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                                        onClick={() => handleCommentSubmit(newComment, post._id)}
+                                        className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-semibold text-blue-100"
+                                        onClick={() => {if(user.step == 2){handleCommentSubmit(newComment, post._id)}else{navigate('/setup/food')}}}
                                         >
-                                        Post Comment
+                                            {user.step == 2 ? 'Post Comment' : 'Finish Setup'}
                                         </button>
                                     </div>
                                 </div>

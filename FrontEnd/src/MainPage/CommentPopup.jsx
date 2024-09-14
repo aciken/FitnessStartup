@@ -1,14 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { MainPageFunctions } from './MainPageFunctions';
 
-export function CommentPopup({ isOpen, onClose, onSubmit }) {
+export function CommentPopup({ isOpen, onClose, onSubmit, postId, user, post }) {
+    const navigate = useNavigate();
     const [comment, setComment] = useState('');
 
-    const handleSubmit = (e) => {
+    const {
+        getFromBetterName
+    } = MainPageFunctions();
+
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        onSubmit(comment);
-        setComment('');
-        onClose();
+        console.log(postId, user)
+        const category = getFromBetterName(post.title);
+        await axios.put(`http://localhost:3000/addComment`, { postId, comment, userId: user._id, username: user.username, fromValue: user.setup[category], toValue: user.changing[category]})
+        .then(res => {
+            navigate(`/post/${postId}`);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+        
+        // onSubmit(comment);
+        // setComment('');
+        // onClose();
     };
+
+
 
     useEffect(() => {
         if (isOpen) {

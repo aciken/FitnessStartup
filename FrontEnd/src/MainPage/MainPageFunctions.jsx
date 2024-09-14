@@ -8,6 +8,27 @@ export function MainPageFunctions() {
     const [selectedStart, setSelectedStart] = useState(null);
     const [isCommentPopupOpen, setIsCommentPopupOpen] = useState(false);
     const [commentValue, setCommentValue] = useState("");
+    const [postId, setPostId] = useState(null);
+
+    const getFromBetterName = (key) => {
+        const nameMap = {
+            'Diet Type': 'diet',
+            'Meals Per Day': 'meals',
+            'Fasting': 'fast',
+            'Fasting Hours': 'fastHours',
+            'Exercise 1': 'exercise1',
+            'Exercise 1 Frequency': 'exercise1Times',
+            'Exercise 2': 'exercise2',
+            'Exercise 2 Frequency': 'exercise2Times',
+            'Exercise 3': 'exercise3',
+            'Exercise 3 Frequency': 'exercise3Times',
+            'Sleep Duration': 'sleep',
+            'Bedtime': 'bed',
+            'Sleep Variation': 'varies',
+            'Calorie Intake': 'calories'
+        };
+        return nameMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    };
 
 
     const handleStartClick = (title, value, changingValue) => {
@@ -40,8 +61,10 @@ export function MainPageFunctions() {
         setIsCommentPopupOpen(false);
     };
 
-    const handleCommentOpen = () => {
+    const handleCommentOpen = (id) => {
         setIsCommentPopupOpen(true);
+        setPostId(id);
+        
         console.log('set')
     };
 
@@ -65,6 +88,8 @@ export function MainPageFunctions() {
         handleConfirmComment,
         handleCommentOpen,
         handleCommentClose,
+        getFromBetterName,
+        postId
     }
     
 }

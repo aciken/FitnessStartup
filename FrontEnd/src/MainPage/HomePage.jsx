@@ -8,6 +8,9 @@ import { TopCategories } from './TopCategories';
 import { MainPageFunctions } from './MainPageFunctions';
 import { PostStartPopup } from '../Post/PostStartPopup';
 import { CommentPopup } from './CommentPopup';
+import { CreatePostPopup } from '../Post/CreatePostPopup';
+import { ProfileChange } from '../Profile/ProfileChange';
+
 
 
 export function HomePage() {
@@ -41,6 +44,7 @@ export function HomePage() {
         handleConfirmComment,
         handleCommentOpen,
         handleCommentClose,
+        postId
     } = MainPageFunctions();
 
 
@@ -175,7 +179,8 @@ const handleCategoryChange = (category) => {
                             user={user} 
                             handleActionChange={handleActionChange}
                             handleStartClick={handleStartClick} 
-                            handleCommentOpen={handleCommentOpen}
+                            handleCommentOpen={() => handleCommentOpen(post._id)}
+                            postId={post._id}
                         />
                     ))}
                 </div>
@@ -191,8 +196,24 @@ const handleCategoryChange = (category) => {
                 isOpen={isCommentPopupOpen}
                 onClose={() => setIsCommentPopupOpen(false)}
                 onConfirm={handleConfirmComment}
-
+                postId={postId}
+                user={user}
+                post={posts.find(p => p._id === postId) || {}}
             />
+
+            <CreatePostPopup
+            onCreatePost={() => {
+
+            }}
+            onChange={() => {
+                if(user.step == 2){ 
+                    navigate('/profile/change', {state: {from: 'main'}})
+                } else {
+                    navigate('/setup/food')
+                }
+            }}
+            />
+
         </div>
     );
 }

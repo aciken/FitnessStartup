@@ -11,7 +11,7 @@ import { MainPageFunctions } from './MainPageFunctions';
 
 
 
-export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, handleActionChange, handleStartClick,handleCommentOpen }) {
+export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, handleActionChange, handleStartClick,handleCommentOpen, postId }) {
     const navigate = useNavigate();
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -25,6 +25,10 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         setCommentValue,
         handleConfirmComment,
         handleCommentClose,
+        handleFinishClick,
+        getFromBetterName,
+
+
     } = MainPageFunctions();
 
 
@@ -178,10 +182,13 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
 
     const renderChangeContent = () => {
         const styles = getPostTypeStyles(post.postType);
+
+
+
         
         return (
             <div className={`${styles.bg} text-gray-700 hover:drop-shadow-md transition-all duration-300 p-4 rounded-xl mb-4 border ${styles.border} shadow-sm cursor-pointer relative`}
-            onClick={(e) => {e.stopPropagation();if(tryButton){setTryButton(false)}else{setTryButton(true)}}}
+            onClick={(e) => {e.stopPropagation();if(user.step == 2){handleStartClick(post.title, user.setup[getFromBetterName(post.title)], post.toValue)}else{alert('Finish Setup First')}}}
             >
                 <div className="flex items-center mb-2">
                     <div className={`${styles.icon} text-white p-1.5 rounded-full mr-2`}>
@@ -220,7 +227,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 <button
                 // onClick={() => {handleEditClick(post.category, post.title, 'main')}}
                 onClick={() => {handleStartClick(post.title, post.fromValue , post.toValue)} }
-                    className={`mt-4 w-30 ${styles.bg} ${styles.title} hover:scale-105 font-semibold py-2 px-4 border ${styles.border} rounded-md shadow-sm hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 absolute right-0 bottom--10`}
+                    className={`mt-4 w-30  hover:scale-105 font-semibold py-2 px-4 border bg-white shadow-md rounded-md  hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 absolute right-0 bottom--10`}
                 >
                     Try This Goal
                 </button>
@@ -280,7 +287,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                     </button>
                     <button 
                         className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 transition-colors duration-200 "
-                        onClick={(e) => handleInteractionClick(e, () => {handleCommentOpen()})}
+                        onClick={(e) => handleInteractionClick(e, () => {handleCommentOpen(postId)})}
                     >
                         <FaComment className="text-lg" />
                         <span className="font-medium">{post.comments.length}</span>

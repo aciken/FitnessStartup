@@ -8,6 +8,7 @@ import { TopCategories } from './TopCategories';
 import { MainPageFunctions } from './MainPageFunctions';
 import { PostStartPopup } from '../Post/PostStartPopup';
 import { CommentPopup } from './CommentPopup';
+import { CreatePostPopup } from '../Post/CreatePostPopup';
 
 
 
@@ -149,6 +150,19 @@ const handleCategoryChange = (category) => {
                 onClose={() => setIsCommentPopupOpen(false)}
                 onConfirm={handleConfirmComment}
 
+            />
+
+            <CreatePostPopup
+            onCreatePost={() => {
+
+            }}
+            onChange={() => {
+                if(user.step == 2){ 
+                    navigate('/profile/change', {state: {from: 'main'}})
+                } else {
+                    navigate('/setup/food')
+                }
+            }}
             />
         </div>
     )

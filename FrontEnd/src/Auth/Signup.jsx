@@ -2,13 +2,20 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GoogleLogo from '../../Assets/Images/GoogleLogo.png'
 import axios from 'axios';
+import { useEffect } from 'react';
+import { GoogleLogin,useGoogleLogin } from '@react-oauth/google';
+
+
 
 export function Signup() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [data, setData] = useState(null);
   const navigate = useNavigate();
+
+    const clientID = '998700739226-o1vqp0lqu98l37tvmmhkm2oo6ibhg4do.apps.googleusercontent.com'
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -54,10 +61,55 @@ export function Signup() {
     }
   };
 
-  const handleGoogleSignUp = () => {
-    // Handle Google sign-up logic here
-    console.log('Google sign-up clicked');
-  };
+
+  const handleGoogleSignUp = useGoogleLogin({
+    onSuccess: (response) => {
+      setData(response);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+    clientId: clientID,
+
+
+  });
+
+    useEffect(
+    () => {
+        if (data) {
+            axios
+                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${data.access_token}`, {
+                    headers: {
+                        Authorization: `Bearer ${data.access_token}`,
+                        Accept: 'application/json'
+                    }
+                })
+                .then((res) => {
+                    console.log(res.data.id);
+                    axios.put('http://localhost:3000/signinGoogle', {
+                        id: res.data.id,
+                    })
+                    .then((res) => {
+                      console.log(res.data.user)
+                        if(res.data.user.username == ''){
+                            navigate('/set-username', {state: {id: res.data.user._id}})
+                        } else {
+                          localStorage.setItem('user', JSON.stringify(res.data.user))
+                          if(res.data.user.step != 1){
+                            navigate('/feed/home')
+                          } else {
+                            navigate('/setup/food')
+                          }
+                        }
+                        console.log(res.data.user);
+                    })
+                    .catch((err) => console.log(err));
+                })
+                .catch((err) => console.log(err));
+        }
+    },
+    [ data ]
+);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
