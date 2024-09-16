@@ -26,7 +26,7 @@ export function SetupStep2() {
             id: JSON.parse(localStorage.getItem('user'))._id
         }).then((res) => {
             localStorage.setItem('user', JSON.stringify(res.data.user));
-            navigate('/feed/home');
+            navigate('/feed/all');
         }).catch((err) => {
             console.log(err);
         });

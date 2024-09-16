@@ -26,7 +26,7 @@ export function Verification() {
             if (res.data !== 'Incorrect verification code') {
                 localStorage.setItem('user', JSON.stringify(res.data.user))
                 if (res.data.user.step === 0) {
-                    navigate('/feed/home');
+                    navigate('/feed/all');
                 } else {
                     navigate('/setup/food');
                 }

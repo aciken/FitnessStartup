@@ -21,11 +21,10 @@ const postActions = [
 ];
 
 const categories = [
-  { value: 'home', label: 'Home', icon: FaList },
+  { value: 'all', label: 'All', icon: FaList },
   { value: 'diet', label: 'Diet', icon: FaUtensils },
   { value: 'exercise', label: 'Exercise', icon: FaDumbbell },
   { value: 'sleep', label: 'Sleep', icon: FaBed },
-
 ];
 
 function Dropdown({ options, selected, onSelect, icon: Icon }) {
@@ -97,7 +96,10 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
   );
 }
 
-function ProfileDropdown({ onLogout, onProfileClick }) {
+function ProfileDropdown({ onLogout }) {
+  
+const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -116,56 +118,53 @@ function ProfileDropdown({ onLogout, onProfileClick }) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onMouseEnter={() => setIsOpen(true)}
-        className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      >
-        <FaUser />
-      </motion.button>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden"
-            onMouseLeave={() => setIsOpen(false)}
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      onMouseEnter={() => setIsOpen(true)}
+      className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    >
+      <FaUser />
+    </motion.button>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.2 }}
+          className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden"
+          onMouseLeave={() => setIsOpen(false)}
+        >
+          <button
+            onClick={() => navigate('/profile/all')}
+            className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700 hover:bg-gray-100"
           >
-            <button
-              onClick={onProfileClick}
-              className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <FaUser className="mr-2 text-indigo-500" />
-              Profile
-            </button>
-            <button
-              onClick={onLogout}
-              className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700 hover:bg-gray-100"
-            >
-              <FaSignOutAlt className="mr-2 text-indigo-500" />
-              Log Out
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            <FaUser className="mr-2 text-indigo-500" />
+            Profile
+          </button>
+          <button
+            onClick={onLogout}
+            className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700 hover:bg-gray-100"
+          >
+            <FaSignOutAlt className="mr-2 text-indigo-500" />
+            Log Out
+          </button>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
   );
 }
 
-export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAction, onActionChange, onLogout }) {
+export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAction, onActionChange, selectedCategory, onCategoryChange }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [localTimeRange, setLocalTimeRange] = useState(selectedTimeRange);
-  const [localAction, setLocalAction] = useState(selectedAction);
-  const [localCategory, setLocalCategory] = useState('all');
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const [localCategory, setLocalCategory] = useState(selectedCategory);
 
   useEffect(() => {
-    // Set the initial category based on the current URL
     const path = location.pathname.split('/');
     if (path[1] === 'feed' && path[2]) {
       setLocalCategory(path[2]);
@@ -174,33 +173,9 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
     }
   }, [location]);
 
-  // Add these useEffect hooks to keep local state in sync with props
   useEffect(() => {
-    setLocalTimeRange(selectedTimeRange);
-  }, [selectedTimeRange]);
-
-  useEffect(() => {
-    setLocalAction(selectedAction);
-  }, [selectedAction]);
-
-  const handleTimeRangeChange = (value) => {
-    setLocalTimeRange(value);
-    onTimeRangeChange(value);
-  };
-
-  const handleActionChange = (value) => {
-    setLocalAction(value);
-    onActionChange(value);
-  };
-
-  const handleCategoryChange = (value) => {
-    setLocalCategory(value);
-    if (value === 'all') {
-      navigate('/feed');
-    } else {
-      navigate(`/feed/${value}`);
-    }
-  };
+    setLocalCategory(selectedCategory);
+  }, [selectedCategory]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -228,14 +203,19 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
     return () => clearInterval(intervalId);
   }, []);
 
-  const handleProfileClick = () => {
-    console.log(JSON.parse(localStorage.getItem('user')));
-    if(JSON.parse(localStorage.getItem('user')).step != 2) {
-      navigate('/setup/food');
+  const handleCategoryChange = (value) => {
+    setLocalCategory(value);
+    onCategoryChange(value);
+    if (value === 'all') {
+      navigate('/feed/all');
     } else {
-      navigate('/profile/diet');
+      navigate(`/feed/${value}`);
     }
+  };
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    navigate('/');
   };
 
   return (
@@ -253,14 +233,14 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
               <div className="flex gap-4 items-center">
                 <Dropdown
                   options={timeRanges}
-                  selected={localTimeRange}
-                  onSelect={handleTimeRangeChange}
+                  selected={selectedTimeRange}
+                  onSelect={onTimeRangeChange}
                   icon={FaClock}
                 />
                 <Dropdown
                   options={postActions}
-                  selected={localAction}
-                  onSelect={handleActionChange}
+                  selected={selectedAction}
+                  onSelect={onActionChange}
                   icon={FaCog}
                 />
                 <Dropdown
@@ -269,18 +249,7 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
                   onSelect={handleCategoryChange}
                   icon={FaList}
                 />
-                {/* <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white flex items-center justify-center px-6 py-2 rounded-full hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
-                >
-                  <FaPlus className="mr-2" />
-                  Post
-                </motion.button> */}
-                <ProfileDropdown onLogout={() => {
-                  localStorage.removeItem('user');
-                  navigate('/');
-                }} onProfileClick={handleProfileClick} />
+                <ProfileDropdown onLogout={handleLogout} />
               </div>
             </div>
           </div>

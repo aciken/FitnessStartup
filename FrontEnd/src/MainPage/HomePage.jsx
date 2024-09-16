@@ -1,37 +1,28 @@
-import React from 'react';
-import {LeftTab} from './LeftTab';
-import {useState, useEffect} from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaHome, FaClock, FaFilter, FaPlus } from 'react-icons/fa';
 import { PostCard } from './PostCardComponent';
 import { TopCategories } from './TopCategories';
 import { MainPageFunctions } from './MainPageFunctions';
 import { PostStartPopup } from '../Post/PostStartPopup';
 import { CommentPopup } from './CommentPopup';
 import { CreatePostPopup } from '../Post/CreatePostPopup';
-import { ProfileChange } from '../Profile/ProfileChange';
-
-
 
 export function HomePage() {
-
     const navigate = useNavigate();
+    const location = useLocation();
     const [selectedTimeRange, setSelectedTimeRange] = useState('all');
     const [selectedAction, setSelectedAction] = useState('all');
+    const [selectedCategory, setSelectedCategory] = useState('all');
     const [posts, setPosts] = useState([]);
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+    const [likedPosts, setLikedPosts] = useState([]);
+    const [dislikedPosts, setDislikedPosts] = useState([]);
+    const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            const user = JSON.parse(localStorage.getItem('user'))
-            console.log('User from localStorage:', user);
-        }, 3000);
-
-        return () => clearInterval(intervalId);
-    }, []);
-
-    const 
-    {
+    const {
         isStartChangePopupOpen,
         setIsStartChangePopupOpen,
         selectedStart,
@@ -47,64 +38,55 @@ export function HomePage() {
         postId
     } = MainPageFunctions();
 
+    useEffect(() => {
+        if (!user) {
+            navigate('/');
+        }
+    }, [user, navigate]);
 
+    useEffect(() => {
+        const path = location.pathname.split('/');
+        if (path[1] === 'feed' && path[2]) {
+            setSelectedCategory(path[2]);
+        } else {
+            setSelectedCategory('all');
+        }
+    }, [location]);
 
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                const res = await axios.post('http://localhost:3000/getPosts', {
+                    category: selectedCategory,
+                    timeRange: selectedTimeRange,
+                    action: selectedAction
+                });
+                setPosts(res.data.posts);
+            } catch (err) {
+                console.error('Error fetching posts:', err);
+            }
+        };
 
-    
-
-
-    const [likedPosts, setLikedPosts] = useState([]);
-    const [dislikedPosts, setDislikedPosts] = useState([]);
+        fetchPosts();
+    }, [selectedTimeRange, selectedAction, selectedCategory]);
 
     const handleTimeRangeChange = (range) => {
         setSelectedTimeRange(range);
-        if(range != selectedTimeRange){
-            setLikedPosts([]);
-            setDislikedPosts([]);
-        }
+        setLikedPosts([]);
+        setDislikedPosts([]);
     };
 
     const handleActionChange = (action) => {
         setSelectedAction(action);
-        if(action != selectedAction){
-            setLikedPosts([]);
-            setDislikedPosts([]);
-        }
-
+        setLikedPosts([]);
+        setDislikedPosts([]);
     };
 
-    useEffect(() => {
-        if(JSON.parse(localStorage.getItem('user')) == null) {
-            navigate('/')
-        }
-        
-
-    }, [])
-
-
-
-
-    
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            console.log(user);
-        }, 3000);
-
-        // Clean up the interval on component unmount
-        return () => clearInterval(intervalId);
-    }, [user]);
-
-
-    useEffect(() => {
-        axios.post('http://localhost:3000/getPosts', {category: 'all', timeRange: selectedTimeRange, action: selectedAction})
-        .then(res => {
-            setPosts(res.data.posts);
-            console.log(res.data.posts);
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }, [selectedTimeRange, selectedAction])
+    const handleCategoryChange = (category) => {
+        setSelectedCategory(category);
+        setLikedPosts([]);
+        setDislikedPosts([]);
+    };
 
     const addLikedPost = (postId) => {
         console.log(posts)
@@ -122,48 +104,19 @@ export function HomePage() {
                 setLikedPosts([...likedPosts, postId]);
             }
         }
-    }
-
-
-    //     console.log(postId)
-    //     if(!user.user.likedPosts.includes(postId)){
-    //     if(likedPosts.includes(postId)){
-    //         setLikedPosts(likedPosts.filter(id => id !== postId));
-    //     } else {
-    //         setLikedPosts([...likedPosts, postId]);
-    //     } 
-    // }else{
-    //     if(dislikedPosts.includes(postId)){
-    //         setDislikedPosts(dislikedPosts.filter(id => id !== postId));
-    //     } else{
-    //         setDislikedPosts([...dislikedPosts, postId]);
-    //     }
-
-    // }
-
-    
-
-    const [selectedCategory, setSelectedCategory] = useState('all');
-
-const handleCategoryChange = (category) => {
-  setSelectedCategory(category);
-  // Add any additional logic you need when the category changes
-};
-
-
-
+    };
 
     return (
-        <div className="flex flex-row min-h-screen  bg-gray-50 z-10">
-<TopCategories
-  selectedTimeRange={selectedTimeRange}
-  onTimeRangeChange={handleTimeRangeChange}
-  selectedAction={selectedAction}
-  onActionChange={handleActionChange}
-  selectedCategory={selectedCategory}
-  onCategoryChange={handleCategoryChange}
-/>
-                               
+        <div className="flex flex-row min-h-screen bg-gray-50 z-10">
+            <TopCategories
+                selectedTimeRange={selectedTimeRange}
+                onTimeRangeChange={handleTimeRangeChange}
+                selectedAction={selectedAction}
+                onActionChange={handleActionChange}
+                selectedCategory={selectedCategory}
+                onCategoryChange={handleCategoryChange}
+            />
+            
             <div className="fixed top-0 left-0 h-full">
                 {/* <LeftTab current='Home'/> */}
             </div>
@@ -185,6 +138,7 @@ const handleCategoryChange = (category) => {
                     ))}
                 </div>
             </div>
+            
             <PostStartPopup
                 isOpen={isStartChangePopupOpen}
                 onClose={() => setIsStartChangePopupOpen(false)}
@@ -202,18 +156,19 @@ const handleCategoryChange = (category) => {
             />
 
             <CreatePostPopup
-            onCreatePost={() => {
-
-            }}
-            onChange={() => {
-                if(user.step == 2){ 
-                    navigate('/profile/change', {state: {from: 'main'}})
-                } else {
-                    navigate('/setup/food')
-                }
-            }}
+                isOpen={isCreatePostOpen}
+                onClose={() => setIsCreatePostOpen(false)}
+                onCreatePost={() => {
+                    // Handle post creation
+                }}
+                onChange={() => {
+                    if (user.step === 2) {
+                        navigate('/profile/change', { state: { from: 'main' } });
+                    } else {
+                        navigate('/setup/food');
+                    }
+                }}
             />
-
         </div>
     );
 }

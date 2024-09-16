@@ -46,21 +46,21 @@ export function App() {
 <Router>
 <Routes>
    <Route exact path="/" element={<MainNotLoged/>} /> 
-    <Route exact path="/feed/home" element={<HomePage/>} />
-    <Route exact path="/feed/diet" element={<DietPage/>} />
+    <Route exact path="/feed/:categories" element={<HomePage/>} />
+    {/* <Route exact path="/feed/diet" element={<DietPage/>} />
     <Route exact path="/feed/likes" element={<LikesPage/>} />
     <Route exact path="/feed/sleep" element={<SleepPage/>} />
     <Route exact path="/feed/exercise" element={<ExercisePage/>} />
-    <Route exact path="/feed/changes" element={<ChangesPage/>} />
+    <Route exact path="/feed/changes" element={<ChangesPage/>} /> */}
    <Route exact path="/signup" element={<Signup/>} />
     <Route exact path="/signin" element={<Signin/>} />
     <Route exact path="/continue-signin" element={<ContinueSignin/>} />
     <Route exact path="/create-account" element={<CreateAccRoute/>} />
     <Route exact path="/confirm-signin" element={<ConfirmSignin/>} />
-    <Route exact path="/profile/diet" element={<ProfileDiet/>} />
-    <Route exact path="/profile/sleep" element={<ProfileSleep/>} />
+    <Route path="/profile/:tab" element={<ProfileDiet />} />
+    {/* <Route exact path="/profile/sleep" element={<ProfileSleep/>} />
     <Route exact path="/profile/exercise" element={<ProfileExercise/>} />
-    <Route exact path="/profile/changing" element={<ProfileChangePage/>} />
+    <Route exact path="/profile/changing" element={<ProfileChangePage/>} /> */}
     <Route exact path="/verification" element={<Verification/>} />
     <Route exact path="/setup/food" element={<SetupStep1/>} />
     <Route exact path="/setup/exercise" element={<SetupStep2/>} />

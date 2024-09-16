@@ -48,7 +48,7 @@ export function useProfileFunctions() {
     const removeChange = useCallback(async (change, id) => {
 
         try {
-
+            console.log(change,id)
             const response = await axios.put('http://localhost:3000/removeChange', {
                 change, id
             });
@@ -438,48 +438,74 @@ export function useProfileFunctions() {
 
     const getInfoCards = useCallback((selected) => {
         if (!user || !user.setup) return [];
-
+    
+        console.log(selected)
+    
         const { setup, changing } = user;
         const { diet, meals, fast, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies, calories } = setup;
-
+    
         const formatExercise = (exercise, times) => {
             if (exercise === 'none') return null;
             return `${exercise} (${times} times a week)`;
         };
-
+    
+        const formatFast = (fastValue) => fastValue === 'No' ? 'No fasting' : `${fastValue} Hours`;
+    
+        const allFields = [
+            { key: 'calories', title: 'Calorie Intake', format: (value) => `${value} calories` },
+            { key: 'diet', title: 'Diet Type', format: (value) => value },
+            { key: 'meals', title: 'Meals Per Day', format: (value) => value },
+            { key: 'fast', title: 'Fasting', format: formatFast },
+            { key: 'exercise1', title: 'Exercise 1', format: (value, times) => formatExercise(value, times) },
+            { key: 'exercise2', title: 'Exercise 2', format: (value, times) => formatExercise(value, times) },
+            { key: 'exercise3', title: 'Exercise 3', format: (value, times) => formatExercise(value, times) },
+            { key: 'sleep', title: 'Sleep Duration', format: (value) => `${value} hours` },
+            { key: 'bed', title: 'Bedtime', format: (value) => value },
+            { key: 'varies', title: 'Sleep Variation', format: (value) => `${value}/10` }
+        ];
+    
         switch (selected) {
             case 'diet':
-                return [
-                    { title: 'Calorie Intake', value: `${calories} calories`, changingValue: changing.calories ? `${changing.calories} calories` : undefined, isChanging: !!changing.calories },
-                    { title: 'Diet Type', value: diet, changingValue: changing.diet, isChanging: !!changing.diet },
-                    { title: 'Meals Per Day', value: meals, changingValue: changing.meals, isChanging: !!changing.meals },
-                    { title: 'Fasting', value: fast, changingValue: changing.fast === 'No' ? changing.fast + ' Hours' : changing.fast, isChanging: !!changing.fast }
-                ];
+                return allFields.slice(0, 4).map(field => ({
+                    title: field.title,
+                    value: field.format(setup[field.key]),
+                    changingValue: changing[field.key] ? field.format(changing[field.key]) : undefined,
+                    isChanging: !!changing[field.key]
+                }));
             case 'exercise':
-                return [
-                    { title: 'Exercise 1', value: formatExercise(exercise1, exercise1Times), changingValue: changing.exercise1 ? formatExercise(changing.exercise1, changing.exercise1Times) : undefined, isChanging: !!changing.exercise1 },
-                    { title: 'Exercise 2', value: formatExercise(exercise2, exercise2Times), changingValue: changing.exercise2 ? formatExercise(changing.exercise2, changing.exercise2Times) : undefined, isChanging: !!changing.exercise2 },
-                    { title: 'Exercise 3', value: formatExercise(exercise3, exercise3Times), changingValue: changing.exercise3 ? formatExercise(changing.exercise3, changing.exercise3Times) : undefined, isChanging: !!changing.exercise3 }
-                ];
+                return allFields.slice(4, 7).map(field => ({
+                    title: field.title,
+                    value: field.format(setup[field.key], setup[`${field.key}Times`]),
+                    changingValue: changing[field.key] ? field.format(changing[field.key], changing[`${field.key}Times`]) : undefined,
+                    isChanging: !!changing[field.key]
+                }));
             case 'sleep':
-                return [
-                    { title: 'Sleep Duration', value: `${sleep} hours`, changingValue: changing.sleep ? `${changing.sleep} hours` : undefined, isChanging: !!changing.sleep },
-                    { title: 'Bedtime', value: bed, changingValue: changing.bed, isChanging: !!changing.bed },
-                    { title: 'Sleep Variation', value: `${varies}/10`, changingValue: changing.varies ? `${changing.varies}/10` : undefined, isChanging: !!changing.varies }
-                ];
+                return allFields.slice(7).map(field => ({
+                    title: field.title,
+                    value: field.format(setup[field.key]),
+                    changingValue: changing[field.key] ? field.format(changing[field.key]) : undefined,
+                    isChanging: !!changing[field.key]
+                }));
             case 'changing':
-                return Object.entries(changing)
-                    .filter(([_, value]) => value !== null && value !== undefined && value !== '')
-                    .map(([key, value]) => ({ 
-                        title: getBetterName(key), 
-                        value: setup[key], 
-                        changingValue: String(value), 
-                        isChanging: true 
-                    }));
+                return allFields.map(field => {
+                    const isExercise = field.key.startsWith('exercise');
+                    return {
+                        title: field.title,
+                        value: isExercise 
+                            ? field.format(setup[field.key], setup[`${field.key}Times`])
+                            : field.format(setup[field.key]),
+                        changingValue: changing[field.key] 
+                            ? (isExercise 
+                                ? field.format(changing[field.key], changing[`${field.key}Times`])
+                                : field.format(changing[field.key]))
+                            : undefined,
+                        isChanging: !!changing[field.key]
+                    };
+                });
             default:
                 return [];
         }
-    }, [user, getBetterName]);
+    }, [user]);
 
     return {
         user,
@@ -520,6 +546,7 @@ export function useProfileFunctions() {
         setSelectedStart,
         startChange,
         startChangeAndPost,
+        getCategory
 
     };
 }

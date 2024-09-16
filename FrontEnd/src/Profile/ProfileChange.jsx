@@ -369,7 +369,10 @@ export function ProfileChange() {
                 onConfirm={handleConfirmStart}
                 changeInfo={selectedStart}
             />
-            {getFromPage()}
+            {/* <ProfileDiet/> */}
+            {/* <div className="min-h-[100vh] w-full z-1000">
+                {getFromPage()}
+            </div> */}
         </div>
     )
 }

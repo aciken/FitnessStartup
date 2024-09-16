@@ -36,7 +36,7 @@ export function ContinueSignin() {
             console.log(res.data.user.step)
             console.log(res.data.user.step)
             if(res.data.user.step == 0 || res.data.user.step == 2){
-                navigate('/feed/home')
+                navigate('/feed/all')
             } else {
                 navigate('/setup/food')
             }

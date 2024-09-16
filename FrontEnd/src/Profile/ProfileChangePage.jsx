@@ -35,6 +35,8 @@ export function ProfileChangePage() {
         selectedFinish,
         handleConfirmFinish,
         handleFinishClick,
+        handleEditClick,
+        getCategory
     } = useProfileFunctions();
 
     const renderInfoCard = (title, value, changingValue, isChanging, index) => (
@@ -44,6 +46,7 @@ export function ProfileChangePage() {
                 ${isChanging ? 'border-l-4 border-blue-500' : ''}
                 ${expandedCard === index ? 'max-h-96' : 'max-h-48'}
                 ${isChanging ? 'hover:bg-gray-50 cursor-pointer' : ''}
+                ${selected === 'changing' && !isChanging ? 'opacity-70' : ''}
             `}
             onClick={() => {
                 if (isChanging) {
@@ -62,21 +65,21 @@ export function ProfileChangePage() {
                     )}
                 </div>
                 <p className="text-2xl font-bold text-gray-900 mb-2">
-                    {selected === 'changing' ? changingValue : value || 'Not specified'}
+                    {isChanging ? changingValue : value || 'Not specified'}
                 </p>
-                {isChanging && (
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center text-xs text-blue-600 font-medium">
-                            <span>{expandedCard === index ? 'Hide details' : 'View details'}</span>
-                            {expandedCard === index ? <FaChevronUp className="ml-1 text-xs" /> : <FaChevronDown className="ml-1 text-xs" />}
-                        </div>
-                        {selected === 'changing' && (
+                <div className="flex justify-between items-center">
+                    {isChanging ? (
+                        <>
+                            <div className="flex items-center text-xs text-blue-600 font-medium">
+                                <span>{expandedCard === index ? 'Hide details' : 'View details'}</span>
+                                {expandedCard === index ? <FaChevronUp className="ml-1 text-xs" /> : <FaChevronDown className="ml-1 text-xs" />}
+                            </div>
                             <div className="flex items-center space-x-2">
                                 <button
                                     className={greenButtonStyle}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        handleFinishClick(title,value, changingValue);
+                                        handleFinishClick(title, value, changingValue);
                                     }}
                                 >
                                     <FaCheck className="mr-1 text-xs" />
@@ -93,54 +96,38 @@ export function ProfileChangePage() {
                                     Post
                                 </button>
                                 <button
-                                    className="bg-gradient-to-r  from-red-500 to-red-700 text-white p-1.5 rounded-full shadow-sm hover:from-red-600 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
+                                    className="bg-gradient-to-r from-red-500 to-red-700 text-white p-1.5 rounded-full shadow-sm hover:from-red-600 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log(getFromBetterName(title), title);
                                         handleDeleteClick(title, value, changingValue);
-                                        // removeChange(getFromBetterName(title), user.email);
                                     }}
                                 >
                                     <FaTrash className="text-xs" />
                                 </button>
                             </div>
-                        )}
-                    </div>
-                )}
+                        </>
+                    ) : (
+                        <button
+                            className={buttonStyle}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditClick(getCategory(title), title, 'changing')
+                            }}
+                        >
+                            <FaPencilAlt className="mr-1 text-xs" />
+                            Change
+                        </button>
+                    )}
+                </div>
             </div>
             {isChanging && (
                 <div className={`bg-gray-50 p-6 transition-all duration-300 ease-in-out ${expandedCard === index ? 'opacity-100 max-h-48' : 'opacity-0 max-h-0'}`}>
                     <p className="text-sm font-medium text-gray-500 mb-2">
-                        {selected === 'changing' ? 'Current value:' : 'Changing to:'}
+                        Current value:
                     </p>
                     <p className="text-xl font-bold text-blue-700 mb-4">
-                        {selected === 'changing' ? value : changingValue || 'Not specified'}
+                        {value || 'Not specified'}
                     </p>
-                    {selected !== 'changing' && (
-                        <div className="flex items-center space-x-2">
-                            <button
-                                className={buttonStyle}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handlePostClick(title, value, changingValue);
-                                }}
-                            >
-                                <FaCheck className="mr-1" />
-                                Post
-                            </button>
-                            <button
-                                className="bg-red-500 text-white p-1.5 rounded-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    console.log('asd');
-                                    handleDeleteClick(title, value, changingValue);
-                                    // removeChange(getFromBetterName(title), user.email);
-                                }}
-                            >
-                                <FaTrash className="text-xs" />
-                            </button>
-                        </div>
-                    )}
                 </div>
             )}
         </div>

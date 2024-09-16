@@ -3,9 +3,10 @@ const Post = require('../DataBase/Posts');
 const getPosts = async (req, res) => {
     const { category = 'all', timeRange = 'all', action = 'all' } = req.body;
     const limit = 20;
-    
+    console.log(category, timeRange, action)
     try {
         let query = {};
+
         if (category !== 'all') query.category = category;
         if (action !== 'all') query.postType = action;
 

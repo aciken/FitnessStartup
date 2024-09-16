@@ -59,8 +59,8 @@ export function PostDeletePopup({ isOpen, onClose, changeInfo }) {
                 <button
                         className=" text-red-700 border border-red-600 hover:bg-red-50 font-semibold py-2 px-6 rounded-lg shadow-md  transition duration-150 "
                         onClick={() => {
-                            console.log(changeInfo, user.email);
-                            removeChange(getFromBetterName(changeInfo.title), user.email);
+                            console.log(changeInfo, user._id);
+                            removeChange(getFromBetterName(changeInfo.title), user._id);
                         }}          
                     >
                         Finish Without Posting

@@ -57,7 +57,7 @@ export function PostFinishPopup({ isOpen, onClose, changeInfo }) {
                 <button
                         className=" text-green-700 border border-green-600 hover:bg-green-50 font-semibold py-2 px-6 rounded-lg shadow-md  transition duration-150 "
                         onClick={() => {
-                            finishChange(changeInfo, user.email);
+                            finishChange(changeInfo, user._id);
                         }}
                     >
                         Finish Without Posting
