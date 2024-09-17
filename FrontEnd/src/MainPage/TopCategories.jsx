@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaChevronDown, FaClock, FaCog, FaPlus, FaFilter, FaList, FaUtensils, FaDumbbell, FaBed, FaUser, FaSignOutAlt, FaTrash, FaEdit, FaCheck, FaPaperPlane } from 'react-icons/fa';
+import { FaChevronDown, FaClock, FaCog, FaPlus, FaFilter, FaList, FaUtensils, FaDumbbell, FaBed, FaUser, FaSignOutAlt, FaCheck, FaEdit, FaTrash, FaPaperPlane, FaHeart } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -53,11 +53,11 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full px-4 py-2 bg-white border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+        className="flex items-center justify-between w-full px-3 py-2 bg-white border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
       >
         <div className="flex items-center">
-          <SelectedIcon className="mr-2 text-indigo-500" />
-          <span>{selectedOption?.label}</span>
+          <SelectedIcon className="mr-2 text-indigo-500 text-lg" />
+          <span className="truncate">{selectedOption?.label}</span>
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
@@ -73,7 +73,7 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden"
+            className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg z-50 overflow-hidden"
           >
             {options.map((option) => (
               <motion.button
@@ -83,9 +83,9 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
                   onSelect(option.value);
                   setIsOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700"
+                className="w-full text-left px-3 py-2 flex items-center text-sm text-gray-700"
               >
-                <option.icon className="mr-2 text-indigo-500" />
+                <option.icon className="mr-2 text-indigo-500 text-lg" />
                 {option.label}
               </motion.button>
             ))}
@@ -97,9 +97,7 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
 }
 
 function ProfileDropdown({ onLogout }) {
-  
-const navigate = useNavigate();
-
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -142,6 +140,13 @@ const navigate = useNavigate();
           >
             <FaUser className="mr-2 text-indigo-500" />
             Profile
+          </button>
+            <button
+            onClick={() => navigate('/likes')}
+            className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700 hover:bg-gray-100"
+          > 
+            <FaHeart className="mr-2 text-indigo-500" />
+            Likes
           </button>
           <button
             onClick={onLogout}
@@ -193,16 +198,6 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const user = JSON.parse(localStorage.getItem('user'));
-      console.log('Current user in localStorage:', user);
-    }, 3000);
-
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []);
-
   const handleCategoryChange = (value) => {
     setLocalCategory(value);
     onCategoryChange(value);
@@ -226,30 +221,38 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -50 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-0 left-0 right-0 z-10 bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm shadow-md"
+          className="fixed top-0 left-0 right-0 z-40 bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm shadow-md"
         >
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex justify-center items-center">
-              <div className="flex gap-4 items-center">
-                <Dropdown
-                  options={timeRanges}
-                  selected={selectedTimeRange}
-                  onSelect={onTimeRangeChange}
-                  icon={FaClock}
-                />
-                <Dropdown
-                  options={postActions}
-                  selected={selectedAction}
-                  onSelect={onActionChange}
-                  icon={FaCog}
-                />
-                <Dropdown
-                  options={categories}
-                  selected={localCategory}
-                  onSelect={handleCategoryChange}
-                  icon={FaList}
-                />
-                <ProfileDropdown onLogout={handleLogout} />
+          <div className="container mx-auto px-2 py-2 sm:px-4 sm:py-3">
+            <div className="flex justify-start sm:justify-center items-center">
+              <div className="flex  gap-2 sm:gap-3 items-center pb-2 sm:pb-0 w-full sm:w-auto">
+                <div className="flex-shrink-0 w-32 sm:w-40">
+                  <Dropdown
+                    options={timeRanges}
+                    selected={selectedTimeRange}
+                    onSelect={onTimeRangeChange}
+                    icon={FaClock}
+                  />
+                </div>
+                <div className="flex-shrink-0 w-32 sm:w-40">
+                  <Dropdown
+                    options={postActions}
+                    selected={selectedAction}
+                    onSelect={onActionChange}
+                    icon={FaCog}
+                  />
+                </div>
+                <div className="flex-shrink-0 w-32 sm:w-40">
+                  <Dropdown
+                    options={categories}
+                    selected={localCategory}
+                    onSelect={handleCategoryChange}
+                    icon={FaList}
+                  />
+                </div>
+                <div className="flex-shrink-0">
+                  <ProfileDropdown onLogout={handleLogout} />
+                </div>
               </div>
             </div>
           </div>

@@ -254,7 +254,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 </div>
                 <div className="flex items-center space-x-2">
                     <span 
-                        onClick={(e) => handleInteractionClick(e, () => navigate(`/feed/${post.category}`))}
+                        onClick={(e) => handleInteractionClick(e,() => navigate(`/feed/${post.category}`))}
                         className={`text-sm font-medium px-3 py-1 cursor-pointer rounded-full capitalize flex items-center space-x-1 ${getCategoryColor(post.category)}`}
                     >
                         {getCategoryIcon(post.category)}

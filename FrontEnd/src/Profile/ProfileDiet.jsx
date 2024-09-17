@@ -40,45 +40,13 @@ export function ProfileDiet() {
         if (tab && tabs.some(t => t.id === tab)) {
             setSelected(tab);
         } else {
-            navigate('/profile/all', { replace: true });
+            // navigate('/profile/all', { replace: true });
         }
     }, [tab, navigate]);
 
     const handleTabChange = (tabId) => {
         setSelected(tabId);
         navigate(`/profile/${tabId}`);
-    };
-
-    const pageVariants = {
-        initial: { opacity: 0 },
-        in: { opacity: 1 },
-        out: { opacity: 0 },
-    };
-
-    const pageTransition = {
-        type: 'tween',
-        ease: 'anticipate',
-        duration: 0.5,
-    };
-
-    const cardVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { 
-            opacity: 1, 
-            y: 0, 
-            transition: { 
-                type: 'spring',
-                damping: 15,
-                stiffness: 100,
-            } 
-        },
-        exit: { 
-            opacity: 0, 
-            y: -20, 
-            transition: { 
-                duration: 0.3 
-            } 
-        },
     };
 
     const toggleCardExpansion = (cardId) => {
@@ -94,24 +62,34 @@ export function ProfileDiet() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <div className="p-6 bg-gradient-to-r from-gray-50 to-white">
+                <div className="p-4 sm:p-6 bg-gradient-to-r from-gray-50 to-white">
                     <div className="flex items-center">
-                        {category === 'diet' && <FaUtensils className="text-2xl mr-3 text-blue-500" />}
-                        {category === 'exercise' && <FaDumbbell className="text-2xl mr-3 text-green-500" />}
-                        {category === 'sleep' && <FaBed className="text-2xl mr-3 text-purple-500" />}
-                        <h2 className="text-2xl font-bold text-gray-800 capitalize">{category}</h2>
+                        {category === 'diet' && <FaUtensils className="text-xl sm:text-2xl mr-2 sm:mr-3 text-blue-500" />}
+                        {category === 'exercise' && <FaDumbbell className="text-xl sm:text-2xl mr-2 sm:mr-3 text-green-500" />}
+                        {category === 'sleep' && <FaBed className="text-xl sm:text-2xl mr-2 sm:mr-3 text-purple-500" />}
+                        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 capitalize">{category}</h2>
                     </div>
                 </div>
-                <div className="p-6 bg-gray-50">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="p-4 sm:p-6 bg-gray-50">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                         {cards.map((card, index) => (
                             card.value && (
                                 <motion.div
                                     key={`${category}-${card.title}`}
-                                    variants={cardVariants}
+                                    variants={{
+                                        hidden: { opacity: 0, y: 20 },
+                                        visible: { 
+                                            opacity: 1, 
+                                            y: 0, 
+                                            transition: { 
+                                                type: 'spring',
+                                                damping: 15,
+                                                stiffness: 100,
+                                            } 
+                                        },
+                                    }}
                                     initial="hidden"
                                     animate="visible"
-                                    exit="exit"
                                     transition={{ duration: 0.3, delay: index * 0.1 }}
                                     style={{ opacity: card.isChanging ? 1 : 0.5 }}
                                 >
@@ -135,52 +113,43 @@ export function ProfileDiet() {
     };
 
     return (
-        <motion.div 
-            initial="initial"
-            animate="in"
-            exit="out"
-            variants={pageVariants}
-            transition={pageTransition}
-            className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8"
-        >
+        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
             <div className='max-w-7xl mx-auto'>
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                    <div className="p-8">
-                        <div className="flex justify-between items-center mb-8">
-                            <h1 className="text-4xl font-extrabold text-gray-900">Profile Information</h1>
+                    <div className="p-4 sm:p-6 lg:p-8">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4 sm:mb-0">Profile Information</h1>
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={() => navigate('/feed/all')}
-                                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-lg hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
+                                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                             >
                                 <FaHome className="mr-2" />
                                 Return to Home
                             </motion.button>
                         </div>
-                        <div className='mb-8'>
-                            <nav className='flex flex-row justify-between items-center'>
-                                <div className='flex flex-row space-x-4 bg-gray-100 p-1 rounded-full'>
+                        <div className='mb-6'>
+                            <nav className='flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0'>
+                                <div className='flex flex-wrap justify-center w-full sm:w-auto bg-gray-100 p-1 rounded-lg'>
                                     {tabs.map((tab) => (
                                         <motion.button
                                             key={tab.id}
                                             onClick={() => handleTabChange(tab.id)}
-                                            className={`relative flex items-center space-x-2 py-2 px-4 rounded-full font-medium text-sm transition duration-150 ease-in-out`}
+                                            className={`relative flex items-center justify-center w-1/2 sm:w-auto py-2 px-3 sm:px-4 rounded-md font-medium text-xs sm:text-sm transition duration-150 ease-in-out ${selected === tab.id ? 'text-blue-500' : 'text-gray-500'}`}
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
                                         >
                                             {selected === tab.id && (
                                                 <motion.div
                                                     layoutId="activeTab"
-                                                    className="absolute inset-0 bg-white rounded-full shadow-md"
+                                                    className="absolute inset-0 bg-white rounded-md shadow-sm"
                                                     initial={false}
                                                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                                                 />
                                             )}
-                                            <tab.icon className={`relative z-10 text-lg ${selected === tab.id ? 'text-blue-500' : 'text-gray-500'}`} />
-                                            <span className={`relative z-10 ${selected === tab.id ? 'text-blue-500' : 'text-gray-500'}`}>
-                                                {tab.label}
-                                            </span>
+                                            <tab.icon className={`relative z-10 text-lg sm:text-xl mr-1 sm:mr-2`} />
+                                            <span className="relative z-10">{tab.label}</span>
                                         </motion.button>
                                     ))}
                                 </div>
@@ -188,7 +157,7 @@ export function ProfileDiet() {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => navigate('/profile/change', {state: {from: selected}})}
-                                    className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-2.5 px-5 rounded-full shadow-lg hover:from-blue-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
+                                    className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:from-blue-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm w-full sm:w-auto justify-center sm:justify-start mt-4 sm:mt-0"
                                 >
                                     <FaPencilAlt className="mr-2" />
                                     Change
@@ -200,8 +169,12 @@ export function ProfileDiet() {
                                 key={selected}
                                 initial="hidden"
                                 animate="visible"
-                                exit="exit"
-                                variants={cardVariants}
+                                exit="hidden"
+                                variants={{
+                                    hidden: { opacity: 0, y: 20 },
+                                    visible: { opacity: 1, y: 0 },
+                                }}
+                                transition={{ duration: 0.5 }}
                             >
                                 {user ? (
                                     selected === 'all' ? (
@@ -215,7 +188,10 @@ export function ProfileDiet() {
                                     )
                                 ) : (
                                     <motion.div 
-                                        variants={cardVariants}
+                                        variants={{
+                                            hidden: { opacity: 0, y: 20 },
+                                            visible: { opacity: 1, y: 0 },
+                                        }}
                                         className='bg-white border border-gray-200 rounded-lg p-8 text-center shadow-md col-span-full'
                                     >
                                         <p className="text-xl text-gray-600">No user data available</p>
@@ -243,6 +219,6 @@ export function ProfileDiet() {
                 onConfirm={handleConfirmFinish}
                 changeInfo={selectedFinish}
             />
-        </motion.div>
+        </div>
     );
 }

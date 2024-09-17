@@ -286,7 +286,7 @@ export function ProfileChange() {
                             Change Information
                         </h2>
                         <button
-                            onClick={() => {if(from == 'main')navigate('/feed/home'); else navigate('/profile/' + from)}}
+                            onClick={() => {if(from == 'main')navigate('/feed/all'); else navigate('/profile/' + from)}}
                             className="text-gray-500 hover:text-gray-700 transition duration-200"
                         >
                             <FaTimes size={24} />
@@ -369,7 +369,8 @@ export function ProfileChange() {
                 onConfirm={handleConfirmStart}
                 changeInfo={selectedStart}
             />
-            {/* <ProfileDiet/> */}
+            {/* <HomePage/> */}
+            <ProfileDiet/>
             {/* <div className="min-h-[100vh] w-full z-1000">
                 {getFromPage()}
             </div> */}

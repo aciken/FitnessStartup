@@ -97,7 +97,7 @@ export function PostShow() {
                 <div className="max-w-6xl mx-auto flex justify-between items-center">
                     <h1 className="text-2xl font-bold text-gray-800">Post Details</h1>
                     <button
-                        onClick={() => navigate('/feed/home')}
+                        onClick={() => navigate('/feed/all')}
                         className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                     >
                         <FaArrowLeft className="mr-2" />

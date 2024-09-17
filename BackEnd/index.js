@@ -22,6 +22,8 @@ const addComment = require('./Posts/addComment');
 const likeComment = require('./Posts/likeComment');
 const signinGoogle = require('./Auth/signinGoogle');
 const setUsername = require('./Auth/setUsername');
+const getLikedPosts = require('./Posts/getLikedPosts');
+
 
 
 
@@ -52,6 +54,7 @@ app.put('/addComment', addComment);
 app.put('/likeComment', likeComment);
 app.put('/signinGoogle', signinGoogle);
 app.put('/setUsername', setUsername);
+app.post('/getLikedPosts', getLikedPosts);
 
 
 

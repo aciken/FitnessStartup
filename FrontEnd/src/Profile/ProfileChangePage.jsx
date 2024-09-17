@@ -142,7 +142,7 @@ export function ProfileChangePage() {
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-3xl font-bold text-gray-800">Profile Information</h1>
                         <button
-                            onClick={() => navigate('/feed/home')}
+                            onClick={() => navigate('/feed/all')}
                             className="bg-gradient-to-r from-purple-700 to-indigo-800 text-white font-semibold py-2.5 px-5 rounded-full shadow-md hover:from-purple-800 hover:to-indigo-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
                         >
                             <FaHome className="mr-2 text-sm" />

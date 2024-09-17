@@ -26,6 +26,8 @@ import { Signin } from "./Auth/Signin";
 import { Signup } from "./Auth/Signup";
 import { ContinueSignin } from "./Auth/ContinueSignin";
 import { SetUsername } from "./Auth/SetUsername";
+import { ProfileLikes } from "./Profile/ProfileLikes";
+
 
 
 
@@ -70,6 +72,7 @@ export function App() {
     <Route path="/profile/change/:category/:option" element={<ProfileChange />} />
     <Route path="/post/:id" element={<PostShow />} />
     <Route path="/set-username" element={<SetUsername />} />
+    <Route path="/likes" element={<ProfileLikes />} />
 
 
     

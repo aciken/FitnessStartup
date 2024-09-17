@@ -17,7 +17,7 @@ export function MainNotLoged() {
 
     useEffect(() => {
         if(JSON.parse(localStorage.getItem('user')) != null) {
-            navigate('/feed/home')
+            navigate('/feed/all')
         }
     }, [])
     
