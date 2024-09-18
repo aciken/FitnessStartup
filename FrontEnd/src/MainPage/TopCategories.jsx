@@ -224,8 +224,8 @@ export function TopCategories({ selectedTimeRange, onTimeRangeChange, selectedAc
           className="fixed top-0 left-0 right-0 z-40 bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm shadow-md"
         >
           <div className="container mx-auto px-2 py-2 sm:px-4 sm:py-3">
-            <div className="flex justify-start sm:justify-center items-center">
-              <div className="flex  gap-2 sm:gap-3 items-center pb-2 sm:pb-0 w-full sm:w-auto">
+            <div className="flex justify-center  items-center">
+              <div className="flex  gap-2 sm:gap-3 justify-center items-center pb-2 sm:pb-0 w-full sm:w-auto">
                 <div className="flex-shrink-0 w-32 sm:w-40">
                   <Dropdown
                     options={timeRanges}

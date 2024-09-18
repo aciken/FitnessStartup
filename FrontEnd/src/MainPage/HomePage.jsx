@@ -9,6 +9,7 @@ import { MainPageFunctions } from './MainPageFunctions';
 import { PostStartPopup } from '../Post/PostStartPopup';
 import { CommentPopup } from './CommentPopup';
 import { CreatePostPopup } from '../Post/CreatePostPopup';
+import { UserPostPopup } from '../Post/UserPostPopup';
 
 export function HomePage() {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ export function HomePage() {
     const [likedPosts, setLikedPosts] = useState([]);
     const [dislikedPosts, setDislikedPosts] = useState([]);
     const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
-
+    const [isUserPostPopupOpen, setIsUserPostPopupOpen] = useState(false);
     const {
         isStartChangePopupOpen,
         setIsStartChangePopupOpen,
@@ -37,6 +38,10 @@ export function HomePage() {
         handleCommentClose,
         postId
     } = MainPageFunctions();
+
+    const handleUserPostPopup = () => {
+        setIsUserPostPopupOpen(true);
+    };
 
     useEffect(() => {
         if (!user) {
@@ -107,7 +112,7 @@ export function HomePage() {
     };
 
     return (
-        <div className="flex flex-row min-h-screen bg-gray-50 z-10">
+        <div className="flex flex-row min-h-screen bg-gray-50 z-10 ">
             <TopCategories
                 selectedTimeRange={selectedTimeRange}
                 onTimeRangeChange={handleTimeRangeChange}
@@ -120,7 +125,7 @@ export function HomePage() {
             <div className="fixed top-0 left-0 h-full">
                 {/* <LeftTab current='Home'/> */}
             </div>
-            <div className='flex-grow p-6 md:p-8 lg:p-12 overflow-y-auto mt-10'>
+            <div className='flex-grow p-6 md:p-8 lg:p-12 overflow-y-auto mt-16  md:mt-10 '>
                 <div className="space-y-8">
                     {posts.map((post) => (
                         <PostCard 
@@ -159,7 +164,7 @@ export function HomePage() {
                 isOpen={isCreatePostOpen}
                 onClose={() => setIsCreatePostOpen(false)}
                 onCreatePost={() => {
-                    // Handle post creation
+                   handleUserPostPopup();
                 }}
                 onChange={() => {
                     if (user.step === 2) {
@@ -169,6 +174,17 @@ export function HomePage() {
                     }
                 }}
             />
+
+            <UserPostPopup
+                isOpen={isUserPostPopupOpen}
+                onClose={() => setIsUserPostPopupOpen(false)}
+                onPost={() =>{
+                    
+                }}
+            />
+
+
+           
         </div>
     );
 }

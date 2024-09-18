@@ -5,6 +5,7 @@ import { LeftTab } from "../MainPage/LeftTab";
 import { PostCard } from "../MainPage/PostCardComponent";
 import { useProfileFunctions } from "../Profile/useProfileFunctions";
 import { FaUser, FaArrowRight, FaHeart, FaTimes, FaArrowLeft } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 export function PostShow() {
     const { id } = useParams();
@@ -94,15 +95,16 @@ export function PostShow() {
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 z-10">
             <div className="w-full p-4 bg-white shadow-md">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-800">Post Details</h1>
-                    <button
+                <div className="max-w-3xl px-4 sm:px-6 lg:px-8 mx-auto flex justify-between items-center">
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => navigate('/feed/all')}
-                        className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
+                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center transition duration-300 ease-in-out"
                     >
-                        <FaArrowLeft className="mr-2" />
-                        Back to Feed
-                    </button>
+                        <FaArrowLeft className="mr-2" /> Back to Feed
+                    </motion.button>
+                    <h1 className="text-2xl font-bold text-gray-800">Post Details</h1>
                 </div>
             </div>
             <div className="flex-grow md:p-8 lg:p-12 overflow-y-auto">

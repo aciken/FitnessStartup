@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaUtensils, FaDumbbell, FaBed, FaList, FaHome, FaPencilAlt } from 'react-icons/fa';
+import { FaUtensils, FaDumbbell, FaBed, FaList, FaHome, FaPencilAlt, FaArrowLeft } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PostPopup } from '../Post/PostPopup';
 import { PostDeletePopup } from '../Post/PostDeletePopup';
@@ -118,16 +118,16 @@ export function ProfileDiet() {
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                     <div className="p-4 sm:p-6 lg:p-8">
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4 sm:mb-0">Profile Information</h1>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => navigate('/feed/all')}
-                                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition duration-300 ease-in-out flex items-center text-sm"
-                            >
-                                <FaHome className="mr-2" />
-                                Return to Home
+                                                        <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => navigate('/feed/all')}
+                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center transition duration-300 ease-in-out"
+                    >
+                                <FaArrowLeft className="mr-2" /> Back to Feed
                             </motion.button>
+                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4 sm:mb-0">Profile Information</h1>
+
                         </div>
                         <div className='mb-6'>
                             <nav className='flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0'>

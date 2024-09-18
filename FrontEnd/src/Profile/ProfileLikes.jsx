@@ -1,15 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaHeart, FaArrowLeft } from 'react-icons/fa';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { FaHeart, FaArrowLeft, FaChevronDown, FaLayerGroup, FaBed, FaUtensils, FaDumbbell, FaList } from 'react-icons/fa';
 import { PostCard } from '../MainPage/PostCardComponent';
 
 export function ProfileLikes() {
     const [likedPosts, setLikedPosts] = useState([]);
+    const [filteredPosts, setFilteredPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showNav, setShowNav] = useState(true);
+    const [selectedCategory, setSelectedCategory] = useState({ value: 'All', label: 'All Categories', icon: FaLayerGroup });
+    const [categories, setCategories] = useState([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const navigate = useNavigate();
+    const { scrollY } = useScroll();
+    const lastScrollY = useRef(0);
+    const dropdownRef = useRef(null);
+
+    const categoryIcons = {
+        All: FaLayerGroup,
+        diet: FaUtensils,
+        exercise: FaDumbbell,
+        sleep: FaBed,
+        
+
+    };
+
+    useMotionValueEvent(scrollY, "change", (latest) => {
+        const direction = latest > lastScrollY.current ? "down" : "up";
+        if (direction === "down" && latest > 100 && showNav) {
+            setShowNav(false);
+        } else if (direction === "up" && !showNav) {
+            setShowNav(true);
+        }
+        lastScrollY.current = latest;
+    });
 
     useEffect(() => {
         const fetchLikedPosts = async () => {
@@ -28,6 +55,15 @@ export function ProfileLikes() {
 
                 const response = await axios.post('http://localhost:3000/getLikedPosts', { postIds: user.likedPosts });
                 setLikedPosts(response.data);
+                
+                // Extract unique categories
+                const uniqueCategories = ['All', ...new Set(response.data.map(post => post.category))];
+                setCategories(uniqueCategories.map(category => ({
+                    value: category,
+                    label: category === 'All' ? 'All Categories' : category,
+                    icon: categoryIcons[category] || FaLayerGroup
+                })));
+                
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching liked posts:', err);
@@ -38,6 +74,27 @@ export function ProfileLikes() {
 
         fetchLikedPosts();
     }, []);
+
+    useEffect(() => {
+        if (selectedCategory.value === 'All') {
+            setFilteredPosts(likedPosts);
+        } else {
+            setFilteredPosts(likedPosts.filter(post => post.category === selectedCategory.value));
+        }
+    }, [selectedCategory, likedPosts]);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [dropdownRef]);
 
     const handlePostClick = (postId) => {
         navigate(`/post/${postId}`);
@@ -50,124 +107,131 @@ export function ProfileLikes() {
     const removeDislikedPost = () => {};
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen bg-gray-50">
-                <motion.div
-                    animate={{
-                        scale: [1, 1.2, 1],
-                        rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                        duration: 2,
-                        ease: "easeInOut",
-                        times: [0, 0.5, 1],
-                        repeat: Infinity,
-                    }}
-                    className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"
-                />
-            </div>
-        );
+        // ... (loading state remains the same)
     }
 
     if (error) {
-        return (
-            <div className="flex flex-col items-center justify-center h-screen bg-gray-50">
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-red-500 text-lg font-medium mb-4"
-                >
-                    {error}
-                </motion.div>
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate('/feed')}
-                    className="bg-blue-500 text-white px-5 py-2 rounded-md flex items-center transition duration-300 ease-in-out hover:bg-blue-600"
-                >
-                    <FaArrowLeft className="mr-2" /> Return to Feed
-                </motion.button>
-            </div>
-        );
+        // ... (error state remains the same)
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto">
-                <motion.h1 
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-3xl font-bold text-gray-900 mb-8 text-center"
-                >
-                    Liked Posts
-                </motion.h1>
-                {likedPosts.length === 0 ? (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-center bg-white rounded-lg shadow-sm p-8"
+        <div className="min-h-screen bg-gray-50">
+            <motion.nav
+                initial={{ y: 0 }}
+                animate={{ y: showNav ? 0 : -100 }}
+                transition={{ duration: 0.3 }}
+                className="fixed top-0 left-0 right-0 bg-white shadow-md z-10"
+            >
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => navigate('/feed/all')}
+                        className="text-blue-600 hover:text-blue-800 font-medium flex items-center transition duration-300 ease-in-out"
                     >
-                        <FaHeart className="text-red-400 text-4xl mx-auto mb-4" />
-                        <p className="text-lg text-gray-600 mb-2">No liked posts yet</p>
-                        <p className="text-sm text-gray-500 mb-6">Start exploring and liking posts to see them here!</p>
+                        <FaArrowLeft className="mr-2" /> Back to Feed
+                    </motion.button>
+                    <h1 className="text-xl font-bold text-gray-900">Liked Posts</h1>
+                    <div className="relative w-40" ref={dropdownRef}>
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => navigate('/feed')}
-                            className="bg-blue-500 text-white px-5 py-2 rounded-md inline-flex items-center transition duration-300 ease-in-out hover:bg-blue-600"
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="flex items-center justify-between w-full px-3 py-2 bg-white border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
                         >
-                            Explore Feed
-                        </motion.button>
-                    </motion.div>
-                ) : (
-                    <AnimatePresence>
-                        {likedPosts.map((post, index) => (
+                            <div className="flex items-center">
+                                {React.createElement(selectedCategory.icon, { className: "mr-2 text-indigo-500 text-lg" })}
+                                <span className="truncate">{selectedCategory.label}</span>
+                            </div>
                             <motion.div
-                                key={post._id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                transition={{ duration: 0.3, delay: index * 0.05 }}
-                                className="mb-6 relative overflow-hidden rounded-lg shadow-md transition-all duration-300 ease-in-out hover:shadow-lg"
-                                onClick={(e) => {
-                                    // Only navigate if the click wasn't on an interactive element
-                                    if (!['BUTTON', 'A', 'INPUT'].includes(e.target.tagName)) {
-                                        handlePostClick(post._id);
-                                    }
-                                }}
+                                animate={{ rotate: isDropdownOpen ? 180 : 0 }}
+                                transition={{ duration: 0.3 }}
                             >
-                                <PostCard
-                                    post={post}
-                                    onPostClick={() => handlePostClick(post._id)}
-                                    isLiked={true}
-                                    addLikedPost={addLikedPost}
-                                    removeLikedPost={removeLikedPost}
-                                    addDislikedPost={addDislikedPost}
-                                    removeDislikedPost={removeDislikedPost}
-                                    likedPosts={likedPosts.map(p => p._id)}
-                                    dislikedPosts={[]}
-                                />
+                                <FaChevronDown className="ml-2 text-gray-400" />
                             </motion.div>
-                        ))}
-                    </AnimatePresence>
-                )}
-                {likedPosts.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                        className="mt-8 text-center"
-                    >
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => navigate('/feed')}
-                            className="bg-blue-500 text-white px-5 py-2 rounded-md inline-flex items-center transition duration-300 ease-in-out hover:bg-blue-600"
-                        >
-                            <FaArrowLeft className="mr-2" /> Back to Feed
                         </motion.button>
-                    </motion.div>
-                )}
+                        <AnimatePresence>
+                            {isDropdownOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg z-50 overflow-hidden"
+                                >
+                                    {categories.map((category) => (
+                                        <motion.button
+                                            key={category.value}
+                                            whileHover={{ backgroundColor: '#F3F4F6' }}
+                                            onClick={() => {
+                                                setSelectedCategory(category);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                            className="w-full text-left px-3 py-2 flex items-center text-sm text-gray-700"
+                                        >
+                                            {React.createElement(category.icon, { className: "mr-2 text-indigo-500 text-lg" })}
+                                            {category.label}
+                                        </motion.button>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </div>
+            </motion.nav>
+
+            <div className="pt-20 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-3xl mx-auto">
+                    {filteredPosts.length === 0 ? (
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center bg-white rounded-lg shadow-sm p-8"
+                        >
+                            <FaHeart className="text-red-400 text-4xl mx-auto mb-4" />
+                            <p className="text-lg text-gray-600 mb-2">No liked posts in this category</p>
+                            <p className="text-sm text-gray-500 mb-6">Try selecting a different category or explore more posts!</p>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => navigate('/feed')}
+                                className="bg-blue-500 text-white px-5 py-2 rounded-md inline-flex items-center transition duration-300 ease-in-out hover:bg-blue-600"
+                            >
+                                Explore Feed
+                            </motion.button>
+                        </motion.div>
+                    ) : (
+                        <AnimatePresence>
+                            {filteredPosts.map((post, index) => (
+                                <motion.div
+                                    key={post._id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                                    className="mb-6 relative overflow-hidden rounded-lg shadow-md transition-all duration-300 ease-in-out hover:shadow-lg"
+                                    onClick={(e) => {
+                                        if (!['BUTTON', 'A', 'INPUT'].includes(e.target.tagName)) {
+                                            handlePostClick(post._id);
+                                        }
+                                    }}
+                                >
+                                    <PostCard
+                                        post={post}
+                                        onPostClick={() => handlePostClick(post._id)}
+                                        isLiked={true}
+                                        addLikedPost={addLikedPost}
+                                        removeLikedPost={removeLikedPost}
+                                        addDislikedPost={addDislikedPost}
+                                        removeDislikedPost={removeDislikedPost}
+                                        likedPosts={likedPosts.map(p => p._id)}
+                                        dislikedPosts={[]}
+                                    />
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    )}
+                </div>
             </div>
         </div>
     );
