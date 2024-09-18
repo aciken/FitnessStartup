@@ -27,16 +27,7 @@ import { Signup } from "./Auth/Signup";
 import { ContinueSignin } from "./Auth/ContinueSignin";
 import { SetUsername } from "./Auth/SetUsername";
 import { ProfileLikes } from "./Profile/ProfileLikes";
-
-
-
-
-
-
-
-
-
-
+import { UserProfile } from './Profile/UserProfile';
 
 export function App() {
 
@@ -73,7 +64,7 @@ export function App() {
     <Route path="/post/:id" element={<PostShow />} />
     <Route path="/set-username" element={<SetUsername />} />
     <Route path="/likes" element={<ProfileLikes />} />
-
+    <Route path="/user/:username" element={<UserProfile />} />
 
     
 

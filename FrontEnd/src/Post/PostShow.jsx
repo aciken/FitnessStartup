@@ -93,9 +93,9 @@ export function PostShow() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 z-10">
-            <div className="w-full p-4 bg-white shadow-md">
-                <div className="max-w-3xl px-4 sm:px-6 lg:px-8 mx-auto flex justify-between items-center">
+        <div className="flex flex-col min-h-screen bg-gray-50 z-10 ">
+            <div className="w-full p-4 bg-white shadow-md ">
+                <div className="max-w-3xl px-4 sm:px-6 lg:px-8 mx-auto flex justify-between items-center ">
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -107,7 +107,7 @@ export function PostShow() {
                     <h1 className="text-2xl font-bold text-gray-800">Post Details</h1>
                 </div>
             </div>
-            <div className="flex-grow md:p-8 lg:p-12 overflow-y-auto">
+            <div className="flex-grow md:p-8 lg:p-12 overflow-y-auto mt-8  md:mt-6">
                 {isLoading ? (
                     <div>Loading...</div>
                 ) : post ? (

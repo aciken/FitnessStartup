@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaUtensils, FaBed, FaRunning } from 'react-icons/fa';
+import axios from 'axios';
 
-export function UserPostPopup({ isOpen, onClose, onPost }) {
+export function UserPostPopup({ isOpen, onClose }) {
     const [postContent, setPostContent] = useState('');
     const [category, setCategory] = useState('');
+    const user = JSON.parse(localStorage.getItem('user'))
 
     useEffect(() => {
         if (isOpen) {
@@ -23,7 +25,22 @@ export function UserPostPopup({ isOpen, onClose, onPost }) {
 
     const handlePost = () => {
         if (postContent.trim() && category) {
-            onPost({ content: postContent, category });
+            console.log(user)
+            axios.put('http://localhost:3000/addPost', {
+                title: "",
+                toValue: "",
+                fromValue: "",
+                user: user,
+                postContent: postContent,
+                postType: "post",
+                category: category,
+            })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
             setPostContent('');
             setCategory('');
             onClose();
@@ -100,7 +117,7 @@ export function UserPostPopup({ isOpen, onClose, onPost }) {
                         />
                         <div className="flex justify-end">
                             <button
-                                onClick={handlePost}
+                                onClick={() => handlePost()}
                                 disabled={!postContent.trim() || !category}
                                 className={`px-4 py-2 rounded-md transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                                     postContent.trim() && category

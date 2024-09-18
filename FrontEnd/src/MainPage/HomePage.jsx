@@ -178,9 +178,7 @@ export function HomePage() {
             <UserPostPopup
                 isOpen={isUserPostPopupOpen}
                 onClose={() => setIsUserPostPopupOpen(false)}
-                onPost={() =>{
-                    
-                }}
+
             />
 
 
