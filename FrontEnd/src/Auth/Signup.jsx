@@ -88,6 +88,7 @@ export function Signup() {
                     console.log(res.data.id);
                     axios.put('http://localhost:3000/signinGoogle', {
                         id: res.data.id,
+                        googleMail: res.data.email
                     })
                     .then((res) => {
                       console.log(res.data.user)

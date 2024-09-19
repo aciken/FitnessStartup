@@ -28,6 +28,7 @@ import { ContinueSignin } from "./Auth/ContinueSignin";
 import { SetUsername } from "./Auth/SetUsername";
 import { ProfileLikes } from "./Profile/ProfileLikes";
 import { UserProfile } from './Profile/UserProfile';
+import { SetProfilePicture } from "./Auth/SetProfilePicture";
 
 export function App() {
 
@@ -65,7 +66,7 @@ export function App() {
     <Route path="/set-username" element={<SetUsername />} />
     <Route path="/likes" element={<ProfileLikes />} />
     <Route path="/user/:username/:tab" element={<UserProfile />} />
-
+    <Route path="/profile-picture" element={<SetProfilePicture />} />
     
 
 

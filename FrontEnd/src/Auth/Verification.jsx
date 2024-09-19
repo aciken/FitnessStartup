@@ -28,7 +28,7 @@ export function Verification() {
                 if (res.data.user.step === 0) {
                     navigate('/feed/all');
                 } else {
-                    navigate('/setup/food');
+                    navigate('/profile-picture', {state: {id: res.data.user._id}});
                 }
             } else {
                 setError('Incorrect verification code');

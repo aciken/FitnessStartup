@@ -20,6 +20,8 @@ const createAccount = async (req, res) => {
     try{
         if(await User.findOne({email: email})){
             return res.json('Email already exists');
+        } else if(await User.findOne({googleMail: email})){
+            return res.json('Email already exists');
         } else if(await User.findOne({username:username})){
             return res.json('Username already exists');
         } else {
