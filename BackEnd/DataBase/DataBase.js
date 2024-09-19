@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  googleMail:{
+    type: String,
+    default: ''
+  },
   googleId:{
     type: String,
     default: ''

@@ -81,6 +81,7 @@ export function CommentPopup({ isOpen, onClose, onSubmit, postId, user, post }) 
                         >
                             Cancel
                         </button>
+                        {JSON.parse(localStorage.getItem('user')).step === 2 ?
                         <button
                             type="submit"
                             className={`px-6 py-3 text-sm font-medium text-white rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 ease-in-out ${
@@ -88,10 +89,19 @@ export function CommentPopup({ isOpen, onClose, onSubmit, postId, user, post }) 
                                 ? 'bg-gray-400'
                                 : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
                             }`}
-                            disabled={comment.length === 0}
+                            disabled={comment.length === 0 || JSON.parse(localStorage.getItem('user')).step !== 2}
                         >
                             Post Comment
                         </button>
+                        :
+                        <button
+                        onClick={() => navigate('/setup/food')}
+                            type="button"
+                            className={`px-6 py-3 text-sm font-medium text-white rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 ease-in-out  bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700`}
+                        >
+                            Finish Setup
+                        </button>
+                        }
                     </div>
                 </form>
             </div>

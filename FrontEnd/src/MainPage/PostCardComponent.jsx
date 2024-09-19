@@ -177,10 +177,11 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         })
         if(profilePicture){
         return (
-            <img 
+            <img  
+            onClick={(e) => {e.stopPropagation(); navigate(`/user/${post.username}/all`)}}
                 src={profilePicture} 
                 alt={`${post.username}'s profile`} 
-                className="w-10 h-10 rounded-full object-cover"
+                className="w-10 h-10 rounded-full object-cover hover:drop-shadow-md hover:scale-105 transition-all duration-300"
             />
         )
         } else {
@@ -275,7 +276,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                             <h2 className="text-xl font-semibold text-gray-800 tracking-tight">{post.title}</h2>
                         )}
                         <p className="text-sm text-gray-500">
-                            Posted by <a className="underline hover:text-blue-700" onClick={(e) => {e.stopPropagation(); navigate(`/user/${post.username}/diet`)}}>{post.username}</a> on {formatDate(post.createdAt)}
+                            Posted by <a className="underline hover:text-blue-700" onClick={(e) => {e.stopPropagation(); navigate(`/user/${post.username}/all`)}}>{post.username}</a> on {formatDate(post.createdAt)}
                         </p>
                     </div>
                 </div>

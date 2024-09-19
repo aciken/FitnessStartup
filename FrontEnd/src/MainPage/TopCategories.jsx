@@ -34,6 +34,18 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
+    const logUse = () => {
+      console.log(JSON.parse(localStorage.getItem('user')));
+    };
+
+    const intervalId = setInterval(logUse, 3000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [user]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
@@ -98,10 +110,24 @@ function Dropdown({ options, selected, onSelect, icon: Icon }) {
   );
 }
 
+
+
+
+
+
+
 function ProfileDropdown({ onLogout }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      console.log('User profile picture:', user.profilePicture);
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -124,8 +150,8 @@ function ProfileDropdown({ onLogout }) {
       onMouseEnter={() => setIsOpen(true)}
       className="flex items-center justify-center w-10 h-10 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 overflow-hidden"
     >
-      {user.profilePicture ? (
-        <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+      {JSON.parse(localStorage.getItem('user')) ? (
+        <img src={JSON.parse(localStorage.getItem('user')).profilePicture} alt="Profile" className="w-full h-full object-cover" />
       ) : (
         <div className="w-full h-full bg-indigo-500 flex items-center justify-center text-white">
           <FaUser />
@@ -143,7 +169,12 @@ function ProfileDropdown({ onLogout }) {
           onMouseLeave={() => setIsOpen(false)}
         >
           <button
-            onClick={() => navigate('/profile/all')}
+            onClick={() =>  
+              {if (JSON.parse(localStorage.getItem('user')).step === 2){
+                navigate('/profile/all')
+              } else {
+                navigate('/setup/food')}}}
+                    
             className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700 hover:bg-gray-100"
           >
             <FaUser className="mr-2 text-indigo-500" />

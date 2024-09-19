@@ -81,6 +81,7 @@ export function Signin() {
                         } else {
                           localStorage.setItem('user', JSON.stringify(res.data.user))
                           if(res.data.user.step != 1){
+                            console.log(res.data.user.profilePicture)
                             navigate('/feed/all')
                           } else {
                             navigate('/setup/food')

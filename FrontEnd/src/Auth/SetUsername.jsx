@@ -49,6 +49,7 @@ export function SetUsername() {
             getDownloadURL(imageRef).then((url) => {
               axios.put(`http://localhost:3000/updateProfilePicture`, { id, profilePicture: url })
               .then((res) => {
+                console.log(res.data)
                 localStorage.setItem('user', JSON.stringify(res.data));
                 navigate('/setup/food');
               })
