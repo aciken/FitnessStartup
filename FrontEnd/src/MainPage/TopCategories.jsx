@@ -3,6 +3,8 @@ import { FaChevronDown, FaClock, FaCog, FaPlus, FaFilter, FaList, FaUtensils, Fa
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+const user = JSON.parse(localStorage.getItem('user'));
+
 const timeRanges = [
   { value: 'today', label: 'Today', icon: FaClock },
   { value: 'week', label: 'This Week', icon: FaClock },
@@ -120,9 +122,15 @@ function ProfileDropdown({ onLogout }) {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onMouseEnter={() => setIsOpen(true)}
-      className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      className="flex items-center justify-center w-10 h-10 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 overflow-hidden"
     >
-      <FaUser />
+      {user.profilePicture ? (
+        <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+      ) : (
+        <div className="w-full h-full bg-indigo-500 flex items-center justify-center text-white">
+          <FaUser />
+        </div>
+      )}
     </motion.button>
     <AnimatePresence>
       {isOpen && (

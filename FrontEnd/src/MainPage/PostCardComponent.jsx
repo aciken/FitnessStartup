@@ -13,6 +13,8 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
+    const [profilePicture, setProfilePicture] = useState('');
+
     const {
         isCommentPopupOpen,
         setIsCommentPopupOpen,
@@ -164,16 +166,39 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         action();
     };
 
+    const profilePictureCall = (username) => {
+         axios.post('http://localhost:3000/getUser', {username})
+        .then(res => {
+            setProfilePicture(res.data.profilePicture)
+
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        if(profilePicture){
+        return (
+            <img 
+                src={profilePicture} 
+                alt={`${post.username}'s profile`} 
+                className="w-10 h-10 rounded-full object-cover"
+            />
+        )
+        } else {
+            return (
+                <div className="w-10 h-10 flex flex-row justify-center items-center bg-gradient-to-r from-blue-500 to-indigo-500 p-2 rounded-full text-white">
+                    <FaUser />
+                </div>
+            )
+        }
+    }
+
+
     const renderChangeContent = () => {
         const styles = getPostTypeStyles(post.postType);
         
         // If the post type is 'post', render only the content
         if (post.postType === 'post') {
-            return (
-                <div className={`${styles.bg} text-gray-700 hover:drop-shadow-md transition-all duration-300 p-4 rounded-xl mb-4 border ${styles.border} shadow-sm`}>
-                    <p className="text-gray-700 text-lg leading-relaxed">{post.content}</p>
-                </div>
-            );
+            return null;
         }
 
         // For other post types, keep the existing rendering logic
@@ -233,15 +258,24 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         >
             <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center space-x-3">
-                    <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-2 rounded-full text-white">
-                        <FaUser />
-                    </div>
+                    {profilePictureCall(post.username)}
+                    {/* {user && user._id === post.userId && user.profilePicture ? (
+                        <img 
+                            src={user.profilePicture} 
+                            alt={`${post.username}'s profile`} 
+                            className="w-10 h-10 rounded-full object-cover"
+                        />
+                    ) : (
+                        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-2 rounded-full text-white">
+                            <FaUser />
+                        </div>
+                    )} */}
                     <div>
                         {post.postType !== 'post' && (
                             <h2 className="text-xl font-semibold text-gray-800 tracking-tight">{post.title}</h2>
                         )}
                         <p className="text-sm text-gray-500">
-                            Posted by <a className="underline hover:text-blue-700" onClick={(e) => {e.stopPropagation(); navigate(`/user/${post.username}`)}}>{post.username}</a> on {formatDate(post.createdAt)}
+                            Posted by <a className="underline hover:text-blue-700" onClick={(e) => {e.stopPropagation(); navigate(`/user/${post.username}/diet`)}}>{post.username}</a> on {formatDate(post.createdAt)}
                         </p>
                     </div>
                 </div>
@@ -269,6 +303,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
                 </div>
             </div>
             {renderChangeContent()}
+            <p className='text-gray-700 pb-2'>{post.content}</p>
             <div className="flex justify-between items-center text-sm border-t pt-4 border-gray-100">
                 <div className="flex items-center space-x-6">
                     <button

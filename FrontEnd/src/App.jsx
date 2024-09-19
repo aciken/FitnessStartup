@@ -64,7 +64,7 @@ export function App() {
     <Route path="/post/:id" element={<PostShow />} />
     <Route path="/set-username" element={<SetUsername />} />
     <Route path="/likes" element={<ProfileLikes />} />
-    <Route path="/user/:username" element={<UserProfile />} />
+    <Route path="/user/:username/:tab" element={<UserProfile />} />
 
     
 

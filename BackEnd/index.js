@@ -24,6 +24,9 @@ const signinGoogle = require('./Auth/signinGoogle');
 const setUsername = require('./Auth/setUsername');
 const getLikedPosts = require('./Posts/getLikedPosts');
 const getUser = require('./User/getUser');
+const updateProfilePicture = require('./User/updateProfilePicture');
+
+
 
 
 
@@ -58,6 +61,8 @@ app.put('/signinGoogle', signinGoogle);
 app.put('/setUsername', setUsername);
 app.post('/getLikedPosts', getLikedPosts);
 app.post('/getUser', getUser);
+app.put('/updateProfilePicture', updateProfilePicture);
+
 
 
 
