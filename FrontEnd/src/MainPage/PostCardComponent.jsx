@@ -205,7 +205,7 @@ export function PostCard({ post, addLikedPost, likedPosts, dislikedPosts, user, 
         // For other post types, keep the existing rendering logic
         return (
             <div className={`${styles.bg} text-gray-700 hover:drop-shadow-md transition-all duration-300 p-4 rounded-xl mb-4 border ${styles.border} shadow-sm cursor-pointer relative`}
-            onClick={(e) => {e.stopPropagation();if(user.step == 2){handleStartClick(post.title, user.setup[getFromBetterName(post.title)], post.toValue)}else{alert('Finish Setup First')}}}
+            onClick={(e) => {e.stopPropagation();if(user.step == 2){handleStartClick(post.title, user.setup[getFromBetterName(post.title)], post.toValue)}else{if(user._id == '1'){navigate('/signup')}else{alert('Finish Setup First')}}}}
             >
                 <div className="flex items-center mb-2">
                     <div className={`${styles.icon} text-white p-1.5 rounded-full mr-2`}>

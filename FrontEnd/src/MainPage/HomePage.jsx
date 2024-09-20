@@ -122,9 +122,7 @@ export function HomePage() {
                 onCategoryChange={handleCategoryChange}
             />
             
-            <div className="fixed top-0 left-0 h-full">
-                {/* <LeftTab current='Home'/> */}
-            </div>
+
             <div className='flex-grow p-6 md:p-8 lg:p-12 overflow-y-auto mt-16  md:mt-10 '>
                 <div className="space-y-8">
                     {posts.map((post) => (
