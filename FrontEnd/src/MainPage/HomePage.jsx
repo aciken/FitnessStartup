@@ -168,7 +168,7 @@ export function HomePage() {
                     if (user.step === 2) {
                         navigate('/profile/change', { state: { from: 'main' } });
                     } else {
-                        navigate('/setup/food');
+                        navigate('/setup/personal');
                     }
                 }}
             />

@@ -78,7 +78,7 @@ export function SetupStep3() {
                 <div className="flex flex-row justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold text-gray-800 flex items-center">
                         <FaBed className="inline-block mr-2" />
-                        Step 3: Sleep Setup
+                        Step 4: Sleep Setup
                     </h2>
                     <button onClick={skipSetup} className="text-gray-500 underline hover:text-gray-600">Skip for now</button>
                 </div>

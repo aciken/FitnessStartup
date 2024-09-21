@@ -2,17 +2,14 @@ const Post = require('../DataBase/Posts');
 
 const likeComment = async (req, res) => {
     const {commentId, postId, userId, interaction } = req.body;
-    console.log(commentId, postId, userId, interaction)
+
     try {
         const post = await Post.findById(postId);
-        console.log("post found")
-        for(let i = 0 ; i < post.comments.length ; i++){
-            console.log(`ID:${post.comments[i]._id.toString()}`)
-            console.log(`commentId:${commentId}`)
-        }
+
+
         const comment = post.comments.find(comment => comment._id.toString() === commentId);
         if(comment){
-            console.log("comment found")
+
             if(interaction === "like"){
                 if(comment.likedBy.includes(userId)){
                     comment.likedBy = comment.likedBy.filter(id => id.toString() !== userId);

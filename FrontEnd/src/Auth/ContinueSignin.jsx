@@ -38,7 +38,7 @@ export function ContinueSignin() {
             if(res.data.user.step == 0 || res.data.user.step == 2){
                 navigate('/feed/all')
             } else {
-                navigate('/setup/food')
+                navigate('/setup/personal')
             }
         }
          else {

@@ -99,7 +99,7 @@ export function Signup() {
                           if(res.data.user.step != 1){
                             navigate('/feed/all')
                           } else {
-                            navigate('/setup/food')
+                            navigate('/setup/personal')
                           }
                         }
                         console.log(res.data.user);

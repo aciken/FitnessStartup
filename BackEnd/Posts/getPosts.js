@@ -35,22 +35,27 @@ const getPosts = async (req, res) => {
         }
 
         const posts = await Post.find(query)
-            .sort({ createdAt: -1 })
-            .limit(limit)
             .populate('userId', 'name email')
             .lean();
 
         const enhancedPosts = posts.map(post => ({
             ...post,
             commentCount: post.comments ? post.comments.length : 0,
+            totalInteractions: (post.likes ? post.likes : 0) + (post.comments ? post.comments.length : 0),
             isRecent: (new Date() - new Date(post.createdAt)) < 24 * 60 * 60 * 1000
         }));
 
+        // Sort posts by totalInteractions in descending order
+        enhancedPosts.sort((a, b) => b.totalInteractions - a.totalInteractions);
+
+        // Limit the number of posts
+        const limitedPosts = enhancedPosts.slice(0, limit);
+
         return res.json({
             success: true,
-            posts: enhancedPosts,
-            totalPosts: enhancedPosts.length,
-            hasMore: enhancedPosts.length === limit
+            posts: limitedPosts,
+            totalPosts: limitedPosts.length,
+            hasMore: enhancedPosts.length > limit
         });
     } catch (error) {
         console.error('Error getting posts:', error);

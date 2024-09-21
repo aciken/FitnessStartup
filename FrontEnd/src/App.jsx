@@ -29,6 +29,7 @@ import { SetUsername } from "./Auth/SetUsername";
 import { ProfileLikes } from "./Profile/ProfileLikes";
 import { UserProfile } from './Profile/UserProfile';
 import { SetProfilePicture } from "./Auth/SetProfilePicture";
+import { SetupStep4 } from "./Setup/SetupStep4";
 
 export function App() {
 
@@ -56,6 +57,7 @@ export function App() {
     <Route exact path="/profile/exercise" element={<ProfileExercise/>} />
     <Route exact path="/profile/changing" element={<ProfileChangePage/>} /> */}
     <Route exact path="/verification" element={<Verification/>} />
+    <Route exact path="/setup/personal" element={<SetupStep4/>} />
     <Route exact path="/setup/food" element={<SetupStep1/>} />
     <Route exact path="/setup/exercise" element={<SetupStep2/>} />
     <Route exact path="/setup/sleep" element={<SetupStep3/>} />

@@ -8,7 +8,6 @@ const finishSetup = async (req, res) => {
         user.step = 2;
         user.setup = setup;
         await user.save();
-        console.log(user)
         return res.json({user});
     } catch(err){
         return res.json(err);

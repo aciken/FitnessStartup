@@ -173,7 +173,7 @@ function ProfileDropdown({ onLogout }) {
               {if (JSON.parse(localStorage.getItem('user')).step === 2){
                 navigate('/profile/all')
               } else {
-                navigate('/setup/food')}}}
+                navigate('/setup/personal')}}}
                     
             className="w-full text-left px-4 py-2 flex items-center text-sm text-gray-700 hover:bg-gray-100"
           >

@@ -65,7 +65,7 @@ export function LeftTab({current}) {
                 
                 <div className="px-3 mt-2">
                     <button
-                        onClick={() => {if(user.user.step != 2){navigate('/setup/food')}else{navigate('/profile/diet')}}}
+                        onClick={() => {if(user.user.step != 2){navigate('/setup/personal')}else{navigate('/profile/diet')}}}
                         className={`w-full flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out ${
                             current === 'Profile'
                                 ? 'bg-blue-600 text-white'

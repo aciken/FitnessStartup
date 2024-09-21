@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 export function PostShow() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || { _id: "1" });
     const [post, setPost] = useState(null);
     const [likedPosts, setLikedPosts] = useState([]);
     const [dislikedPosts, setDislikedPosts] = useState([]);
@@ -38,6 +38,9 @@ export function PostShow() {
     }, [id]);
 
     const addLikedPost = (postId) => {
+        if(user._id == '1'){
+            navigate('/signin');
+        }
         console.log(post)
         if (post && post.likedBy.includes(user._id)) {
             if (dislikedPosts.includes(postId)) {
@@ -55,6 +58,9 @@ export function PostShow() {
     }
 
     const handleCommentSubmit = async(comment, postId) => {
+        if(user._id == '1'){
+            navigate('/signin');
+        }
         if(comment.length > 0){
         const category = getFromBetterName(post.title);
            await axios.put(`http://localhost:3000/addComment`, { postId, comment, userId: user._id, username: user.username, fromValue: user.setup[category], toValue: user.changing[category]})
@@ -71,6 +77,9 @@ export function PostShow() {
     }
 
     const handleCommentLike = (commentId, postId, userId) => {
+        if(user._id == '1'){
+            navigate('/signin');
+        }
         console.log(commentId)
         axios.put(`http://localhost:3000/likeComment`, { commentId, postId, userId, interaction: "like" })
             .then(res => {
@@ -82,6 +91,9 @@ export function PostShow() {
     }
 
     const handleCommentDislike = (commentId, postId, userId) => {
+        if(user._id == '1'){
+            navigate('/signin');
+        }
 
         axios.put(`http://localhost:3000/likeComment`, { commentId, postId, userId, interaction: "dislike" })
             .then(res => {
@@ -134,9 +146,9 @@ export function PostShow() {
                                     <div className="flex justify-end mt-3">
                                         <button
                                         className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 font-semibold text-blue-100"
-                                        onClick={() => {if(user.step == 2){handleCommentSubmit(newComment, post._id)}else{navigate('/setup/food')}}}
+                                        onClick={() => {if(user.step == 2){handleCommentSubmit(newComment, post._id)}else if(user._id == "1"){navigate('/signin')} else{navigate('/setup/personal')}}}
                                         >
-                                            {user.step == 2 ? 'Post Comment' : 'Finish Setup'}
+                                            {user.step == 2 ? 'Post Comment' : user._id == '1' ? 'Sign in to Post' : 'Finish Setup'}
                                         </button>
                                     </div>
                                 </div>

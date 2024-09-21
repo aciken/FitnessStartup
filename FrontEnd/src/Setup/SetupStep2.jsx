@@ -93,7 +93,7 @@ export function SetupStep2() {
                 <div className="flex flex-row justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold text-gray-800 flex items-center">
                         <FaDumbbell className="inline-block mr-2" />
-                        Step 2: Exercise Setup
+                        Step 3: Exercise Setup
                     </h2>
                     <button onClick={skipSetup} className="text-gray-500 underline hover:text-gray-600">Skip for now</button>
                 </div>

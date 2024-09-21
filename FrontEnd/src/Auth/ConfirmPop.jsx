@@ -44,7 +44,7 @@ export function ConfirmPop() {
                 if(res.data.user.step == 0 || res.data.user.step == 2){
                     navigate('/feed/home')
                 } else {
-                    navigate('/setup/food')
+                    navigate('/setup/personal')
                 }
             }
              else {

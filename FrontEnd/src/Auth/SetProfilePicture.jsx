@@ -41,7 +41,7 @@ export function SetProfilePicture() {
               .then((res) => {
                 console.log(res.data)
                 localStorage.setItem('user', JSON.stringify(res.data));
-                navigate('/setup/food');
+                navigate('/setup/personal');
               })
             })
           })

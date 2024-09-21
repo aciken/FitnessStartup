@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaUtensils, FaDumbbell, FaBed, FaList, FaHome, FaPencilAlt, FaArrowLeft } from 'react-icons/fa';
+import { FaUtensils, FaDumbbell, FaBed, FaList, FaHome, FaPencilAlt, FaArrowLeft, FaUser, FaCamera, FaWeight, FaRuler, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PostPopup } from '../Post/PostPopup';
 import { PostDeletePopup } from '../Post/PostDeletePopup';
@@ -28,9 +28,16 @@ export function ProfileDiet() {
         selectedFinish,
         handleConfirmFinish,
     } = useProfileFunctions();
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [description, setDescription] = useState('');
+    const [weight, setWeight] = useState('');
+    const [height, setHeight] = useState('');
+    const [age, setAge] = useState('');
+    const [gender, setGender] = useState('');
 
     const tabs = [
         { id: 'all', icon: FaList, label: 'All' },
+        { id: 'profile', icon: FaUser, label: 'Profile' },
         { id: 'diet', icon: FaUtensils, label: 'Diet' },
         { id: 'exercise', icon: FaDumbbell, label: 'Exercise' },
         { id: 'sleep', icon: FaBed, label: 'Sleep' },
@@ -112,6 +119,35 @@ export function ProfileDiet() {
         );
     };
 
+    const handleProfilePictureChange = (e) => {
+        if (e.target.files[0]) {
+            setProfilePicture(e.target.files[0]);
+        }
+    };
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+    };
+
+    const handleProfileUpdate = () => {
+        console.log('Updating profile with:', { profilePicture, description, weight, height, age, gender });
+        // Implement the logic to update the profile
+    };
+
+    const renderProfileCard = (title, value, icon, unit = '') => {
+        return (
+            <div className="bg-white rounded-lg shadow-md overflow-hidden w-full max-w-xs">
+                <div className="p-4">
+                    <div className="flex items-center mb-2">
+                        {icon}
+                        <h3 className="text-lg font-semibold ml-2">{title}</h3>
+                    </div>
+                    <p className="text-2xl font-bold">{value} {unit}</p>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
             <div className='max-w-7xl mx-auto'>
@@ -183,6 +219,84 @@ export function ProfileDiet() {
                                             {renderCards('exercise')}
                                             {renderCards('sleep')}
                                         </>
+                                    ) : selected === 'profile' ? (
+                                        <motion.div 
+                                            variants={{
+                                                hidden: { opacity: 0, y: 20 },
+                                                visible: { opacity: 1, y: 0 },
+                                            }}
+                                            className='bg-white border border-gray-200 rounded-lg p-8 shadow-md col-span-full'
+                                        >
+                                            <h2 className="text-2xl font-bold mb-6 text-gray-800">Profile Information</h2>
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                                                <div>
+                                                    <div className="mb-6">
+                                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="profile-picture">
+                                                            Profile Picture
+                                                        </label>
+                                                        <div className="flex items-center">
+                                                            <div className="w-20 h-20 bg-gray-200 rounded-full overflow-hidden mr-4">
+                                                                {profilePicture ? (
+                                                                    <img src={URL.createObjectURL(profilePicture)} alt="Profile" className="w-full h-full object-cover" />
+                                                                ) : (
+                                                                    <div className="w-full h-full flex items-center justify-center">
+                                                                        <FaUser className="text-gray-400 text-3xl" />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                                                                <FaCamera className="mr-2" />
+                                                                <span>Change Picture</span>
+                                                                <input type="file" className="hidden" onChange={handleProfilePictureChange} accept="image/*" />
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-6">
+                                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+                                                            Description
+                                                        </label>
+                                                        <textarea
+                                                            id="description"
+                                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                            rows="4"
+                                                            value={description}
+                                                            onChange={(e) => setDescription(e.target.value)}
+                                                            placeholder="Tell us about yourself..."
+                                                        ></textarea>
+                                                    </div>
+                                                    <div className="mb-6 max-w-xs">
+                                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="gender">
+                                                            <FaVenusMars className="inline mr-2" /> Gender
+                                                        </label>
+                                                        <select
+                                                            id="gender"
+                                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                            value={gender}
+                                                            onChange={(e) => setGender(e.target.value)}
+                                                        >
+                                                            <option value="">Select gender</option>
+                                                            <option value="male">Male</option>
+                                                            <option value="female">Female</option>
+                                                            <option value="other">Other</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        {renderInfoCard("Weight", weight, weight, false, 0, "profile")}
+                                                        {renderInfoCard("Height", height, height, false, 1, "profile")}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-end">
+                                                <button
+                                                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
+                                                    onClick={handleProfileUpdate}
+                                                >
+                                                    Update Profile
+                                                </button>
+                                            </div>
+                                        </motion.div>
                                     ) : (
                                         renderCards(selected)
                                     )

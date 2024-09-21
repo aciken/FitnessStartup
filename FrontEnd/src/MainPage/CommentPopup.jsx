@@ -95,7 +95,7 @@ export function CommentPopup({ isOpen, onClose, onSubmit, postId, user, post }) 
                         </button>
                         :
                         <button
-                        onClick={() => navigate('/setup/food')}
+                        onClick={() => navigate('/setup/personal')}
                             type="button"
                             className={`px-6 py-3 text-sm font-medium text-white rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 ease-in-out  bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700`}
                         >

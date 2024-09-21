@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FaUtensils, FaClock, FaFire, FaBed, FaArrowLeft, FaTimes } from 'react-icons/fa';
+import { FaUtensils } from 'react-icons/fa';
 import axios from 'axios';
 import { ProfilePage } from "../Profile/ProfilePage";
 import { HomePage } from "../MainPage/HomePage";
@@ -78,13 +78,17 @@ export function SetupStep1() {
         });
     };
 
+    const goBack = () => {
+        navigate('/setup/personal');
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full backdrop-blur-sm">
                 <div className="flex flex-row justify-between items-center mb-4">
                     <h2 className="text-2xl font-bold text-gray-800 flex items-center">
                         <FaUtensils className="inline-block mr-2" />
-                        Step 1: Diet Setup
+                        Step 2: Diet Setup
                     </h2>
                     <button onClick={skipSetup} className="text-gray-500 underline hover:text-gray-600">Skip for now</button>
                 </div>
@@ -172,7 +176,13 @@ export function SetupStep1() {
                             </select>
                         </div>
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-end items-center mt-6 space-x-2">
+                <button 
+                        onClick={goBack}
+                        className={` text-white font-semibold py-2 px-4 rounded-lg shadow-mdfocus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-200 bg-blue-500 hover:bg-blue-600 }`}
+                    >
+                        Back
+                    </button>
                     <button 
                         onClick={next}
                         className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition duration-200 ${setup.diet !== 'none' && setup.meals !== 'none' && setup.fast !== 'none' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}

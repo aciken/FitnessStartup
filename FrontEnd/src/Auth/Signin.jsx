@@ -85,7 +85,7 @@ export function Signin() {
                             console.log(res.data.user.profilePicture)
                             navigate('/feed/all')
                           } else {
-                            navigate('/setup/food')
+                            navigate('/setup/personal')
                           }
                         }
                         console.log(res.data.user);

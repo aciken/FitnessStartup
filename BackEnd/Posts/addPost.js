@@ -3,7 +3,7 @@ const Post = require('../DataBase/Posts')
 
 const addPost = async (req, res) => {
     const { title, toValue, fromValue, user, postContent, postType, category } = req.body;
-    console.log(category)
+
 
 
     try{
