@@ -20,6 +20,7 @@ export function ProfileChange() {
     const [selectedOption, setSelectedOption] = useState(option ? option.replace(/-/g, ' ') : null);
     const [userData, setUserData] = useState(null);
     const [newValue, setNewValue] = useState('');
+    const [exerciseTimes, setExerciseTimes] = useState('');
     const [userEmail, setUserEmail] = useState('');
 
 
@@ -30,7 +31,6 @@ export function ProfileChange() {
         selectedStart,
         setSelectedStart,
         handleStartClick,
-        handleConfirmStart,
 
         } = useProfileFunctions();
 
@@ -85,8 +85,9 @@ export function ProfileChange() {
     }, [category, option]);
 
     useEffect(() => {
-        if (selectedCategory && selectedOption && userData) {
+        if (selectedCategory === 'exercise' && selectedOption && userData) {
             setNewValue(getCurrentValue(selectedCategory, selectedOption));
+            setExerciseTimes(getCurrentExerciseTimes(selectedOption));
         }
     }, [selectedCategory, selectedOption, userData]);
 
@@ -106,6 +107,7 @@ export function ProfileChange() {
     const fastingScheduleOptions = ["Not Fasting", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"];
     const mealOptions = ['1', '2', '3', '4', '5', '6'];
     const exerciseOptions = ['Bodybuilding', 'Powerlifting', 'Running', 'Cycling', 'Swimming', 'Yoga', 'Pilates', 'CrossFit', 'HIIT', 'Dancing', 'Boxing', 'Martial Arts', 'Hiking', 'Rowing', 'Tennis', 'Basketball', 'Soccer', 'Golf', 'Skiing', 'Snowboarding', 'Skating', 'Climbing', 'Surfing', 'Kayaking', 'Horseback Riding'];
+    const exerciseTimesOptions = ['none', '1', '2', '3', '4', '5', '6', '7'];
     const sleepVariationOptions = Array.from({ length: 11 }, (_, i) => i.toString());
 
     const handleCategorySelect = (category) => {
@@ -126,6 +128,12 @@ export function ProfileChange() {
 
         const key = getKeyFromOption(option);
         return userData[key] || 'N/A';
+    };
+
+    const getCurrentExerciseTimes = (option) => {
+        if (!userData) return 'Loading...';
+        const key = `${option.toLowerCase().replace(/ /g, '')}Times`;
+        return userData[key] || 'none';
     };
 
     const getKeyFromOption = (option) => {
@@ -211,15 +219,26 @@ export function ProfileChange() {
                 break;
             case 'exercise':
                 return (
-                    <select 
-                        value={newValue} 
-                        onChange={(e) => setNewValue(e.target.value)}
-                        className="w-full p-2 border rounded"
-                    >
-                        {exerciseOptions.map(option => (
-                            <option key={option} value={option}>{option}</option>
-                        ))}
-                    </select>
+                    <>
+                        <select 
+                            value={newValue} 
+                            onChange={(e) => setNewValue(e.target.value)}
+                            className="w-full p-2 border rounded mb-2"
+                        >
+                            {exerciseOptions.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                            ))}
+                        </select>
+                        <select 
+                            value={exerciseTimes} 
+                            onChange={(e) => setExerciseTimes(e.target.value)}
+                            className="w-full p-2 border rounded"
+                        >
+                            {exerciseTimesOptions.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                            ))}
+                        </select>
+                    </>
                 );
             case 'sleep':
                 switch (selectedOption) {
@@ -258,23 +277,34 @@ export function ProfileChange() {
         }
     };
 
+    const handleConfirmStart = async () => {
+        if (selectedStart) {
+            let value = newValue;
+            if (selectedCategory === 'exercise') {
+                value = `${newValue}|${exerciseTimes}`;
+            }
+            await addChange(getKeyFromOption(selectedStart.option), value);
+            setIsStartChangePopupOpen(false);
+        }
+    };
+
     const addChange = async(change, value) => {
         try {
             const stringValue = value.toString();
-            const response = await axios.put('http://localhost:3000/addChange',{
+            const response = await axios.put('http://localhost:3000/addChange', {
                 change: change,
                 value: stringValue,
                 email: userEmail
-            })
-            if(response.data != 'User not found' || response.data != 'Internal Server Error'){
+            });
+            if(response.data !== 'User not found' && response.data !== 'Internal Server Error'){
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 navigate('/profile/' + selectedCategory);
             }
         } catch (err) {
             console.log(err);
         }
-    }
-    
+    };
+
     return (
         <div className="min-h-[100vh] w-full z-1000">
             <div className="fixed inset-0 flex items-center justify-center z-[1001]">
@@ -337,7 +367,7 @@ export function ProfileChange() {
                     ) : (
                         <div>
                             <p className="mb-2 text-gray-600">Current {selectedOption}:</p>
-                            <p className="mb-4 text-lg font-semibold text-gray-800">{getCurrentValue(selectedCategory, selectedOption)}</p>
+                            <p className="mb-4 text-lg font-semibold text-gray-800">{getCurrentValue(selectedCategory, selectedOption)} {getCurrentExerciseTimes(selectedOption) !== 'none' ? `(${getCurrentExerciseTimes(selectedOption)} times a week)` : ''}</p>
                             <p className="mb-2 text-gray-600">Enter new value:</p>
                             {renderInput()}
                             <button
@@ -353,7 +383,7 @@ export function ProfileChange() {
                             <div className="mt-6 flex justify-end">
                                 <button
                                     // onClick={() => {addChange(getKeyFromOption(selectedOption), newValue);}}
-                                    onClick={() => {if(newValue !== getCurrentValue(selectedCategory, selectedOption)){handleStartClick(selectedOption, getCurrentValue(selectedCategory, selectedOption), newValue);}}}
+                                    onClick={() => {if(newValue !== getCurrentValue(selectedCategory, selectedOption)){handleStartClick(selectedOption, getCurrentValue(selectedCategory, selectedOption), newValue, getCurrentExerciseTimes(selectedOption),exerciseTimes);}}}
                                     className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none  transition duration-200 flex items-center ${newValue !== getCurrentValue(selectedCategory, selectedOption) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
                                 >
                                     Change

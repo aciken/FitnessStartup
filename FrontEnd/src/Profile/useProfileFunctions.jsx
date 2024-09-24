@@ -227,8 +227,8 @@ export function useProfileFunctions() {
     }, []);
 
     const handleDeleteClick = (title, value, changingValue) => {
-        const trimmedValue = value.split(' ')[0];
-        const trimmedChangingValue = changingValue ? changingValue.split(' ')[0] : undefined;
+        const trimmedValue = title.includes('Exercise') & value != 'none' ? `${value.split(' ')[0]}(${value.split('(')[1].charAt(0)})` : value.split(' ')[0];
+        const trimmedChangingValue = title.includes('Exercise') & changingValue != 'none' ? `${changingValue.split(' ')[0]}(${changingValue.split('(')[1].charAt(0)})` : changingValue.split(' ')[0];
         setSelectedDelete({ title, fromValue: trimmedValue, toValue: trimmedChangingValue });
         setIsPostDeletePopupOpen(true);
     };
@@ -241,9 +241,9 @@ export function useProfileFunctions() {
     };
 
     const handleFinishClick = (title, value, changingValue) => {
-        console.log(title, value, changingValue)
-        const trimmedValue = value.split(' ')[0];
-        const trimmedChangingValue = changingValue.split(' ')[0];
+
+        const trimmedValue = title.includes('Exercise' & value != 'none') ? `${value.split(' ')[0]}(${value.split('(')[1].charAt(0)})` : value.split(' ')[0];
+        const trimmedChangingValue = title.includes('Exercise') ? `${changingValue.split(' ')[0]}(${changingValue.split('(')[1].charAt(0)})` : changingValue.split(' ')[0];
         setSelectedFinish({ title, fromValue: trimmedValue, toValue: trimmedChangingValue });
         setIsFinishChangePopupOpen(true);
     };
@@ -257,8 +257,10 @@ export function useProfileFunctions() {
         setIsFinishChangePopupOpen(false);
     };
 
-    const handleStartClick = useCallback((title, value, changingValue) => {
-        console.log(title, value, changingValue); // Add this for debugging
+    const handleStartClick = useCallback((title, value, changingValue,timesStart, timesChange) => {
+
+
+
 
         const safelyTrimValue = (val) => {
             if (typeof val === 'string') {
@@ -267,8 +269,13 @@ export function useProfileFunctions() {
             return val;
         };
 
-        const trimmedValue = safelyTrimValue(value);
-        const trimmedChangingValue = safelyTrimValue(changingValue);
+        if(title.includes('Exercise')){
+            console.log(value, changingValue)
+        }
+
+
+        const trimmedValue = title.includes('Exercise') ? `${safelyTrimValue(value)}(${timesStart})` : safelyTrimValue(value);
+        const trimmedChangingValue = title.includes('Exercise') ? `${safelyTrimValue(changingValue)}(${timesChange})` : safelyTrimValue(changingValue);
 
         setSelectedStart({ 
             title, 
@@ -442,7 +449,7 @@ export function useProfileFunctions() {
         console.log(selected)
     
         const { setup, changing } = user;
-        const { diet, meals, fast, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies, calories } = setup;
+        const { diet, meals, fast, exercise1, exercise1Times, exercise2, exercise2Times, exercise3, exercise3Times, sleep, bed, varies, calories, weight, height, description, gender } = setup;
     
         const formatExercise = (exercise, times) => {
             if (exercise === 'none') return null;
@@ -456,12 +463,16 @@ export function useProfileFunctions() {
             { key: 'diet', title: 'Diet Type', format: (value) => value },
             { key: 'meals', title: 'Meals Per Day', format: (value) => value },
             { key: 'fast', title: 'Fasting', format: formatFast },
-            { key: 'exercise1', title: 'Exercise 1', format: (value, times) => formatExercise(value, times) },
-            { key: 'exercise2', title: 'Exercise 2', format: (value, times) => formatExercise(value, times) },
-            { key: 'exercise3', title: 'Exercise 3', format: (value, times) => formatExercise(value, times) },
+            { key: 'exercise1', title: 'Exercise 1', format: (value, times) => `${value} ${times !== 'none' ? `(${times} times a week)` : ''}` },
+            { key: 'exercise2', title: 'Exercise 2', format: (value, times) => `${value} ${times !== 'none' ? `(${times} times a week)` : ''}` },
+            { key: 'exercise3', title: 'Exercise 3', format: (value, times) => `${value} ${times !== 'none' ? `(${times} times a week)` : ''}` },
             { key: 'sleep', title: 'Sleep Duration', format: (value) => `${value} hours` },
             { key: 'bed', title: 'Bedtime', format: (value) => value },
-            { key: 'varies', title: 'Sleep Variation', format: (value) => `${value}/10` }
+            { key: 'varies', title: 'Sleep Variation', format: (value) => `${value}/10` },
+            { key: 'weight', title: 'Weight', format: (value) => `${value} ${setup.unitWeight}` },
+            { key: 'height', title: 'Height', format: (value) => `${value} ${setup.unitHeight}` },
+            { key: 'description', title: 'Description', format: (value) => value },
+            { key: 'gender', title: 'Gender', format: (value) => value },
         ];
     
         switch (selected) {
@@ -480,7 +491,14 @@ export function useProfileFunctions() {
                     isChanging: !!changing[field.key]
                 }));
             case 'sleep':
-                return allFields.slice(7).map(field => ({
+                return allFields.slice(7,10).map(field => ({
+                    title: field.title,
+                    value: field.format(setup[field.key]),
+                    changingValue: changing[field.key] ? field.format(changing[field.key]) : undefined,
+                    isChanging: !!changing[field.key]
+                }));
+            case 'personal':
+                return allFields.slice(10,12).map(field => ({
                     title: field.title,
                     value: field.format(setup[field.key]),
                     changingValue: changing[field.key] ? field.format(changing[field.key]) : undefined,

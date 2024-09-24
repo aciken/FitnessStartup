@@ -8,20 +8,37 @@ export function SetupStep4() {
     const location = useLocation();
 
     const [setup, setSetup] = useState({
+        diet: 'none',
+        meals: 'none',
+        fast: 'none',
+        exercise1: 'none',
+        exercise1Times: 'none',
+        exercise2: 'none',
+        exercise2Times: 'none',
+        exercise3: 'none',
+        exercise3Times: 'none',
+        sleep: 'none',
+        bed: 'none',
+        varies: 'none',
+        calories: 2000,
+        number: 1,
         description: '',
         gender: 'none',
         weight: '',
         height: '',
+        unitWeight: 'kg',
+        unitHeight: 'cm'
     });
 
-    const [units, setUnits] = useState({
-        weight: 'kg',
-        height: 'cm'
-    });
+
+
 
     useEffect(() => {
+        console.log(setup);
         if (location.state) {
-            setSetup(prevSetup => ({ ...prevSetup, ...location.state.setup }));
+            console.log('yesss')
+            
+            setSetup(location.state.setup);
         }
     }, [location.state]);
 
@@ -32,8 +49,8 @@ export function SetupStep4() {
 
     const toggleUnits = (type) => {
         if (type === 'weight') {
-            const newUnit = units.weight === 'kg' ? 'lbs' : 'kg';
-            setUnits(prev => ({ ...prev, weight: newUnit }));
+            const newUnit = setup.unitWeight === 'kg' ? 'lbs' : 'kg';
+            setSetup(prev => ({ ...prev, unitWeight: newUnit }));
             if (setup.weight) {
                 setSetup(prev => ({
                     ...prev,
@@ -41,8 +58,8 @@ export function SetupStep4() {
                 }));
             }
         } else if (type === 'height') {
-            const newUnit = units.height === 'cm' ? 'ft' : 'cm';
-            setUnits(prev => ({ ...prev, height: newUnit }));
+            const newUnit = setup.unitHeight === 'cm' ? 'ft' : 'cm';
+            setSetup(prev => ({ ...prev, unitHeight: newUnit }));
             if (setup.height) {
                 setSetup(prev => ({
                     ...prev,
@@ -54,13 +71,7 @@ export function SetupStep4() {
 
     const next = () => {
         if (setup.gender !== 'none' && setup.weight && setup.height && setup.description) {
-            const finalSetup = {
-                ...setup,
-                weight: units.weight === 'kg' ? setup.weight : (setup.weight / 2.20462).toFixed(1),
-                height: units.height === 'cm' ? setup.height : (setup.height * 30.48).toFixed(1),
-            };
-            console.log(finalSetup);
-            navigate('/setup/food', { state: { setup: finalSetup } });
+            navigate('/setup/food', { state: { setup: setup } });
         }
     };
 
@@ -114,10 +125,10 @@ export function SetupStep4() {
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 mb-2 flex justify-between items-center">
-                        <span><FaWeight className="inline mr-2" /> Weight ({units.weight})</span>
+                        <span><FaWeight className="inline mr-2" /> Weight ({setup.unitWeight})</span>
                         <button onClick={() => toggleUnits('weight')} className="text-blue-500 hover:text-blue-600">
                             <FaExchangeAlt className="inline mr-1" /> 
-                            Switch to {units.weight === 'kg' ? 'lbs' : 'kg'}
+                            Switch to {setup.unitWeight === 'kg' ? 'lbs' : 'kg'}
                         </button>
                     </label>
                     <input
@@ -126,15 +137,15 @@ export function SetupStep4() {
                         value={setup.weight}
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
-                        placeholder={`Enter your weight in ${units.weight}`}
+                        placeholder={`Enter your weight in ${setup.unitWeight}`}
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 mb-2 flex justify-between items-center">
-                        <span><FaRuler className="inline mr-2" /> Height ({units.height})</span>
+                    <label className=" text-gray-700 mb-2 flex justify-between items-center">
+                        <span><FaRuler className="inline mr-2" /> Height ({setup.unitHeight})</span>
                         <button onClick={() => toggleUnits('height')} className="text-blue-500 hover:text-blue-600">
                             <FaExchangeAlt className="inline mr-1" /> 
-                            Switch to {units.height === 'cm' ? 'ft' : 'cm'}
+                            Switch to {setup.unitHeight === 'cm' ? 'ft' : 'cm'}
                         </button>
                     </label>
                     <input
@@ -143,7 +154,7 @@ export function SetupStep4() {
                         value={setup.height}
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
-                        placeholder={`Enter your height in ${units.height}`}
+                        placeholder={`Enter your height in ${setup.unitHeight}`}
                     />
                 </div>
                 <div className="flex justify-end">

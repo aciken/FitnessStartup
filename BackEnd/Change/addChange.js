@@ -1,15 +1,23 @@
 const User = require('../DataBase/DataBase')
 
 const addChange = async(req, res) => {
-    const {change, value, id} = req.body;
-
+    let {change, value, id} = req.body;
 
     try {
-
+        const updateFields = {};
+        
+        if (value.includes('(') && value.includes(')')) {
+            const [mainValue, times] = value.split('(');
+            const timesValue = times.replace(')', '').trim();
+            updateFields[`changing.${change}`] = mainValue.trim();
+            updateFields[`changing.${change}Times`] = timesValue;
+        } else {
+            updateFields[`changing.${change}`] = value;
+        }
 
         const updatedUser = await User.findOneAndUpdate(
             { _id: id },
-            { $set: { [`changing.${change}`]: value } },
+            { $set: updateFields },
             { new: true, runValidators: true }
         );
 

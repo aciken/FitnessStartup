@@ -19,22 +19,7 @@ export function SetupStep1() {
         return () => clearInterval(intervalId);
     }, []);
 
-    const [setup, setSetup] = useState({
-        diet: 'none',
-        meals: 'none',
-        fast: 'none',
-        exercise1: 'none',
-        exercise1Times: 'none',
-        exercise2: 'none',
-        exercise2Times: 'none',
-        exercise3: 'none',
-        exercise3Times: 'none',
-        sleep: 'none',
-        bed: 'none',
-        varies: 'none',
-        calories: 2000,
-        number: 1,
-    });
+    const [setup, setSetup] = useState(location.state.setup);
 
     useEffect(() => {
         console.log(setup);
@@ -79,7 +64,7 @@ export function SetupStep1() {
     };
 
     const goBack = () => {
-        navigate('/setup/personal');
+        navigate('/setup/personal', { state: { setup: setup } });
     };
 
     return (

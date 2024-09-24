@@ -6,6 +6,10 @@ import { PostPopup } from '../Post/PostPopup';
 import { PostDeletePopup } from '../Post/PostDeletePopup';
 import { useProfileFunctions } from './useProfileFunctions';
 import { PostFinishPopup } from '../Post/PostFinishPopup';
+import { storage } from '../Comp/Firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { v4 } from 'uuid';
+import axios from 'axios';
 
 export function ProfileDiet() {
     const navigate = useNavigate();
@@ -29,15 +33,23 @@ export function ProfileDiet() {
         handleConfirmFinish,
     } = useProfileFunctions();
     const [profilePicture, setProfilePicture] = useState(null);
-    const [description, setDescription] = useState('');
-    const [weight, setWeight] = useState('');
-    const [height, setHeight] = useState('');
-    const [age, setAge] = useState('');
-    const [gender, setGender] = useState('');
+    const [description, setDescription] = useState(JSON.parse(localStorage.getItem('user')).setup.description);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user && user.profilePicture) {
+                console.log('User profile picture:', user.profilePicture);
+            }
+        }, 3000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
 
     const tabs = [
         { id: 'all', icon: FaList, label: 'All' },
-        { id: 'profile', icon: FaUser, label: 'Profile' },
+        { id: 'personal', icon: FaUser, label: 'Personal' },
         { id: 'diet', icon: FaUtensils, label: 'Diet' },
         { id: 'exercise', icon: FaDumbbell, label: 'Exercise' },
         { id: 'sleep', icon: FaBed, label: 'Sleep' },
@@ -130,8 +142,26 @@ export function ProfileDiet() {
     };
 
     const handleProfileUpdate = () => {
-        console.log('Updating profile with:', { profilePicture, description, weight, height, age, gender });
-        // Implement the logic to update the profile
+        if(profilePicture){
+            const imageRef = ref(storage, `profilePictures/${profilePicture.name + v4()}`);
+            uploadBytes(imageRef, profilePicture).then(() =>{
+              getDownloadURL(imageRef).then((url) => {
+                console.log('url', url);
+                axios.put(`http://localhost:3000/updateProfilePicture`, { id: user._id, profilePicture: url })
+                .then((res) => {
+                  console.log(res.data)
+                  localStorage.setItem('user', JSON.stringify(res.data));
+                  window.location.reload();
+
+                })
+              })
+            }) 
+        }
+
+        if(description !== user.setup.description){
+            console.log('description', description);
+        }
+
     };
 
     const renderProfileCard = (title, value, icon, unit = '') => {
@@ -147,6 +177,14 @@ export function ProfileDiet() {
             </div>
         );
     };
+
+    const [showSaveButton, setShowSaveButton] = useState(false);
+
+    useEffect(() => {
+        if(profilePicture){
+            setShowSaveButton(true);
+        }
+    }, [profilePicture]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
@@ -219,7 +257,7 @@ export function ProfileDiet() {
                                             {renderCards('exercise')}
                                             {renderCards('sleep')}
                                         </>
-                                    ) : selected === 'profile' ? (
+                                    ) : selected === 'personal' ? (
                                         <motion.div 
                                             variants={{
                                                 hidden: { opacity: 0, y: 20 },
@@ -239,12 +277,10 @@ export function ProfileDiet() {
                                                                 {profilePicture ? (
                                                                     <img src={URL.createObjectURL(profilePicture)} alt="Profile" className="w-full h-full object-cover" />
                                                                 ) : (
-                                                                    <div className="w-full h-full flex items-center justify-center">
-                                                                        <FaUser className="text-gray-400 text-3xl" />
-                                                                    </div>
+                                                                    <img src={JSON.parse(localStorage.getItem('user')).profilePicture} alt="Profile" className="w-full h-full object-cover" />
                                                                 )}
                                                             </div>
-                                                            <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+                                                            <label className="cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600  text-white font-bold py-2 px-4 rounded inline-flex items-center">
                                                                 <FaCamera className="mr-2" />
                                                                 <span>Change Picture</span>
                                                                 <input type="file" className="hidden" onChange={handleProfilePictureChange} accept="image/*" />
@@ -252,49 +288,54 @@ export function ProfileDiet() {
                                                         </div>
                                                     </div>
                                                     <div className="mb-6">
-                                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-                                                            Description
+                                                        <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="description">
+                                                            <FaPencilAlt className="inline mr-2" /> Description
                                                         </label>
                                                         <textarea
                                                             id="description"
-                                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                            className="shadow-sm border border-gray-300 rounded-md w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                                             rows="4"
+                                                            maxLength="200"
                                                             value={description}
-                                                            onChange={(e) => setDescription(e.target.value)}
+                                                            onChange={(e) => {
+                                                                setDescription(e.target.value);
+                                                                setShowSaveButton(e.target.value !== user.setup.description);
+                                                            }}
                                                             placeholder="Tell us about yourself..."
                                                         ></textarea>
+                                                        <div className="text-right text-gray-500 text-sm mt-1">
+                                                            {description.length}/200 characters
+                                                        </div>
+                                                        {showSaveButton && (
+                                                            <button
+                                                                className=" bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                                                onClick={handleProfileUpdate}
+                                                            >
+                                                                Save Changes
+                                                            </button>
+                                                        )}
                                                     </div>
                                                     <div className="mb-6 max-w-xs">
                                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="gender">
                                                             <FaVenusMars className="inline mr-2" /> Gender
                                                         </label>
-                                                        <select
+                                                        <div
                                                             id="gender"
-                                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                            value={gender}
-                                                            onChange={(e) => setGender(e.target.value)}
+                                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight bg-gray-100 cursor-default"
                                                         >
-                                                            <option value="">Select gender</option>
-                                                            <option value="male">Male</option>
-                                                            <option value="female">Female</option>
-                                                            <option value="other">Other</option>
-                                                        </select>
+                                                            {user.setup.gender}
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                        {renderInfoCard("Weight", weight, weight, false, 0, "profile")}
-                                                        {renderInfoCard("Height", height, height, false, 1, "profile")}
+                                                        {getInfoCards("personal").map((card, index) => (
+                                                            <div key={index}>
+                                                                {renderInfoCard(card.title, card.value, card.changingValue, card.isChanging, index, "personal")}
+                                                            </div>
+                                                        ))}
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div className="flex justify-end">
-                                                <button
-                                                    className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out"
-                                                    onClick={handleProfileUpdate}
-                                                >
-                                                    Update Profile
-                                                </button>
                                             </div>
                                         </motion.div>
                                     ) : (

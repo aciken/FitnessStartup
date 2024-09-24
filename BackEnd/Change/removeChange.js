@@ -5,7 +5,10 @@ const removeChange = async (req, res) => {
     try {
         const updatedUser = await User.findOneAndUpdate(
             { _id: id },
-            { $set: { [`changing.${change}`]: '' } },
+            { 
+                $set: { [`changing.${change}`]: '' },
+                $unset: { [`changing.${change}Times`]: '' } 
+            },
             { new: true, runValidators: true }
         );
         if (updatedUser) {
