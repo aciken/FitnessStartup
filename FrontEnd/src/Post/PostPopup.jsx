@@ -22,6 +22,8 @@ export function PostPopup({ isOpen, onClose, changeInfo }) {
 
     const { title, fromValue, toValue } = changeInfo || {};
 
+    console.log(changeInfo)
+
     return (
         <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-opacity duration-300 backdrop-blur-sm ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
             <div className={`bg-white rounded-lg shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import { FaUtensils, FaDumbbell, FaBed, FaList, FaHome, FaPencilAlt, FaArrowLeft, FaUser, FaCamera, FaWeight, FaRuler, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { FaUtensils, FaDumbbell, FaBed, FaList, FaHome, FaArrowLeft, FaUser ,FaWeight, FaRuler, FaBirthdayCake, FaVenusMars, FaCamera, FaPencilAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PostPopup } from '../Post/PostPopup';
 import { PostDeletePopup } from '../Post/PostDeletePopup';
@@ -139,29 +139,32 @@ export function ProfileDiet() {
 
     const handleDescriptionChange = (e) => {
         setDescription(e.target.value);
+        setShowSaveButton(true);
     };
 
-    const handleProfileUpdate = () => {
-        if(profilePicture){
+    const handleProfileUpdate = async () => {
+        let updatedUser = null;
+
+        if (profilePicture) {
             const imageRef = ref(storage, `profilePictures/${profilePicture.name + v4()}`);
-            uploadBytes(imageRef, profilePicture).then(() =>{
-              getDownloadURL(imageRef).then((url) => {
-                console.log('url', url);
-                axios.put(`http://localhost:3000/updateProfilePicture`, { id: user._id, profilePicture: url })
-                .then((res) => {
-                  console.log(res.data)
-                  localStorage.setItem('user', JSON.stringify(res.data));
-                  window.location.reload();
-
-                })
-              })
-            }) 
+            await uploadBytes(imageRef, profilePicture);
+            const url = await getDownloadURL(imageRef);
+            console.log('url', url);
+            const res = await axios.put(`http://localhost:3000/updateProfilePicture`, { id: user._id, profilePicture: url });
+            updatedUser = res.data;
+            console.log(updatedUser);
         }
 
-        if(description !== user.setup.description){
-            console.log('description', description);
+        if (description !== user.setup.description) {
+            const res = await axios.put(`http://localhost:3000/updateDescription`, { id: user._id, description: description });
+            updatedUser = res.data;
+            console.log(updatedUser);
         }
 
+        if (updatedUser) {
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            window.location.reload();
+        }
     };
 
     const renderProfileCard = (title, value, icon, unit = '') => {
@@ -185,6 +188,74 @@ export function ProfileDiet() {
             setShowSaveButton(true);
         }
     }, [profilePicture]);
+
+    const renderPersonalInfo = () => (
+        <motion.div 
+            className="mb-8 bg-white rounded-xl shadow-md overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <div className="p-4 sm:p-6 bg-gradient-to-r from-gray-50 to-white">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Personal Information</h2>
+            </div>
+            <div className="p-4 sm:p-6 bg-gray-50">
+                <div className="flex flex-col md:flex-row md:space-x-6">
+                    <div className="flex-shrink-0 mb-4 md:mb-0 text-center md:text-left">
+                        <div className="w-32 h-32 bg-gray-200 rounded-full overflow-hidden mx-auto md:mx-0">
+                            {profilePicture ? (
+                                <img src={URL.createObjectURL(profilePicture)} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                                <img src={JSON.parse(localStorage.getItem('user')).profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                            )}
+                        </div>
+                        <label className="mt-3 cursor-pointer inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition duration-300">
+                            <FaCamera className="inline mr-2" />
+                            Change Picture
+                            <input type="file" className="hidden" onChange={handleProfilePictureChange} accept="image/*" />
+                        </label>
+                    </div>
+                    <div className="flex-grow space-y-4">
+                        <div>
+                            <label className="block text-gray-700 text-sm font-semibold mb-2">
+                                <FaPencilAlt className="inline mr-2" /> Description
+                            </label>
+                            <textarea
+                                value={description}
+                                onChange={handleDescriptionChange}
+                                className="w-full p-2 border rounded-md resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                rows="3"
+                                maxLength="200"
+                                placeholder="Tell us about yourself..."
+                            />
+                            <div className="text-right text-gray-500 text-xs mt-1">
+                                {description.length}/200 characters
+                            </div>
+                        </div>
+                        <div className="flex items-center">
+                            <label className="text-gray-700 text-sm font-semibold mr-3">
+                                <FaVenusMars className="inline mr-2" /> Gender:
+                            </label>
+                            <input
+                                type="text"
+                                value={JSON.parse(localStorage.getItem('user')).setup.gender}
+                                readOnly
+                                className="flex-grow md:flex-grow-0 md:w-40 p-2 border rounded-md bg-gray-100 text-gray-700"
+                            />
+                        </div>
+                    </div>
+                </div>
+                {showSaveButton && (
+                    <button
+                        className="mt-6 w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+                        onClick={handleProfileUpdate}
+                    >
+                        Save Changes
+                    </button>
+                )}
+            </div>
+        </motion.div>
+    );
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
@@ -253,91 +324,13 @@ export function ProfileDiet() {
                                 {user ? (
                                     selected === 'all' ? (
                                         <>
+                                            {renderPersonalInfo()}
                                             {renderCards('diet')}
                                             {renderCards('exercise')}
                                             {renderCards('sleep')}
                                         </>
                                     ) : selected === 'personal' ? (
-                                        <motion.div 
-                                            variants={{
-                                                hidden: { opacity: 0, y: 20 },
-                                                visible: { opacity: 1, y: 0 },
-                                            }}
-                                            className='bg-white border border-gray-200 rounded-lg p-8 shadow-md col-span-full'
-                                        >
-                                            <h2 className="text-2xl font-bold mb-6 text-gray-800">Profile Information</h2>
-                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                                                <div>
-                                                    <div className="mb-6">
-                                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="profile-picture">
-                                                            Profile Picture
-                                                        </label>
-                                                        <div className="flex items-center">
-                                                            <div className="w-20 h-20 bg-gray-200 rounded-full overflow-hidden mr-4">
-                                                                {profilePicture ? (
-                                                                    <img src={URL.createObjectURL(profilePicture)} alt="Profile" className="w-full h-full object-cover" />
-                                                                ) : (
-                                                                    <img src={JSON.parse(localStorage.getItem('user')).profilePicture} alt="Profile" className="w-full h-full object-cover" />
-                                                                )}
-                                                            </div>
-                                                            <label className="cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600  text-white font-bold py-2 px-4 rounded inline-flex items-center">
-                                                                <FaCamera className="mr-2" />
-                                                                <span>Change Picture</span>
-                                                                <input type="file" className="hidden" onChange={handleProfilePictureChange} accept="image/*" />
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="mb-6">
-                                                        <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="description">
-                                                            <FaPencilAlt className="inline mr-2" /> Description
-                                                        </label>
-                                                        <textarea
-                                                            id="description"
-                                                            className="shadow-sm border border-gray-300 rounded-md w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            rows="4"
-                                                            maxLength="200"
-                                                            value={description}
-                                                            onChange={(e) => {
-                                                                setDescription(e.target.value);
-                                                                setShowSaveButton(e.target.value !== user.setup.description);
-                                                            }}
-                                                            placeholder="Tell us about yourself..."
-                                                        ></textarea>
-                                                        <div className="text-right text-gray-500 text-sm mt-1">
-                                                            {description.length}/200 characters
-                                                        </div>
-                                                        {showSaveButton && (
-                                                            <button
-                                                                className=" bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                                                onClick={handleProfileUpdate}
-                                                            >
-                                                                Save Changes
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                    <div className="mb-6 max-w-xs">
-                                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="gender">
-                                                            <FaVenusMars className="inline mr-2" /> Gender
-                                                        </label>
-                                                        <div
-                                                            id="gender"
-                                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight bg-gray-100 cursor-default"
-                                                        >
-                                                            {user.setup.gender}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                        {getInfoCards("personal").map((card, index) => (
-                                                            <div key={index}>
-                                                                {renderInfoCard(card.title, card.value, card.changingValue, card.isChanging, index, "personal")}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </motion.div>
+                                        renderPersonalInfo()
                                     ) : (
                                         renderCards(selected)
                                     )

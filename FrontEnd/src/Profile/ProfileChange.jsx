@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { ProfilePage } from "./ProfilePage";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { FaUser, FaUtensils, FaDumbbell, FaBed, FaArrowLeft, FaTimes } from 'react-icons/fa';
@@ -11,6 +11,8 @@ import { PostStartPopup } from "../Post/PostStartPopup";
 import { useProfileFunctions } from "./useProfileFunctions";
 import { HomePage } from "../MainPage/HomePage";
 
+
+
 export function ProfileChange() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,8 +24,11 @@ export function ProfileChange() {
     const [newValue, setNewValue] = useState('');
     const [exerciseTimes, setExerciseTimes] = useState('');
     const [userEmail, setUserEmail] = useState('');
+    const user = JSON.parse(localStorage.getItem('user'));
+    const [units, setUnits] = useState({ 
 
-
+    });
+ 
 
     const{ 
         isStartChangePopupOpen,
@@ -71,6 +76,8 @@ export function ProfileChange() {
             const parsedUser = JSON.parse(storedUser);
             setUserData(parsedUser.setup);
             setUserEmail(parsedUser.email);
+            // Update units based on user preferences without changing the values
+
         }
     }, []);
 
@@ -94,13 +101,13 @@ export function ProfileChange() {
     const categories = {
         diet: ['Calorie Intake', 'Diet Type', 'Meals Per Day', 'Fasting'],
         exercise: ['Exercise 1', 'Exercise 2', 'Exercise 3'],
-        sleep: ['Sleep Duration', 'Bedtime', 'Sleep Variation']
+        sleep: ['Sleep Duration', 'Bedtime', 'Sleep Variation'],
     };
 
     const categoryIcons = {
         diet: <FaUtensils className="inline-block mr-2" />,
         exercise: <FaDumbbell className="inline-block mr-2" />,
-        sleep: <FaBed className="inline-block mr-2" />
+        sleep: <FaBed className="inline-block mr-2" />,
     };
 
     const dietOptions = ["Omnivore", "Vegetarian", "Vegan", "Pescatarian", "Keto", "Paleo"];
@@ -127,7 +134,17 @@ export function ProfileChange() {
         if (!userData) return 'Loading...';
 
         const key = getKeyFromOption(option);
-        return userData[key] || 'N/A';
+        let value = userData[key] || 'N/A';
+
+
+
+        // if (option === 'Weight' && units.weight === 'lbs') {
+        //     value = (parseFloat(value) * 2.20462).toFixed(1);
+        // } else if (option === 'Height' && units.height === 'ft') {
+        //     value = (parseFloat(value) / 30.48).toFixed(2);
+        // }
+
+        return value;
     };
 
     const getCurrentExerciseTimes = (option) => {
@@ -147,10 +164,23 @@ export function ProfileChange() {
             'Exercise 3': 'exercise3',
             'Sleep Duration': 'sleep',
             'Bedtime': 'bed',
-            'Sleep Variation': 'varies'
+            'Sleep Variation': 'varies',
+
         };
+
         return keyMap[option] || option.toLowerCase().replace(/ /g, '');
     };
+
+    useEffect(() => {
+
+        if(selectedCategory && selectedOption){
+            setNewValue(getCurrentValue(selectedCategory, selectedOption));
+        }
+    }, [selectedCategory, selectedOption]);
+
+
+
+
 
     const renderInput = () => {
         switch (selectedCategory) {
@@ -282,6 +312,12 @@ export function ProfileChange() {
             let value = newValue;
             if (selectedCategory === 'exercise') {
                 value = `${newValue}|${exerciseTimes}`;
+            } else if (selectedCategory === 'personal') {
+                if (selectedStart.option === 'Weight' && units.weight === 'lbs') {
+                    value = (parseFloat(value) / 2.20462).toFixed(1);
+                } else if (selectedStart.option === 'Height' && units.height === 'ft') {
+                    value = (parseFloat(value) * 30.48).toFixed(1);
+                }
             }
             await addChange(getKeyFromOption(selectedStart.option), value);
             setIsStartChangePopupOpen(false);
@@ -383,8 +419,8 @@ export function ProfileChange() {
                             <div className="mt-6 flex justify-end">
                                 <button
                                     // onClick={() => {addChange(getKeyFromOption(selectedOption), newValue);}}
-                                    onClick={() => {if(newValue !== getCurrentValue(selectedCategory, selectedOption)){handleStartClick(selectedOption, getCurrentValue(selectedCategory, selectedOption), newValue, getCurrentExerciseTimes(selectedOption),exerciseTimes);}}}
-                                    className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none  transition duration-200 flex items-center ${newValue !== getCurrentValue(selectedCategory, selectedOption) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
+                                    onClick={() => {if(newValue !== getCurrentValue(selectedCategory, selectedOption) || (selectedCategory == 'exercise' && exerciseTimes !== getCurrentExerciseTimes(selectedOption))){handleStartClick(selectedOption, getCurrentValue(selectedCategory, selectedOption), newValue, getCurrentExerciseTimes(selectedOption),exerciseTimes);}}}
+                                    className={`bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none  transition duration-200 flex items-center ${newValue !== getCurrentValue(selectedCategory, selectedOption) || (selectedCategory == 'exercise' && exerciseTimes !== getCurrentExerciseTimes(selectedOption)) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-500 hover:bg-gray-600'}`}
                                 >
                                     Change
                                 </button>

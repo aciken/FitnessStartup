@@ -220,8 +220,8 @@ export function useProfileFunctions() {
   
     
     const handlePostClick = useCallback((title, value, changingValue) => {
-        const trimmedValue = value.split(' ')[0];
-        const trimmedChangingValue = changingValue.split(' ')[0];
+        const trimmedValue = title.includes('Exercise') ? `${value.split(' ')[0]}(${value.split('(')[1].charAt(0)})` : value.split(' ')[0];
+        const trimmedChangingValue = title.includes('Exercise') ? `${changingValue.split(' ')[0]}(${changingValue.split('(')[1].charAt(0)})` : changingValue.split(' ')[0];
         setSelectedChange({ title, fromValue: trimmedValue, toValue: trimmedChangingValue });
         setIsPostPopupOpen(true);
     }, []);
@@ -300,6 +300,7 @@ export function useProfileFunctions() {
     const handleEditClick = useCallback((category, option, from) => {
         const formattedCategory = category.toLowerCase();
         const formattedOption = option.toLowerCase().replace(/ /g, '-');
+        console.log(formattedCategory, formattedOption, from)
         navigate(`/profile/change/${formattedCategory}/${formattedOption}`, {state: {from: from}});
     }, [navigate]);
 
@@ -469,8 +470,6 @@ export function useProfileFunctions() {
             { key: 'sleep', title: 'Sleep Duration', format: (value) => `${value} hours` },
             { key: 'bed', title: 'Bedtime', format: (value) => value },
             { key: 'varies', title: 'Sleep Variation', format: (value) => `${value}/10` },
-            { key: 'weight', title: 'Weight', format: (value) => `${value} ${setup.unitWeight}` },
-            { key: 'height', title: 'Height', format: (value) => `${value} ${setup.unitHeight}` },
             { key: 'description', title: 'Description', format: (value) => value },
             { key: 'gender', title: 'Gender', format: (value) => value },
         ];
@@ -492,13 +491,6 @@ export function useProfileFunctions() {
                 }));
             case 'sleep':
                 return allFields.slice(7,10).map(field => ({
-                    title: field.title,
-                    value: field.format(setup[field.key]),
-                    changingValue: changing[field.key] ? field.format(changing[field.key]) : undefined,
-                    isChanging: !!changing[field.key]
-                }));
-            case 'personal':
-                return allFields.slice(10,12).map(field => ({
                     title: field.title,
                     value: field.format(setup[field.key]),
                     changingValue: changing[field.key] ? field.format(changing[field.key]) : undefined,
